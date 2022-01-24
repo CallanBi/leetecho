@@ -1,12 +1,14 @@
-import { useState } from 'react'
-import { Button } from 'antd'
-import vite from '@/assets/vite.svg'
-import react from '@/assets/react.svg'
-import electron from '@/assets/electron.png'
-import './App.css'
+import * as React from 'react';
+import { Button } from 'antd';
+import vite from '@/assets/vite.svg';
+import react from '@/assets/react.svg';
+import electron from '@/assets/electron.png';
+import './App.css';
+
+const { useState } = React;
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   return (
     <div className="App">
@@ -53,7 +55,7 @@ function App() {
         </div>
       </header>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

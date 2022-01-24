@@ -21,7 +21,7 @@ function domReady(condition = ["complete", "interactive"]) {
   });
 }
 function useLoading() {
-  const className = `loaders-css__square-spin`;
+  const className = "loaders-css__square-spin";
   const styleContent = `
 @keyframes square-spin {
   25% { transform: perspective(100px) rotateX(180deg) rotateY(0); }

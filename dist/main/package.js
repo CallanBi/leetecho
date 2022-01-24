@@ -3,12 +3,13 @@ exports[Symbol.toStringTag] = "Module";
 const name = "leetecho";
 const version = "0.0.1";
 const description = "Leetecho is a tool that automatically generates Leetcode solutions and notes and publishes them to a personal repository.";
-const author = "Moltemort <mcbihv@126.com>";
+const author = "CallanBi <mcbihv@126.com>";
 const license = "MIT";
 const main = "dist/main/index.cjs";
 const scripts = {
   dev: "node scripts/watch.mjs",
-  build: "node scripts/build.mjs && electron-builder"
+  build: "node scripts/build.mjs && electron-builder",
+  lint: "eslint --fix --ext .ts,.tsx src"
 };
 const engines = {
   node: ">=14.17.0"
@@ -16,11 +17,15 @@ const engines = {
 const devDependencies = {
   "@types/react": "^17.0.33",
   "@types/react-dom": "^17.0.10",
+  "@typescript-eslint/eslint-plugin": "^5.10.0",
+  "@typescript-eslint/parser": "^5.10.0",
   "@vitejs/plugin-react": "^1.0.7",
   antd: "^4.16.13",
   electron: "^15.3.0",
   "electron-builder": "^22.13.1",
   "electron-store": "^8.0.1",
+  eslint: "^8.7.0",
+  "eslint-plugin-react": "^7.28.0",
   react: "^17.0.2",
   "react-dom": "^17.0.2",
   typescript: "^4.4.4",
