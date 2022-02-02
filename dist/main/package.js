@@ -20,12 +20,14 @@ const devDependencies = {
   "@typescript-eslint/eslint-plugin": "^5.10.0",
   "@typescript-eslint/parser": "^5.10.0",
   "@vitejs/plugin-react": "^1.0.7",
-  antd: "^4.16.13",
+  antd: "^4.18.5",
   electron: "^15.3.0",
   "electron-builder": "^22.13.1",
   "electron-store": "^8.0.1",
   eslint: "^8.7.0",
   "eslint-plugin-react": "^7.28.0",
+  less: "^4.1.2",
+  "less-loader": "^7.3.0",
   react: "^17.0.2",
   "react-dom": "^17.0.2",
   typescript: "^4.4.4",
@@ -35,6 +37,9 @@ const env = {
   "//": "Used in build scripts",
   HOST: "127.0.0.1",
   PORT: 3344
+};
+const dependencies = {
+  "@ant-design/pro-layout": "^6.32.7"
 };
 var _package = {
   name,
@@ -46,10 +51,12 @@ var _package = {
   scripts,
   engines,
   devDependencies,
-  env
+  env,
+  dependencies
 };
 exports.author = author;
 exports["default"] = _package;
+exports.dependencies = dependencies;
 exports.description = description;
 exports.devDependencies = devDependencies;
 exports.engines = engines;

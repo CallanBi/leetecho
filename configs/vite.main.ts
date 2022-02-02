@@ -25,4 +25,24 @@ export default defineConfig({
       },
     },
   },
+  // css: {
+  //   preprocessorOptions: {
+  //     less: {
+  //       javascriptEnabled: true,
+  //       modifyVars: {
+  //         'root-entry-name': 'default',
+  //         'primary-color': '#1DA57A',
+  //         'link-color': '#1DA57A',
+  //         'border-radius-base': '2px',
+  //       }
+  //     }
+  //   },
+  // },
+  // resolve: {
+  //   alias: [
+  //     { find: /^~/, replacement: '' },
+  //     { find: '@', replacement: join(__dirname, '../src/renderer/src') },
+  //     { find: 'src', replacement: join(__dirname, '../src') },
+  //   ]
+  // }
 });
