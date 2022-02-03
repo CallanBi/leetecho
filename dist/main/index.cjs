@@ -10023,7 +10023,7 @@ if (!require$$1$2.app.requestSingleInstanceLock()) {
 let win = null;
 async function createWindow() {
   win = new require$$1$2.BrowserWindow({
-    title: "Main window",
+    title: "Leetecho",
     webPreferences: {
       preload: require$$0$1.join(__dirname, "../preload/index.cjs")
     }

@@ -4,83 +4,86 @@ import { Button, Descriptions, Result, Avatar, Space, Statistic } from 'antd';
 // import vite from '@/assets/vite.svg';
 // import react from '@/assets/react.svg';
 // import electron from '@/assets/electron.png';
-import './App.css';
-import BasicLayout from '@ant-design/pro-layout';
+import './app.css';
 
 import { LikeOutlined, UserOutlined } from '@ant-design/icons';
 
 import type { ProSettings } from '@ant-design/pro-layout';
 import ProLayout, { PageContainer, SettingDrawer } from '@ant-design/pro-layout';
-import defaultProps from './_defaultProps';
+import { navConfig } from './routes/index';
+import { themeSettings } from './const/theme';
 
-const content = (
-  <Descriptions size="small" column={2}>
-    <Descriptions.Item label="创建人">张三</Descriptions.Item>
-    <Descriptions.Item label="联系方式">
-      <a>421421</a>
-    </Descriptions.Item>
-    <Descriptions.Item label="创建时间">2017-01-10</Descriptions.Item>
-    <Descriptions.Item label="更新时间">2017-10-10</Descriptions.Item>
-    <Descriptions.Item label="备注">中国浙江省杭州市西湖区古翠路</Descriptions.Item>
-  </Descriptions>
-);
+const { useState } = React;
+
+// const content = (
+//   <Descriptions size="small" column={2}>
+//     <Descriptions.Item label="创建人">张三</Descriptions.Item>
+//     <Descriptions.Item label="联系方式">
+//       <a>421421</a>
+//     </Descriptions.Item>
+//     <Descriptions.Item label="创建时间">2017-01-10</Descriptions.Item>
+//     <Descriptions.Item label="更新时间">2017-10-10</Descriptions.Item>
+//     <Descriptions.Item label="备注">中国浙江省杭州市西湖区古翠路</Descriptions.Item>
+//   </Descriptions>
+// );
 
 function App() {
-  const [settings, setSetting] = useState<Partial<ProSettings> | undefined>({ fixSiderbar: true });
+  const [settings, setSetting] = useState<Partial<ProSettings> | undefined>(themeSettings);
   const [pathname, setPathname] = useState('/welcome');
   return (
     <div
-      id="test-pro-layout"
+      id="main"
       style={{
         height: '100vh',
       }}
     >
       <ProLayout
-        {...defaultProps}
-        location={{
-          pathname,
-        }}
-        waterMarkProps={{
-          content: 'Pro Layout',
-        }}
-        menuFooterRender={(props) => {
-          return (
-            <a
-              style={{
-                lineHeight: '48rpx',
-                display: 'flex',
-                height: 48,
-                color: 'rgba(255, 255, 255, 0.65)',
-                alignItems: 'center',
-              }}
-              href="https://preview.pro.ant.design/dashboard/analysis"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <img
-                alt="pro-logo"
-                src="https://procomponents.ant.design/favicon.ico"
-                style={{
-                  width: 16,
-                  height: 16,
-                  margin: '0 16px',
-                  marginRight: 10,
-                }}
-              />
-              {!props?.collapsed && 'Preview Pro'}
-            </a>
-          );
-        }}
+        title="Leetecho"
+        {...navConfig}
+        // location={{
+        //   pathname,
+        // }}
+        // waterMarkProps={{
+        //   content: 'Leetecho',
+        // }}
+        // menuFooterRender={(props) => {
+        //   return (
+        //     <a
+        //       style={{
+        //         lineHeight: '48rpx',
+        //         display: 'flex',
+        //         height: 48,
+        //         color: 'rgba(255, 255, 255, 0.65)',
+        //         alignItems: 'center',
+        //       }}
+        //       href="https://preview.pro.ant.design/dashboard/analysis"
+        //       target="_blank"
+        //       rel="noreferrer"
+        //     >
+        //       <img
+        //         alt="pro-logo"
+        //         src="https://procomponents.ant.design/favicon.ico"
+        //         style={{
+        //           width: 16,
+        //           height: 16,
+        //           margin: '0 16px',
+        //           marginRight: 10,
+        //         }}
+        //       />
+        //       {!props?.collapsed && 'Preview Pro'}
+        //     </a>
+        //   );
+        // }}
         onMenuHeaderClick={(e) => console.log(e)}
-        menuItemRender={(item, dom) => (
-          <a
-            onClick={() => {
-              setPathname(item.path || '/welcome');
-            }}
-          >
-            {dom}
-          </a>
-        )}
+        // menuItemRender={(item, dom) => (
+        //   <a
+        //     onClick={() => {
+        //       setPathname(item.path || '/welcome');
+        //     }}
+        //   >
+        //     {dom}
+        //   </a>
+        // )}
         rightContentRender={() => (
           <div>
             <Avatar shape="square" size="small" icon={<UserOutlined />} />
@@ -88,7 +91,7 @@ function App() {
         )}
         {...settings}
       >
-        <PageContainer
+        {/* <PageContainer
           content={content}
           tabList={[
             {
@@ -136,11 +139,11 @@ function App() {
               extra={<Button type="primary">Back Home</Button>}
             />
           </div>
-        </PageContainer>
+        </PageContainer> */}
       </ProLayout>
       <SettingDrawer
         pathname={pathname}
-        getContainer={() => document.getElementById('test-pro-layout')}
+        getContainer={() => document.getElementById('main')}
         settings={settings}
         onSettingChange={(changeSetting) => {
           setSetting(changeSetting);
@@ -151,8 +154,6 @@ function App() {
   );
 };
 
-
-const { useState } = React;
 
 // function App() {
 //   const [count, setCount] = useState(0);

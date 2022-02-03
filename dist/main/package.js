@@ -39,7 +39,8 @@ const env = {
   PORT: 3344
 };
 const dependencies = {
-  "@ant-design/pro-layout": "^6.32.7"
+  "@ant-design/pro-layout": "^6.32.7",
+  "@emotion/react": "^11.7.1"
 };
 var _package = {
   name,

@@ -10,6 +10,9 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "strict": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "include": [
+      "types/*/*.d.ts"
+    ]
   }
 }

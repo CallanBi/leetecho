@@ -38,6 +38,7 @@
     "PORT": 3344
   },
   "dependencies": {
-    "@ant-design/pro-layout": "^6.32.7"
+    "@ant-design/pro-layout": "^6.32.7",
+    "@emotion/react": "^11.7.1"
   }
 }

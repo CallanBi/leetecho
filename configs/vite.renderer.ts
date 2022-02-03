@@ -10,6 +10,12 @@ export default defineConfig({
   plugins: [
     react(),
   ],
+  esbuild: {
+    /** jsxInject simply set esbuild's --inject transformation option and auto imports the provided module in all .jsx files. */
+    jsxFactory: `jsx`,
+    /** jsxFactory overrides the default React.creatElement with emotionsjsx` factory function. */
+    jsxInject: `import { jsx, css } from '@emotion/react'`,
+  },
   base: './',
   build: {
     emptyOutDir: true,
