@@ -10013,6 +10013,17 @@ require$$1$2.ipcMain.handle("electron-store", async (_evnet, methodSign, ...args
   }
   return store[methodSign];
 });
+const browserWindowOptions = {
+  title: "Leetecho",
+  frame: false,
+  width: 1300,
+  height: 850,
+  titleBarStyle: "hiddenInset",
+  trafficLightPosition: { x: 5, y: 6 },
+  webPreferences: {
+    preload: require$$0$1.join(__dirname, "../preload/index.cjs")
+  }
+};
 const isWin7 = require$$1__default["default"].release().startsWith("6.1");
 if (isWin7)
   require$$1$2.app.disableHardwareAcceleration();
@@ -10022,12 +10033,7 @@ if (!require$$1$2.app.requestSingleInstanceLock()) {
 }
 let win = null;
 async function createWindow() {
-  win = new require$$1$2.BrowserWindow({
-    title: "Leetecho",
-    webPreferences: {
-      preload: require$$0$1.join(__dirname, "../preload/index.cjs")
-    }
-  });
+  win = new require$$1$2.BrowserWindow(browserWindowOptions);
   if (require$$1$2.app.isPackaged) {
     win.loadFile(require$$0$1.join(__dirname, "../renderer/index.html"));
   } else {

@@ -1,5 +1,16 @@
-import { SmileOutlined, CrownOutlined, TabletOutlined, AntDesignOutlined } from '@ant-design/icons';
+import * as React from 'react';
 import { BasicLayoutProps } from '@ant-design/pro-layout';
+import { IconCheckList, IconList, IconTemplate, IconServer } from '@douyinfe/semi-icons';
+
+const withIconStyle: (style?: React.CSSProperties | undefined) => React.CSSProperties = (style) => {
+  return {
+    ...style,
+    marginLeft: 16,
+    marginRight: 8,
+    position: 'relative',
+    top: 3,
+  };
+};
 
 const navConfig: BasicLayoutProps = {
   route: {
@@ -8,92 +19,28 @@ const navConfig: BasicLayoutProps = {
       {
         path: '/settledProblems',
         name: '已刷习题',
-        icon: <SmileOutlined />,
+        icon: <IconCheckList style={withIconStyle()} />,
         component: './Welcome',
       },
       {
         path: '/allProblems',
         name: '所有习题',
-        icon: <CrownOutlined />,
+        icon: <IconList style={withIconStyle()}/>,
         access: 'canAdmin',
         component: './Admin',
-        // routes: [
-        //   {
-        //     path: '/admin/sub-page1',
-        //     name: '一级页面',
-        //     icon: <CrownOutlined />,
-        //     component: './Welcome',
-        //   },
-        //   {
-        //     path: '/admin/sub-page2',
-        //     name: '二级页面',
-        //     icon: <CrownOutlined />,
-        //     component: './Welcome',
-        //   },
-        //   {
-        //     path: '/admin/sub-page3',
-        //     name: '三级页面',
-        //     icon: <CrownOutlined />,
-        //     component: './Welcome',
-        //   },
-        // ],
       },
       {
         name: '默认模板',
-        icon: <TabletOutlined />,
+        icon: <IconTemplate style={withIconStyle()}/>,
         path: '/defaultTemplate',
         component: './ListTableList',
-        // routes: [
-        //   {
-        //     path: '/list/sub-page',
-        //     name: '一级列表页面',
-        //     icon: <CrownOutlined />,
-        //     routes: [
-        //       {
-        //         path: 'sub-sub-page1',
-        //         name: '一一级列表页面',
-        //         icon: <CrownOutlined />,
-        //         component: './Welcome',
-        //       },
-        //       {
-        //         path: 'sub-sub-page2',
-        //         name: '一二级列表页面',
-        //         icon: <CrownOutlined />,
-        //         component: './Welcome',
-        //       },
-        //       {
-        //         path: 'sub-sub-page3',
-        //         name: '一三级列表页面',
-        //         icon: <CrownOutlined />,
-        //         component: './Welcome',
-        //       },
-        //     ],
-        //   },
-        //   {
-        //     path: '/list/sub-page2',
-        //     name: '二级列表页面',
-        //     icon: <CrownOutlined />,
-        //     component: './Welcome',
-        //   },
-        //   {
-        //     path: '/list/sub-page3',
-        //     name: '三级列表页面',
-        //     icon: <CrownOutlined />,
-        //     component: './Welcome',
-        //   },
-        // ],
       },
       {
         path: '/remoteSettings',
         name: ' 远程设置',
-        icon: <SmileOutlined />,
+        icon: <IconServer style={withIconStyle()}/>,
         component: './Welcome',
       },
-      // {
-      //   path: 'https://ant.design',
-      //   name: 'Ant Design 官网外链',
-      //   icon: <AntDesignOutlined />,
-      // },
     ],
   },
   location: {

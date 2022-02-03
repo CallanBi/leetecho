@@ -1,7 +1,10 @@
 import { join } from 'path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import svgrPlugin from 'vite-plugin-svgr';
+
 import pkg from '../package.json';
+
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -9,12 +12,19 @@ export default defineConfig({
   root: join(__dirname, '../src/renderer'),
   plugins: [
     react(),
+    /** import svg file as a React Component */
+    svgrPlugin({
+      svgrOptions: {
+        icon: true,
+        // ...svgr options (https://react-svgr.com/docs/options/)
+      },
+    }),
   ],
   esbuild: {
     /** jsxInject simply set esbuild's --inject transformation option and auto imports the provided module in all .jsx files. */
-    jsxFactory: `jsx`,
+    jsxFactory: 'jsx',
     /** jsxFactory overrides the default React.creatElement with emotionsjsx` factory function. */
-    jsxInject: `import { jsx, css } from '@emotion/react'`,
+    jsxInject: 'import { jsx, css } from \'@emotion/react\'',
   },
   base: './',
   build: {

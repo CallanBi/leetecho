@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { Button, Descriptions, Result, Avatar, Space, Statistic } from 'antd';
-
-// import vite from '@/assets/vite.svg';
-// import react from '@/assets/react.svg';
-// import electron from '@/assets/electron.png';
-import './app.css';
+import Logo from '@/assets/logo.png';
+import './index.less';
 
 import { LikeOutlined, UserOutlined } from '@ant-design/icons';
 
@@ -15,17 +12,9 @@ import { themeSettings } from './const/theme';
 
 const { useState } = React;
 
-// const content = (
-//   <Descriptions size="small" column={2}>
-//     <Descriptions.Item label="创建人">张三</Descriptions.Item>
-//     <Descriptions.Item label="联系方式">
-//       <a>421421</a>
-//     </Descriptions.Item>
-//     <Descriptions.Item label="创建时间">2017-01-10</Descriptions.Item>
-//     <Descriptions.Item label="更新时间">2017-10-10</Descriptions.Item>
-//     <Descriptions.Item label="备注">中国浙江省杭州市西湖区古翠路</Descriptions.Item>
-//   </Descriptions>
-// );
+const renderLogo: () => React.ReactNode = () => {
+  return <><img src={Logo} alt="Leetecho" style={{ height: 80 }} /></>;
+};
 
 function App() {
   const [settings, setSetting] = useState<Partial<ProSettings> | undefined>(themeSettings);
@@ -38,52 +27,14 @@ function App() {
       }}
     >
       <ProLayout
-        title="Leetecho"
+        title={false}
+        logo={renderLogo()}
+        /**TODO: collapsed 状态由 Context 管理*/
+        collapsed={false}
+        collapsedButtonRender={() => <></>}
         {...navConfig}
-        // location={{
-        //   pathname,
-        // }}
-        // waterMarkProps={{
-        //   content: 'Leetecho',
-        // }}
-        // menuFooterRender={(props) => {
-        //   return (
-        //     <a
-        //       style={{
-        //         lineHeight: '48rpx',
-        //         display: 'flex',
-        //         height: 48,
-        //         color: 'rgba(255, 255, 255, 0.65)',
-        //         alignItems: 'center',
-        //       }}
-        //       href="https://preview.pro.ant.design/dashboard/analysis"
-        //       target="_blank"
-        //       rel="noreferrer"
-        //     >
-        //       <img
-        //         alt="pro-logo"
-        //         src="https://procomponents.ant.design/favicon.ico"
-        //         style={{
-        //           width: 16,
-        //           height: 16,
-        //           margin: '0 16px',
-        //           marginRight: 10,
-        //         }}
-        //       />
-        //       {!props?.collapsed && 'Preview Pro'}
-        //     </a>
-        //   );
-        // }}
-        onMenuHeaderClick={(e) => console.log(e)}
-        // menuItemRender={(item, dom) => (
-        //   <a
-        //     onClick={() => {
-        //       setPathname(item.path || '/welcome');
-        //     }}
-        //   >
-        //     {dom}
-        //   </a>
-        // )}
+        onMenuHeaderClick={(e) => console.log('%c header e >>>', 'background: yellow; color: blue', e)
+        }
         rightContentRender={() => (
           <div>
             <Avatar shape="square" size="small" icon={<UserOutlined />} />
@@ -91,55 +42,6 @@ function App() {
         )}
         {...settings}
       >
-        {/* <PageContainer
-          content={content}
-          tabList={[
-            {
-              tab: '基本信息',
-              key: 'base',
-            },
-            {
-              tab: '详细信息',
-              key: 'info',
-            },
-          ]}
-          extraContent={
-            <Space size={24}>
-              <Statistic title="Feedback" value={1128} prefix={<LikeOutlined />} />
-              <Statistic title="Unmerged" value={93} suffix="/ 100" />
-            </Space>
-          }
-          extra={[
-            <Button key="3">操作</Button>,
-            <Button key="2">操作</Button>,
-            <Button key="1" type="primary">
-              主操作
-            </Button>,
-          ]}
-          footer={[
-            <Button key="3">重置</Button>,
-            <Button key="2" type="primary">
-              提交
-            </Button>,
-          ]}
-        >
-          <div
-            style={{
-              height: '120vh',
-            }}
-          >
-            <Result
-              status="404"
-              style={{
-                height: '100%',
-                background: '#fff',
-              }}
-              title="Hello World"
-              subTitle="Sorry, you are not authorized to access this page."
-              extra={<Button type="primary">Back Home</Button>}
-            />
-          </div>
-        </PageContainer> */}
       </ProLayout>
       <SettingDrawer
         pathname={pathname}
@@ -153,20 +55,5 @@ function App() {
     </div>
   );
 };
-
-
-// function App() {
-//   const [count, setCount] = useState(0);
-
-//   return (
-//     <div className="App">
-//       <BasicLayout
-//         title="Leetecho"
-//       >
-
-//       </BasicLayout>
-//     </div>ƒ
-//   );
-// }
 
 export default App;

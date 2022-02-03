@@ -31,7 +31,8 @@ const devDependencies = {
   react: "^17.0.2",
   "react-dom": "^17.0.2",
   typescript: "^4.4.4",
-  vite: "^2.6.13"
+  vite: "^2.6.13",
+  "vite-plugin-svgr": "^1.0.1"
 };
 const env = {
   "//": "Used in build scripts",
@@ -40,6 +41,7 @@ const env = {
 };
 const dependencies = {
   "@ant-design/pro-layout": "^6.32.7",
+  "@douyinfe/semi-icons": "^2.3.1",
   "@emotion/react": "^11.7.1"
 };
 var _package = {

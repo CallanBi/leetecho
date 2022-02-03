@@ -2,6 +2,7 @@ import os from 'os';
 import { join } from 'path';
 import { app, BrowserWindow } from 'electron';
 import './samples/electron-store';
+import browserWindowOptions from './const/electronOptions/browserWindows';
 
 const isWin7 = os.release().startsWith('6.1');
 if (isWin7) app.disableHardwareAcceleration();
@@ -14,12 +15,7 @@ if (!app.requestSingleInstanceLock()) {
 let win: BrowserWindow | null = null;
 
 async function createWindow() {
-  win = new BrowserWindow({
-    title: 'Leetecho',
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.cjs')
-    },
-  });
+  win = new BrowserWindow(browserWindowOptions);
 
   if (app.isPackaged) {
     win.loadFile(join(__dirname, '../renderer/index.html'));

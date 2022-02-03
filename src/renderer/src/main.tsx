@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
 import './samples/electron-store';
@@ -15,7 +15,7 @@ ReactDOM.render(
 
 // -----------------------------------------------------------
 
-console.log('contextBridge ->', window.bridge);
+// console.log('contextBridge ->', window.bridge);
 
 // Use ipcRenderer.on
 window.bridge.ipcRenderer.on('main-process-message', (_event, ...args) => {
