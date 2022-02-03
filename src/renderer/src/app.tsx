@@ -1,19 +1,24 @@
 import * as React from 'react';
-import { Button, Descriptions, Result, Avatar, Space, Statistic } from 'antd';
-import Logo from '@/assets/logo.png';
+import { Avatar } from 'antd';
+import { ReactComponent as LogoHeader } from '@/assets/logo-vertical.svg';
 import './index.less';
 
-import { LikeOutlined, UserOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 
 import type { ProSettings } from '@ant-design/pro-layout';
-import ProLayout, { PageContainer, SettingDrawer } from '@ant-design/pro-layout';
+import ProLayout, { SettingDrawer } from '@ant-design/pro-layout';
 import { navConfig } from './routes/index';
 import { themeSettings } from './const/theme';
 
 const { useState } = React;
 
+const headerLogoStyle: React.CSSProperties = {
+  marginTop: 100,
+  marginBottom: 20
+};
+
 const renderLogo: () => React.ReactNode = () => {
-  return <><img src={Logo} alt="Leetecho" style={{ height: 80 }} /></>;
+  return <section style={headerLogoStyle}><LogoHeader /></section>;
 };
 
 function App() {
@@ -29,12 +34,12 @@ function App() {
       <ProLayout
         title={false}
         logo={renderLogo()}
-        /**TODO: collapsed 状态由 Context 管理*/
+        /** TODO: collapsed 状态由 Context 管理*/
         collapsed={false}
         collapsedButtonRender={() => <></>}
         {...navConfig}
-        onMenuHeaderClick={(e) => console.log('%c header e >>>', 'background: yellow; color: blue', e)
-        }
+        // onMenuHeaderClick={(e) => console.log('%c header e >>>', 'background: yellow; color: blue', e)
+        // }
         rightContentRender={() => (
           <div>
             <Avatar shape="square" size="small" icon={<UserOutlined />} />
@@ -48,12 +53,14 @@ function App() {
         getContainer={() => document.getElementById('main')}
         settings={settings}
         onSettingChange={(changeSetting) => {
+          console.log('%c changeSetting >>>', 'background: yellow; color: blue', changeSetting);
+
           setSetting(changeSetting);
         }}
         disableUrlParams
       />
     </div>
   );
-};
+}
 
 export default App;

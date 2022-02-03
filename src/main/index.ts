@@ -2,7 +2,7 @@ import os from 'os';
 import { join } from 'path';
 import { app, BrowserWindow } from 'electron';
 import './samples/electron-store';
-import browserWindowOptions from './const/electronOptions/browserWindows';
+import { DEFAULT_WINDOW_OPTIONS } from './const/electronOptions/window';
 
 const isWin7 = os.release().startsWith('6.1');
 if (isWin7) app.disableHardwareAcceleration();
@@ -15,7 +15,11 @@ if (!app.requestSingleInstanceLock()) {
 let win: BrowserWindow | null = null;
 
 async function createWindow() {
-  win = new BrowserWindow(browserWindowOptions);
+  win = new BrowserWindow({ ...DEFAULT_WINDOW_OPTIONS });
+
+
+  console.log('%c DEFAULT_WINDOW_OPTIONS >>>', 'background: yellow; color: blue', DEFAULT_WINDOW_OPTIONS);
+
 
   if (app.isPackaged) {
     win.loadFile(join(__dirname, '../renderer/index.html'));
