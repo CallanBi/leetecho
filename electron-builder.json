@@ -1,5 +1,5 @@
 {
-  "appId": "01",
+  "appId": "com.electron.${productName}",
   "asar": true,
   "directories": {
     "output": "release/${version}"
@@ -9,11 +9,13 @@
   ],
   "mac": {
     "artifactName": "${productName}_${version}.${ext}",
+    "icon": "./assets/icon/icon-mac.icns",
     "target": [
       "dmg"
     ]
   },
   "win": {
+    "icon": "./assets/icon/icon-win.ico",
     "target": [
       {
         "target": "nsis",
@@ -23,6 +25,20 @@
       }
     ],
     "artifactName": "${productName}_${version}.${ext}"
+  },
+  "linux": {
+    "icon": "./assets/icon/icon-linux.png",
+    "target": [
+      {
+        "target": "AppImage"
+      },
+      {
+        "target": "deb"
+      },
+      {
+        "target": "snap"
+      },
+    ]
   },
   "nsis": {
     "oneClick": false,
