@@ -11,6 +11,7 @@ declare global {
       path: typeof import('path');
       ipcRenderer: import('electron').IpcRenderer;
       removeLoading: () => void;
+      // app: typeof import('electron').app;
     };
   }
 }

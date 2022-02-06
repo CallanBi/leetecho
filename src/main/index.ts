@@ -1,8 +1,10 @@
 import os from 'os';
 import { join } from 'path';
-import { app, BrowserWindow } from 'electron';
-import './samples/electron-store';
+import { app, BrowserWindow, ipcMain } from 'electron';
+import './electronStore/electronStore';
 import { DEFAULT_WINDOW_OPTIONS } from './const/electronOptions/window';
+
+import { cloneDeep } from 'lodash';
 
 const isWin7 = os.release().startsWith('6.1');
 if (isWin7) app.disableHardwareAcceleration();
@@ -17,9 +19,10 @@ let win: BrowserWindow | null = null;
 async function createWindow() {
   win = new BrowserWindow({ ...DEFAULT_WINDOW_OPTIONS });
 
+  win.setTitle('Leetecho');
 
-  console.log('%c DEFAULT_WINDOW_OPTIONS >>>', 'background: yellow; color: blue', DEFAULT_WINDOW_OPTIONS);
-
+  /** 去除菜单栏，保持跨平台风格统一 */
+  win.removeMenu();
 
   if (app.isPackaged) {
     win.loadFile(join(__dirname, '../renderer/index.html'));
@@ -35,6 +38,11 @@ async function createWindow() {
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', (new Date).toLocaleString());
   });
+
+  ipcMain.on('get-path', (event, args: Parameters<typeof app.getPath>[0]) => {
+    event.returnValue = app.getPath(args);
+  });
+
 }
 
 app.whenReady().then(createWindow);

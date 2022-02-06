@@ -12,6 +12,11 @@ import { themeSettings } from './const/theme';
 
 const { useState } = React;
 
+// const { bridge: { app } } = window;
+
+// console.log('%c home path >>>', 'background: yellow; color: blue', app.getPath('home'));
+
+
 const headerLogoStyle: React.CSSProperties = {
   marginTop: 100,
   marginBottom: 20
@@ -54,7 +59,6 @@ function App() {
         settings={settings}
         onSettingChange={(changeSetting) => {
           console.log('%c changeSetting >>>', 'background: yellow; color: blue', changeSetting);
-
           setSetting(changeSetting);
         }}
         disableUrlParams

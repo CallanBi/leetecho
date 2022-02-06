@@ -1,5 +1,5 @@
 /**
- * Use 'electron-store' sample code.
+ * Use 'electron-store' sample code. https://github.com/sindresorhus/electron-store
  */
 import { ipcMain } from 'electron';
 import Store from 'electron-store';
@@ -14,4 +14,3 @@ ipcMain.handle('electron-store', async (_evnet, methodSign: string, ...args: any
   }
   return (store as any)[methodSign];
 });
- 

@@ -1,13 +1,13 @@
 import fs from 'fs';
 import path from 'path';
-import { contextBridge, ipcRenderer } from 'electron';
+import { contextBridge, ipcRenderer, app } from 'electron';
 import { domReady } from './utils';
 import { useLoading } from './loading';
 
 const isDev = process.env.NODE_ENV === 'development';
-const { appendLoading, removeLoading } = useLoading()
+const { appendLoading, removeLoading } = useLoading();
 
-  ; (async () => {
+(async () => {
   await domReady();
 
   appendLoading();
