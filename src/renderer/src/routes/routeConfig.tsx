@@ -3,7 +3,7 @@ import { ROUTE } from '@/const/route';
 
 const navConfig: BasicLayoutProps = {
   route: {
-    path: '/',
+    path: '/settledProblems',
     routes: ROUTE,
   },
 };

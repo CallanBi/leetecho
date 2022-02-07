@@ -27,7 +27,7 @@ const renderLogo: () => React.ReactNode = () => {
 
 const App: React.FC<Record<string, never>> = () => {
   const [settings, setSetting] = useState<Partial<ProSettings> | undefined>(themeSettings);
-  const [path, setPath] = useState<typeof ROUTE[number]['path']>('settledProblems');
+  const [path, setPath] = useState<typeof ROUTE[number]['path']>('/settledProblems');
 
   const router = useRouter();
 
@@ -41,9 +41,6 @@ const App: React.FC<Record<string, never>> = () => {
       <ProLayout
         title={false}
         logo={renderLogo()}
-        location={{
-          pathname: path,
-        }}
         /** TODO: collapsed 状态由 Context 管理*/
         collapsed={false}
         collapsedButtonRender={() => <></>}
@@ -67,9 +64,10 @@ const App: React.FC<Record<string, never>> = () => {
           </div>
         )}
         {...settings}
+        location={{
+          pathname: path,
+        }}
       >
-        <section className="menu">
-        </section>
         <Switch>
           <Route path='/' exact render={() => (
             <Redirect to='/settledProblems' />
