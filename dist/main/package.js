@@ -18,6 +18,7 @@ const devDependencies = {
   "@types/lodash": "^4.14.178",
   "@types/react": "^17.0.33",
   "@types/react-dom": "^17.0.10",
+  "@types/react-router-dom": "^5.3.3",
   "@typescript-eslint/eslint-plugin": "^5.10.0",
   "@typescript-eslint/parser": "^5.10.0",
   "@vitejs/plugin-react": "^1.0.7",
@@ -41,11 +42,14 @@ const env = {
   PORT: 3344
 };
 const dependencies = {
+  "@ant-design/icons": "^4.7.0",
   "@ant-design/pro-layout": "^6.32.7",
   "@douyinfe/semi-icons": "^2.3.1",
   "@emotion/react": "^11.7.1",
+  icons: "link:@types/ant-design/icons",
   lodash: "^4.17.21",
-  "react-router-dom": "^6.2.1"
+  "query-string": "^7.1.1",
+  "react-router-dom": "5.2.0"
 };
 var _package = {
   name,

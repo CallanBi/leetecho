@@ -1,1 +1,1 @@
-export * from './navConfig';
+export * from './routeConfig';

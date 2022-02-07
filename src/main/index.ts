@@ -4,8 +4,6 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import './electronStore/electronStore';
 import { DEFAULT_WINDOW_OPTIONS } from './const/electronOptions/window';
 
-import { cloneDeep } from 'lodash';
-
 const isWin7 = os.release().startsWith('6.1');
 if (isWin7) app.disableHardwareAcceleration();
 

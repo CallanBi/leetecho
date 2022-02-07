@@ -4,12 +4,15 @@ import 'antd/dist/antd.css';
 import './samples/electron-store';
 import './index.less';
 import App from './app';
+import { HashRouter } from 'react-router-dom';
 
 const { bridge: { removeLoading, ipcRenderer } } = window;
 
 
 ReactDOM.render(
-  <App />,
+  <HashRouter>
+    <App />
+  </HashRouter>,
   document.getElementById('root'),
   () => {
     removeLoading();

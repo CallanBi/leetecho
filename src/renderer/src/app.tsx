@@ -9,12 +9,11 @@ import type { ProSettings } from '@ant-design/pro-layout';
 import ProLayout, { SettingDrawer } from '@ant-design/pro-layout';
 import { navConfig } from './routes/index';
 import { themeSettings } from './const/theme';
+import { Redirect, Route, Switch } from 'react-router-dom';
+import { ROUTE } from './const/route';
+import { useRouter } from './hooks/router/useRouter';
 
-const { useState } = React;
-
-// const { bridge: { app } } = window;
-
-// console.log('%c home path >>>', 'background: yellow; color: blue', app.getPath('home'));
+const { useState, useRef, useEffect } = React;
 
 
 const headerLogoStyle: React.CSSProperties = {
@@ -26,9 +25,12 @@ const renderLogo: () => React.ReactNode = () => {
   return <section style={headerLogoStyle}><LogoHeader /></section>;
 };
 
-function App() {
+const App: React.FC<Record<string, never>> = () => {
   const [settings, setSetting] = useState<Partial<ProSettings> | undefined>(themeSettings);
-  const [pathname, setPathname] = useState('/welcome');
+  const [path, setPath] = useState<typeof ROUTE[number]['path']>('settledProblems');
+
+  const router = useRouter();
+
   return (
     <div
       id="main"
@@ -39,12 +41,26 @@ function App() {
       <ProLayout
         title={false}
         logo={renderLogo()}
+        location={{
+          pathname: path,
+        }}
         /** TODO: collapsed 状态由 Context 管理*/
         collapsed={false}
         collapsedButtonRender={() => <></>}
         {...navConfig}
-        // onMenuHeaderClick={(e) => console.log('%c header e >>>', 'background: yellow; color: blue', e)
-        // }
+        menuItemRender={(item, dom) => (
+          <a
+            onClick={() => {
+              const { path = 'settledProblems' } = item;
+              setPath(path);
+              if (router.pathname !== path) {
+                router.history.push(path);
+              }
+            }}
+          >
+            {dom}
+          </a>
+        )}
         rightContentRender={() => (
           <div>
             <Avatar shape="square" size="small" icon={<UserOutlined />} />
@@ -52,9 +68,17 @@ function App() {
         )}
         {...settings}
       >
+        <section className="menu">
+        </section>
+        <Switch>
+          <Route path='/' exact render={() => (
+            <Redirect to='/settledProblems' />
+          )} />
+          {ROUTE.map(route => <Route key={route.name ?? '/settledProblems'} exact path={route.path ?? '/settledProblems'} component={route.component} />)}
+        </Switch>
       </ProLayout>
       <SettingDrawer
-        pathname={pathname}
+        pathname={path}
         getContainer={() => document.getElementById('main')}
         settings={settings}
         onSettingChange={(changeSetting) => {
@@ -65,6 +89,6 @@ function App() {
       />
     </div>
   );
-}
+};
 
 export default App;
