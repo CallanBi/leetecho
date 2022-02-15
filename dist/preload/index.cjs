@@ -1,11 +1,35 @@
-"use strict";var d=require("fs"),c=require("path"),r=require("electron");function i(e){return e&&typeof e=="object"&&"default"in e?e:{default:e}}var s=i(d),p=i(c);function u(e=["complete","interactive"]){return new Promise(a=>{e.includes(document.readyState)?a(!0):document.addEventListener("readystatechange",()=>{e.includes(document.readyState)&&a(!0)})})}function l(){const e="loaders-css__square-spin",a=`
+"use strict";
+var fs = require("fs");
+var path = require("path");
+var electron = require("electron");
+function _interopDefaultLegacy(e) {
+  return e && typeof e === "object" && "default" in e ? e : { "default": e };
+}
+var fs__default = /* @__PURE__ */ _interopDefaultLegacy(fs);
+var path__default = /* @__PURE__ */ _interopDefaultLegacy(path);
+function domReady(condition = ["complete", "interactive"]) {
+  return new Promise((resolve) => {
+    if (condition.includes(document.readyState)) {
+      resolve(true);
+    } else {
+      document.addEventListener("readystatechange", () => {
+        if (condition.includes(document.readyState)) {
+          resolve(true);
+        }
+      });
+    }
+  });
+}
+function useLoading() {
+  const className = "loaders-css__square-spin";
+  const styleContent = `
 @keyframes square-spin {
   25% { transform: perspective(100px) rotateX(180deg) rotateY(0); }
   50% { transform: perspective(100px) rotateX(180deg) rotateY(180deg); }
   75% { transform: perspective(100px) rotateX(0) rotateY(180deg); }
   100% { transform: perspective(100px) rotateX(0) rotateY(0); }
 }
-.${e} > div {
+.${className} > div {
   animation-fill-mode: both;
   width: 50px;
   height: 50px;
@@ -24,4 +48,49 @@
   background: #282c34;
   z-index: 9;
 }
-    `,t=document.createElement("style"),n=document.createElement("div");return t.id="app-loading-style",t.innerHTML=a,n.className="app-loading-wrap",n.innerHTML=`<div class="${e}"><div></div></div>`,{appendLoading(){document.head.appendChild(t),document.body.appendChild(n)},removeLoading(){document.head.removeChild(t),document.body.removeChild(n)}}}const{appendLoading:f,removeLoading:m}=l();(async()=>{await u(),f()})();r.contextBridge.exposeInMainWorld("bridge",{__dirname,__filename,fs:s.default,path:p.default,ipcRenderer:v(r.ipcRenderer),removeLoading:m});function v(e){const a=Object.getPrototypeOf(e);for(const[t,n]of Object.entries(a))Object.prototype.hasOwnProperty.call(e,t)||(typeof n=="function"?e[t]=function(...o){return n.call(e,...o)}:e[t]=n);return e}
+    `;
+  const oStyle = document.createElement("style");
+  const oDiv = document.createElement("div");
+  oStyle.id = "app-loading-style";
+  oStyle.innerHTML = styleContent;
+  oDiv.className = "app-loading-wrap";
+  oDiv.innerHTML = `<div class="${className}"><div></div></div>`;
+  return {
+    appendLoading() {
+      document.head.appendChild(oStyle);
+      document.body.appendChild(oDiv);
+    },
+    removeLoading() {
+      document.head.removeChild(oStyle);
+      document.body.removeChild(oDiv);
+    }
+  };
+}
+const { appendLoading, removeLoading } = useLoading();
+(async () => {
+  await domReady();
+  appendLoading();
+})();
+electron.contextBridge.exposeInMainWorld("bridge", {
+  __dirname,
+  __filename,
+  fs: fs__default["default"],
+  path: path__default["default"],
+  ipcRenderer: withPrototype(electron.ipcRenderer),
+  removeLoading
+});
+function withPrototype(obj) {
+  const protos = Object.getPrototypeOf(obj);
+  for (const [key, value] of Object.entries(protos)) {
+    if (Object.prototype.hasOwnProperty.call(obj, key))
+      continue;
+    if (typeof value === "function") {
+      obj[key] = function(...args) {
+        return value.call(obj, ...args);
+      };
+    } else {
+      obj[key] = value;
+    }
+  }
+  return obj;
+}

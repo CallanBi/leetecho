@@ -4,6 +4,12 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import './electronStore/electronStore';
 import { DEFAULT_WINDOW_OPTIONS } from './const/electronOptions/window';
 
+/* devTools 安装*/
+import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
+
+const isDev = process.env.NODE_ENV === 'development';
+
+
 const isWin7 = os.release().startsWith('6.1');
 if (isWin7) app.disableHardwareAcceleration();
 
@@ -43,7 +49,14 @@ async function createWindow() {
 
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  if (isDev) {
+    installExtension(REACT_DEVELOPER_TOOLS.id)
+      .then((name) => console.log(`Added Extension:  ${name}`))
+      .catch((err) => console.log('An error occurred: ', err));
+  }
+  createWindow;
+});
 
 app.on('window-all-closed', () => {
   win = null;
