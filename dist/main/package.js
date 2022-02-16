@@ -48,6 +48,7 @@ const dependencies = {
   "@ant-design/pro-layout": "^6.32.7",
   "@douyinfe/semi-icons": "^2.3.1",
   "@emotion/react": "^11.7.1",
+  "await-to-js": "^3.0.0",
   icons: "link:@types/ant-design/icons",
   lodash: "^4.17.21",
   "query-string": "^7.1.1",

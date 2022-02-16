@@ -1,13 +1,26 @@
 import os from 'os';
 import { join } from 'path';
+import to from 'await-to-js';
 import { app, BrowserWindow, ipcMain } from 'electron';
 import './electronStore/electronStore';
 import { DEFAULT_WINDOW_OPTIONS } from './const/electronOptions/window';
 
-/* devTools 安装*/
+// const { default: installExtension, REACT_DEVELOPER_TOOLS } = await import('electron-devtools-installer');
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
+
+
 const isDev = process.env.NODE_ENV === 'development';
+
+/* devTools 安装*/
+const installDevTools = async () => {
+  const [err, name] = await to(installExtension(REACT_DEVELOPER_TOOLS.id));
+  if (err) {
+    console.log('An error occurred: ', err);
+    return;
+  }
+  console.log(`Added Extension:  ${name}`);
+};
 
 
 const isWin7 = os.release().startsWith('6.1');
@@ -51,9 +64,7 @@ async function createWindow() {
 
 app.whenReady().then(() => {
   if (isDev) {
-    installExtension(REACT_DEVELOPER_TOOLS.id)
-      .then((name) => console.log(`Added Extension:  ${name}`))
-      .catch((err) => console.log('An error occurred: ', err));
+    installDevTools();
   }
   createWindow;
 });

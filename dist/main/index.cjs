@@ -20,6 +20,7 @@ var __spreadValues = (a, b) => {
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 var require$$1 = require("os");
 var require$$0$1 = require("path");
+var to = require("await-to-js");
 var require$$0$2 = require("electron");
 var require$$1$1 = require("util");
 var require$$0 = require("fs");
@@ -32,6 +33,7 @@ function _interopDefaultLegacy(e) {
 }
 var require$$1__default = /* @__PURE__ */ _interopDefaultLegacy(require$$1);
 var require$$0__default$1 = /* @__PURE__ */ _interopDefaultLegacy(require$$0$1);
+var to__default = /* @__PURE__ */ _interopDefaultLegacy(to);
 var require$$0__default$2 = /* @__PURE__ */ _interopDefaultLegacy(require$$0$2);
 var require$$1__default$1 = /* @__PURE__ */ _interopDefaultLegacy(require$$1$1);
 var require$$0__default = /* @__PURE__ */ _interopDefaultLegacy(require$$0);
@@ -1398,17 +1400,17 @@ var scope = {};
     }
   }
   class ForRange extends For {
-    constructor(varKind, name, from, to) {
+    constructor(varKind, name, from, to2) {
       super();
       this.varKind = varKind;
       this.name = name;
       this.from = from;
-      this.to = to;
+      this.to = to2;
     }
     render(opts2) {
       const varKind = opts2.es5 ? scope_1.varKinds.var : this.varKind;
-      const { name, from, to } = this;
-      return `for(${varKind} ${name}=${from}; ${name}<${to}; ${name}++)` + super.render(opts2);
+      const { name, from, to: to2 } = this;
+      return `for(${varKind} ${name}=${from}; ${name}<${to2}; ${name}++)` + super.render(opts2);
     }
     get names() {
       const names2 = addExprNames(super.names, this.from);
@@ -1609,9 +1611,9 @@ var scope = {};
     for(iteration, forBody) {
       return this._for(new ForLoop(iteration), forBody);
     }
-    forRange(nameOrPrefix, from, to, forBody, varKind = this.opts.es5 ? scope_1.varKinds.var : scope_1.varKinds.let) {
+    forRange(nameOrPrefix, from, to2, forBody, varKind = this.opts.es5 ? scope_1.varKinds.var : scope_1.varKinds.let) {
       const name = this._scope.toName(nameOrPrefix);
-      return this._for(new ForRange(varKind, name, from, to), () => forBody(name));
+      return this._for(new ForRange(varKind, name, from, to2), () => forBody(name));
     }
     forOf(nameOrPrefix, iterable, forBody, varKind = scope_1.varKinds.const) {
       const name = this._scope.toName(nameOrPrefix);
@@ -1886,31 +1888,31 @@ var util = {};
   }
   exports.eachItem = eachItem;
   function makeMergeEvaluated({ mergeNames, mergeToName, mergeValues, resultToName }) {
-    return (gen, from, to, toName) => {
-      const res = to === void 0 ? from : to instanceof codegen_12.Name ? (from instanceof codegen_12.Name ? mergeNames(gen, from, to) : mergeToName(gen, from, to), to) : from instanceof codegen_12.Name ? (mergeToName(gen, to, from), from) : mergeValues(from, to);
+    return (gen, from, to2, toName) => {
+      const res = to2 === void 0 ? from : to2 instanceof codegen_12.Name ? (from instanceof codegen_12.Name ? mergeNames(gen, from, to2) : mergeToName(gen, from, to2), to2) : from instanceof codegen_12.Name ? (mergeToName(gen, to2, from), from) : mergeValues(from, to2);
       return toName === codegen_12.Name && !(res instanceof codegen_12.Name) ? resultToName(gen, res) : res;
     };
   }
   exports.mergeEvaluated = {
     props: makeMergeEvaluated({
-      mergeNames: (gen, from, to) => gen.if((0, codegen_12._)`${to} !== true && ${from} !== undefined`, () => {
-        gen.if((0, codegen_12._)`${from} === true`, () => gen.assign(to, true), () => gen.assign(to, (0, codegen_12._)`${to} || {}`).code((0, codegen_12._)`Object.assign(${to}, ${from})`));
+      mergeNames: (gen, from, to2) => gen.if((0, codegen_12._)`${to2} !== true && ${from} !== undefined`, () => {
+        gen.if((0, codegen_12._)`${from} === true`, () => gen.assign(to2, true), () => gen.assign(to2, (0, codegen_12._)`${to2} || {}`).code((0, codegen_12._)`Object.assign(${to2}, ${from})`));
       }),
-      mergeToName: (gen, from, to) => gen.if((0, codegen_12._)`${to} !== true`, () => {
+      mergeToName: (gen, from, to2) => gen.if((0, codegen_12._)`${to2} !== true`, () => {
         if (from === true) {
-          gen.assign(to, true);
+          gen.assign(to2, true);
         } else {
-          gen.assign(to, (0, codegen_12._)`${to} || {}`);
-          setEvaluated(gen, to, from);
+          gen.assign(to2, (0, codegen_12._)`${to2} || {}`);
+          setEvaluated(gen, to2, from);
         }
       }),
-      mergeValues: (from, to) => from === true ? true : __spreadValues(__spreadValues({}, from), to),
+      mergeValues: (from, to2) => from === true ? true : __spreadValues(__spreadValues({}, from), to2),
       resultToName: evaluatedPropsToName
     }),
     items: makeMergeEvaluated({
-      mergeNames: (gen, from, to) => gen.if((0, codegen_12._)`${to} !== true && ${from} !== undefined`, () => gen.assign(to, (0, codegen_12._)`${from} === true ? true : ${to} > ${from} ? ${to} : ${from}`)),
-      mergeToName: (gen, from, to) => gen.if((0, codegen_12._)`${to} !== true`, () => gen.assign(to, from === true ? true : (0, codegen_12._)`${to} > ${from} ? ${to} : ${from}`)),
-      mergeValues: (from, to) => from === true ? true : Math.max(from, to),
+      mergeNames: (gen, from, to2) => gen.if((0, codegen_12._)`${to2} !== true && ${from} !== undefined`, () => gen.assign(to2, (0, codegen_12._)`${from} === true ? true : ${to2} > ${from} ? ${to2} : ${from}`)),
+      mergeToName: (gen, from, to2) => gen.if((0, codegen_12._)`${to2} !== true`, () => gen.assign(to2, from === true ? true : (0, codegen_12._)`${to2} > ${from} ? ${to2} : ${from}`)),
+      mergeValues: (from, to2) => from === true ? true : Math.max(from, to2),
       resultToName: (gen, items2) => gen.var("items", items2)
     })
   };
@@ -3683,7 +3685,7 @@ var uri_all = { exports: {} };
       scheme: "mailto",
       parse: function parse$$1(components, options) {
         var mailtoComponents = components;
-        var to = mailtoComponents.to = mailtoComponents.path ? mailtoComponents.path.split(",") : [];
+        var to2 = mailtoComponents.to = mailtoComponents.path ? mailtoComponents.path.split(",") : [];
         mailtoComponents.path = void 0;
         if (mailtoComponents.query) {
           var unknownHeaders = false;
@@ -3695,7 +3697,7 @@ var uri_all = { exports: {} };
               case "to":
                 var toAddrs = hfield[1].split(",");
                 for (var _x = 0, _xl = toAddrs.length; _x < _xl; ++_x) {
-                  to.push(toAddrs[_x]);
+                  to2.push(toAddrs[_x]);
                 }
                 break;
               case "subject":
@@ -3714,8 +3716,8 @@ var uri_all = { exports: {} };
             mailtoComponents.headers = headers;
         }
         mailtoComponents.query = void 0;
-        for (var _x2 = 0, _xl2 = to.length; _x2 < _xl2; ++_x2) {
-          var addr = to[_x2].split("@");
+        for (var _x2 = 0, _xl2 = to2.length; _x2 < _xl2; ++_x2) {
+          var addr = to2[_x2].split("@");
           addr[0] = unescapeComponent(addr[0]);
           if (!options.unicodeSupport) {
             try {
@@ -3726,16 +3728,16 @@ var uri_all = { exports: {} };
           } else {
             addr[1] = unescapeComponent(addr[1], options).toLowerCase();
           }
-          to[_x2] = addr.join("@");
+          to2[_x2] = addr.join("@");
         }
         return mailtoComponents;
       },
       serialize: function serialize$$1(mailtoComponents, options) {
         var components = mailtoComponents;
-        var to = toArray(mailtoComponents.to);
-        if (to) {
-          for (var x = 0, xl = to.length; x < xl; ++x) {
-            var toAddr = String(to[x]);
+        var to2 = toArray(mailtoComponents.to);
+        if (to2) {
+          for (var x = 0, xl = to2.length; x < xl; ++x) {
+            var toAddr = String(to2[x]);
             var atIdx = toAddr.lastIndexOf("@");
             var localPart = toAddr.slice(0, atIdx).replace(PCT_ENCODED, decodeUnreserved).replace(PCT_ENCODED, toUpperCase).replace(NOT_LOCAL_PART, pctEncChar);
             var domain = toAddr.slice(atIdx + 1);
@@ -3744,9 +3746,9 @@ var uri_all = { exports: {} };
             } catch (e) {
               components.error = components.error || "Email address's domain name can not be converted to " + (!options.iri ? "ASCII" : "Unicode") + " via punycode: " + e;
             }
-            to[x] = localPart + "@" + domain;
+            to2[x] = localPart + "@" + domain;
           }
-          components.path = to.join(",");
+          components.path = to2.join(",");
         }
         var headers = mailtoComponents.headers = mailtoComponents.headers || {};
         if (mailtoComponents.subject)
@@ -7435,48 +7437,48 @@ var limit = {};
   Object.defineProperty(exports, "__esModule", { value: true });
   exports.default = formatsPlugin;
 })(dist$2, dist$2.exports);
-const copyProperty = (to, from, property, ignoreNonConfigurable) => {
+const copyProperty = (to2, from, property, ignoreNonConfigurable) => {
   if (property === "length" || property === "prototype") {
     return;
   }
   if (property === "arguments" || property === "caller") {
     return;
   }
-  const toDescriptor = Object.getOwnPropertyDescriptor(to, property);
+  const toDescriptor = Object.getOwnPropertyDescriptor(to2, property);
   const fromDescriptor = Object.getOwnPropertyDescriptor(from, property);
   if (!canCopyProperty(toDescriptor, fromDescriptor) && ignoreNonConfigurable) {
     return;
   }
-  Object.defineProperty(to, property, fromDescriptor);
+  Object.defineProperty(to2, property, fromDescriptor);
 };
 const canCopyProperty = function(toDescriptor, fromDescriptor) {
   return toDescriptor === void 0 || toDescriptor.configurable || toDescriptor.writable === fromDescriptor.writable && toDescriptor.enumerable === fromDescriptor.enumerable && toDescriptor.configurable === fromDescriptor.configurable && (toDescriptor.writable || toDescriptor.value === fromDescriptor.value);
 };
-const changePrototype = (to, from) => {
+const changePrototype = (to2, from) => {
   const fromPrototype = Object.getPrototypeOf(from);
-  if (fromPrototype === Object.getPrototypeOf(to)) {
+  if (fromPrototype === Object.getPrototypeOf(to2)) {
     return;
   }
-  Object.setPrototypeOf(to, fromPrototype);
+  Object.setPrototypeOf(to2, fromPrototype);
 };
 const wrappedToString = (withName, fromBody) => `/* Wrapped ${withName}*/
 ${fromBody}`;
 const toStringDescriptor = Object.getOwnPropertyDescriptor(Function.prototype, "toString");
 const toStringName = Object.getOwnPropertyDescriptor(Function.prototype.toString, "name");
-const changeToString = (to, from, name) => {
+const changeToString = (to2, from, name) => {
   const withName = name === "" ? "" : `with ${name.trim()}() `;
   const newToString = wrappedToString.bind(null, withName, from.toString());
   Object.defineProperty(newToString, "name", toStringName);
-  Object.defineProperty(to, "toString", __spreadProps(__spreadValues({}, toStringDescriptor), { value: newToString }));
+  Object.defineProperty(to2, "toString", __spreadProps(__spreadValues({}, toStringDescriptor), { value: newToString }));
 };
-const mimicFn$4 = (to, from, { ignoreNonConfigurable = false } = {}) => {
-  const { name } = to;
+const mimicFn$4 = (to2, from, { ignoreNonConfigurable = false } = {}) => {
+  const { name } = to2;
   for (const property of Reflect.ownKeys(from)) {
-    copyProperty(to, from, property, ignoreNonConfigurable);
+    copyProperty(to2, from, property, ignoreNonConfigurable);
   }
-  changePrototype(to, from);
-  changeToString(to, from, name);
-  return to;
+  changePrototype(to2, from);
+  changeToString(to2, from, name);
+  return to2;
 };
 var mimicFn_1 = mimicFn$4;
 const mimicFn$3 = mimicFn_1;
@@ -8252,53 +8254,53 @@ Yallist$1.prototype.toArrayReverse = function() {
   }
   return arr;
 };
-Yallist$1.prototype.slice = function(from, to) {
-  to = to || this.length;
-  if (to < 0) {
-    to += this.length;
+Yallist$1.prototype.slice = function(from, to2) {
+  to2 = to2 || this.length;
+  if (to2 < 0) {
+    to2 += this.length;
   }
   from = from || 0;
   if (from < 0) {
     from += this.length;
   }
   var ret = new Yallist$1();
-  if (to < from || to < 0) {
+  if (to2 < from || to2 < 0) {
     return ret;
   }
   if (from < 0) {
     from = 0;
   }
-  if (to > this.length) {
-    to = this.length;
+  if (to2 > this.length) {
+    to2 = this.length;
   }
   for (var i = 0, walker = this.head; walker !== null && i < from; i++) {
     walker = walker.next;
   }
-  for (; walker !== null && i < to; i++, walker = walker.next) {
+  for (; walker !== null && i < to2; i++, walker = walker.next) {
     ret.push(walker.value);
   }
   return ret;
 };
-Yallist$1.prototype.sliceReverse = function(from, to) {
-  to = to || this.length;
-  if (to < 0) {
-    to += this.length;
+Yallist$1.prototype.sliceReverse = function(from, to2) {
+  to2 = to2 || this.length;
+  if (to2 < 0) {
+    to2 += this.length;
   }
   from = from || 0;
   if (from < 0) {
     from += this.length;
   }
   var ret = new Yallist$1();
-  if (to < from || to < 0) {
+  if (to2 < from || to2 < 0) {
     return ret;
   }
   if (from < 0) {
     from = 0;
   }
-  if (to > this.length) {
-    to = this.length;
+  if (to2 > this.length) {
+    to2 = this.length;
   }
-  for (var i = this.length, walker = this.tail; walker !== null && i > to; i--) {
+  for (var i = this.length, walker = this.tail; walker !== null && i > to2; i--) {
     walker = walker.prev;
   }
   for (; walker !== null && i > from; i--, walker = walker.prev) {
@@ -8946,7 +8948,7 @@ const replaceGTE0 = (comp, options) => {
   debug$1("replaceGTE0", comp, options);
   return comp.trim().replace(re$1[options.includePrerelease ? t$1.GTE0PRE : t$1.GTE0], "");
 };
-const hyphenReplace = (incPr) => ($0, from, fM, fm, fp, fpr, fb, to, tM, tm, tp, tpr, tb) => {
+const hyphenReplace = (incPr) => ($0, from, fM, fm, fp, fpr, fb, to2, tM, tm, tp, tpr, tb) => {
   if (isX(fM)) {
     from = "";
   } else if (isX(fm)) {
@@ -8959,19 +8961,19 @@ const hyphenReplace = (incPr) => ($0, from, fM, fm, fp, fpr, fb, to, tM, tm, tp,
     from = `>=${from}${incPr ? "-0" : ""}`;
   }
   if (isX(tM)) {
-    to = "";
+    to2 = "";
   } else if (isX(tm)) {
-    to = `<${+tM + 1}.0.0-0`;
+    to2 = `<${+tM + 1}.0.0-0`;
   } else if (isX(tp)) {
-    to = `<${tM}.${+tm + 1}.0-0`;
+    to2 = `<${tM}.${+tm + 1}.0-0`;
   } else if (tpr) {
-    to = `<=${tM}.${tm}.${tp}-${tpr}`;
+    to2 = `<=${tM}.${tm}.${tp}-${tpr}`;
   } else if (incPr) {
-    to = `<${tM}.${tm}.${+tp + 1}-0`;
+    to2 = `<${tM}.${tm}.${+tp + 1}-0`;
   } else {
-    to = `<=${to}`;
+    to2 = `<=${to2}`;
   }
-  return `${from} ${to}`.trim();
+  return `${from} ${to2}`.trim();
 };
 const testSet = (set, version, options) => {
   for (let i = 0; i < set.length; i++) {
@@ -9502,11 +9504,11 @@ var semver$1 = {
 };
 var onetime$1 = { exports: {} };
 var mimicFn$2 = { exports: {} };
-const mimicFn$1 = (to, from) => {
+const mimicFn$1 = (to2, from) => {
   for (const prop of Reflect.ownKeys(from)) {
-    Object.defineProperty(to, prop, Object.getOwnPropertyDescriptor(from, prop));
+    Object.defineProperty(to2, prop, Object.getOwnPropertyDescriptor(from, prop));
   }
-  return to;
+  return to2;
 };
 mimicFn$2.exports = mimicFn$1;
 mimicFn$2.exports.default = mimicFn$1;
@@ -10326,14 +10328,14 @@ var utils = {};
   };
   exports.getPath = getPath;
   const request = electron_12.net ? electron_12.net.request : https.get;
-  const downloadFile = (from, to) => {
+  const downloadFile = (from, to2) => {
     return new Promise((resolve2, reject) => {
       const req = request(from);
       req.on("response", (res) => {
         if (res.statusCode && res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-          return exports.downloadFile(res.headers.location, to).then(resolve2).catch(reject);
+          return exports.downloadFile(res.headers.location, to2).then(resolve2).catch(reject);
         }
-        res.pipe(fs2.createWriteStream(to)).on("close", resolve2);
+        res.pipe(fs2.createWriteStream(to2)).on("close", resolve2);
         res.on("error", reject);
       });
       req.on("error", reject);
@@ -13631,6 +13633,14 @@ dist$1.MOBX_DEVTOOLS = {
   id: "pfgnfdagidkfgccljigdamigbcnndkod",
   electron: ">=1.2.1"
 };
+const installDevTools = async () => {
+  const [err, name] = await to__default["default"](_default(REACT_DEVELOPER_TOOLS.id));
+  if (err) {
+    console.log("An error occurred: ", err);
+    return;
+  }
+  console.log(`Added Extension:  ${name}`);
+};
 const isWin7 = require$$1__default["default"].release().startsWith("6.1");
 if (isWin7)
   require$$0$2.app.disableHardwareAcceleration();
@@ -13662,7 +13672,7 @@ async function createWindow() {
 }
 require$$0$2.app.whenReady().then(() => {
   {
-    _default(REACT_DEVELOPER_TOOLS.id).then((name) => console.log(`Added Extension:  ${name}`)).catch((err) => console.log("An error occurred: ", err));
+    installDevTools();
   }
 });
 require$$0$2.app.on("window-all-closed", () => {
