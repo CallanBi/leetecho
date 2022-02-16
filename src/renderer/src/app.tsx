@@ -12,8 +12,10 @@ import { themeSettings } from './const/theme';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { ROUTE } from './const/route';
 import { useRouter } from './hooks/router/useRouter';
+import { AppStoreContext } from './store/appStore';
+import NavFooter from './components/navFooter';
 
-const { useState, useRef, useEffect } = React;
+const { useState, useRef, useEffect, useContext } = React;
 
 
 const headerLogoStyle: React.CSSProperties = {
@@ -25,9 +27,13 @@ const renderLogo: () => React.ReactNode = () => {
   return <section style={headerLogoStyle}><LogoHeader /></section>;
 };
 
+const renderNavFooter: () => React.ReactNode = () => <><NavFooter></NavFooter></>;
+
 const App: React.FC<Record<string, never>> = () => {
   const [settings, setSetting] = useState<Partial<ProSettings> | undefined>(themeSettings);
   const [path, setPath] = useState<typeof ROUTE[number]['path']>('/settledProblems');
+
+  const { state, dispatch } = useContext(AppStoreContext);
 
   const router = useRouter();
 
@@ -41,10 +47,19 @@ const App: React.FC<Record<string, never>> = () => {
       <ProLayout
         title={false}
         logo={renderLogo()}
-        /** TODO: collapsed 状态由 Context 管理*/
+        // onCollapse={isCollapsed => {
+        //   dispatch({
+        //     appActionType: 'change-ui-status',
+        //     payload: {
+        //       isNavCollapsed: isCollapsed,
+        //     },
+        //   });
+        // }}
         collapsed={false}
-        collapsedButtonRender={() => <></>}
-        {...navConfig}
+        hasSiderMenu={false}
+        defaultCollapsed={false}
+        menuFooterRender={renderNavFooter}
+        collapsedButtonRender={false}
         menuItemRender={(item, dom) => (
           <a
             onClick={() => {
@@ -63,6 +78,7 @@ const App: React.FC<Record<string, never>> = () => {
             <Avatar shape="square" size="small" icon={<UserOutlined />} />
           </div>
         )}
+        {...navConfig}
         {...settings}
         location={{
           pathname: path,

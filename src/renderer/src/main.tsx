@@ -5,14 +5,17 @@ import './samples/electron-store';
 import './index.less';
 import App from './app';
 import { HashRouter } from 'react-router-dom';
+import WithAppStoreProvider from './store/appStore/withAppStoreProvider';
 
 const { bridge: { removeLoading, ipcRenderer } } = window;
 
 
 ReactDOM.render(
-  <HashRouter>
-    <App />
-  </HashRouter>,
+  <WithAppStoreProvider>
+    <HashRouter>
+      <App />
+    </HashRouter>,
+  </WithAppStoreProvider>,
   document.getElementById('root'),
   () => {
     removeLoading();
