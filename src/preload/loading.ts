@@ -6,6 +6,7 @@
  * https://projects.lukehaas.me/css-loaders
  * https://matejkustec.github.io/SpinThatShit
  */
+import { COLOR_PALETTE } from 'src/const/theme/color';
 export function useLoading() {
   const className = 'loaders-css__square-spin';
   const styleContent = `
@@ -19,7 +20,7 @@ export function useLoading() {
   animation-fill-mode: both;
   width: 50px;
   height: 50px;
-  background: #fff;
+  background: ${COLOR_PALETTE.LEETECHO_BLUE};
   animation: square-spin 3s 0s cubic-bezier(0.09, 0.57, 0.49, 0.9) infinite;
 }
 .app-loading-wrap {
@@ -31,7 +32,7 @@ export function useLoading() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #282c34;
+  background: ${COLOR_PALETTE.LEETECHO_WHITE};
   z-index: 9;
 }
     `;

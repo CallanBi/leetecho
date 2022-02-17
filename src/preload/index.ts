@@ -22,6 +22,7 @@ contextBridge.exposeInMainWorld('bridge', {
   path,
   ipcRenderer: withPrototype(ipcRenderer),
   removeLoading,
+  isDev,
 });
 
 // `exposeInMainWorld` can not detect `prototype` attribute and methods, manually patch it.

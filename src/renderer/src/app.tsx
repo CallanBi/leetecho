@@ -8,14 +8,16 @@ import { UserOutlined } from '@ant-design/icons';
 import type { ProSettings } from '@ant-design/pro-layout';
 import ProLayout, { SettingDrawer } from '@ant-design/pro-layout';
 import { navConfig } from './routes/index';
-import { themeSettings } from './const/theme';
+import { layoutSettings } from './const/layout';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { ROUTE } from './const/route';
 import { useRouter } from './hooks/router/useRouter';
 import { AppStoreContext } from './store/appStore';
-import NavFooter from './components/navFooter';
+import NavFooter from './components/layout/navFooter';
 
-const { useState, useRef, useEffect, useContext } = React;
+const { useState, useRef, useEffect, useContext, useMemo } = React;
+const { bridge: { isDev } } = window;
+
 
 
 const headerLogoStyle: React.CSSProperties = {
@@ -30,14 +32,16 @@ const renderLogo: () => React.ReactNode = () => {
 const renderNavFooter: () => React.ReactNode = () => <><NavFooter></NavFooter></>;
 
 const App: React.FC<Record<string, never>> = () => {
-  const [settings, setSetting] = useState<Partial<ProSettings> | undefined>(themeSettings);
+  const [settings, setSetting] = useState<Partial<ProSettings> | undefined>(layoutSettings);
   const [path, setPath] = useState<typeof ROUTE[number]['path']>('/settledProblems');
 
   const { state, dispatch } = useContext(AppStoreContext);
 
+  const { uiStatus: { isNavCollapsed } } = state;
+
   const router = useRouter();
 
-  return (
+  return useMemo(() => (
     <div
       id="main"
       style={{
@@ -91,7 +95,7 @@ const App: React.FC<Record<string, never>> = () => {
           {ROUTE.map(route => <Route key={route.name ?? '/settledProblems'} exact path={route.path ?? '/settledProblems'} component={route.component} />)}
         </Switch>
       </ProLayout>
-      <SettingDrawer
+      {isDev && <SettingDrawer
         pathname={path}
         getContainer={() => document.getElementById('main')}
         settings={settings}
@@ -100,9 +104,9 @@ const App: React.FC<Record<string, never>> = () => {
           setSetting(changeSetting);
         }}
         disableUrlParams
-      />
+      />}
     </div>
-  );
+  ), [isNavCollapsed, path]);
 };
 
 export default App;

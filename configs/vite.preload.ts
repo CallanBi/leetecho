@@ -1,7 +1,10 @@
-import { join } from 'path';
+import path, { join } from 'path';
 import { builtinModules } from 'module';
 import { defineConfig } from 'vite';
 import pkg from '../package.json';
+
+console.log('%c 11 >>>', 'background: yellow; color: blue', path.resolve(__dirname, '../src/const/theme/color'));
+
 
 export default defineConfig({
   mode: process.env.NODE_ENV,
@@ -17,6 +20,7 @@ export default defineConfig({
     rollupOptions: {
       external: [
         'electron',
+        '/src/const/theme/color',
         ...builtinModules,
         ...Object.keys((pkg as Record<string, any>).dependencies || {}),
       ],
@@ -24,5 +28,12 @@ export default defineConfig({
         entryFileNames: '[name].cjs',
       },
     },
+  },
+  resolve: {
+    /** rollup本身不具备路径解析能力, 需指定 ailas */
+    alias: [
+      { find: /^~/, replacement: '' },
+      { find: 'src', replacement: join(__dirname, '../src') },
+    ]
   },
 });

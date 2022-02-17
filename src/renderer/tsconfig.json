@@ -29,6 +29,5 @@
     "./src",
     "types/*.d.ts",
     "types/*/*.d.ts",
-    "../main/const/"
   ]
 }

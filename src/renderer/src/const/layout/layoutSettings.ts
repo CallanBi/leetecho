@@ -1,14 +1,16 @@
 import { ProSettings } from '@ant-design/pro-layout';
+import { COLOR_PALETTE } from 'src/const/theme/color';
 
-const themeSettings: Partial<ProSettings> = {
+
+const layoutSettings: Partial<ProSettings> = {
   'fixSiderbar': true,
   'navTheme': 'light',
   'layout': 'side',
   'contentWidth': 'Fluid',
   'headerHeight': 48,
-  'primaryColor': '#1890ff',
+  'primaryColor': COLOR_PALETTE.LEETECHO_BLUE,
   'splitMenus': false,
   'fixedHeader': false
 };
 
-export { themeSettings };
+export { layoutSettings };

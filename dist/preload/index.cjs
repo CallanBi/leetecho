@@ -20,6 +20,15 @@ function domReady(condition = ["complete", "interactive"]) {
     }
   });
 }
+var COLOR_PALETTE;
+(function(COLOR_PALETTE2) {
+  COLOR_PALETTE2["LEETECHO_BLUE"] = "#2688f0";
+  COLOR_PALETTE2["LEETECHO_BLACK"] = "#0d0d0d";
+  COLOR_PALETTE2["LEETECHO_WHITE"] = "#fffffe";
+  COLOR_PALETTE2["LEETECHO_LIGHT_BLUE"] = "#56a2f3";
+  COLOR_PALETTE2["LEETECHO_DARK_BLUE"] = "0f6fd4";
+  COLOR_PALETTE2["LEETECHO_LIGHT_BLACK"] = "#262626";
+})(COLOR_PALETTE || (COLOR_PALETTE = {}));
 function useLoading() {
   const className = "loaders-css__square-spin";
   const styleContent = `
@@ -33,7 +42,7 @@ function useLoading() {
   animation-fill-mode: both;
   width: 50px;
   height: 50px;
-  background: #fff;
+  background: ${COLOR_PALETTE.LEETECHO_BLUE};
   animation: square-spin 3s 0s cubic-bezier(0.09, 0.57, 0.49, 0.9) infinite;
 }
 .app-loading-wrap {
@@ -45,7 +54,7 @@ function useLoading() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #282c34;
+  background: ${COLOR_PALETTE.LEETECHO_WHITE};
   z-index: 9;
 }
     `;
@@ -66,6 +75,7 @@ function useLoading() {
     }
   };
 }
+const isDev = true;
 const { appendLoading, removeLoading } = useLoading();
 (async () => {
   await domReady();
@@ -77,7 +87,8 @@ electron.contextBridge.exposeInMainWorld("bridge", {
   fs: fs__default["default"],
   path: path__default["default"],
   ipcRenderer: withPrototype(electron.ipcRenderer),
-  removeLoading
+  removeLoading,
+  isDev
 });
 function withPrototype(obj) {
   const protos = Object.getPrototypeOf(obj);
