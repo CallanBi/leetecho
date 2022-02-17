@@ -15,6 +15,7 @@ const engines = {
   node: ">=14.17.0"
 };
 const devDependencies = {
+  "@emotion/babel-plugin": "^11.7.2",
   "@types/lodash": "^4.14.178",
   "@types/react": "^17.0.33",
   "@types/react-dom": "^17.0.10",
@@ -48,6 +49,7 @@ const dependencies = {
   "@ant-design/pro-layout": "^6.32.7",
   "@douyinfe/semi-icons": "^2.3.1",
   "@emotion/react": "^11.7.1",
+  "@emotion/styled": "^11.6.0",
   "await-to-js": "^3.0.0",
   icons: "link:@types/ant-design/icons",
   lodash: "^4.17.21",

@@ -20,10 +20,13 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "jsxImportSource": "@emotion/react",
     "types": [
       "vite/client",
-      "vite-plugin-svgr/client"
-    ]
+      "vite-plugin-svgr/client",
+      "@emotion/react/types/css-prop",
+      "@emotion/core",
+    ],
   },
   "include": [
     "./src",

@@ -3,9 +3,6 @@ import { builtinModules } from 'module';
 import { defineConfig } from 'vite';
 import pkg from '../package.json';
 
-console.log('%c 11 >>>', 'background: yellow; color: blue', path.resolve(__dirname, '../src/const/theme/color'));
-
-
 export default defineConfig({
   mode: process.env.NODE_ENV,
   root: join(__dirname, '../src/preload'),

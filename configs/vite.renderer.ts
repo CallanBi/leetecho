@@ -11,7 +11,12 @@ export default defineConfig({
   mode: process.env.NODE_ENV,
   root: join(__dirname, '../src/renderer'),
   plugins: [
-    react(),
+    react({
+      jsxImportSource: '@emotion/react',
+      babel: {
+        plugins: ['@emotion/babel-plugin'],
+      },
+    }),
     /** import svg file as a React Component */
     svgrPlugin({
       svgrOptions: {
@@ -23,8 +28,6 @@ export default defineConfig({
   esbuild: {
     /** jsxInject simply set esbuild's --inject transformation option and auto imports the provided module in all .jsx files. */
     jsxFactory: 'jsx',
-    /** jsxFactory overrides the default React.creatElement with emotionsjsx` factory function. */
-    jsxInject: 'import { jsx, css } from \'@emotion/react\'',
   },
   base: './',
   build: {
