@@ -1,5 +1,6 @@
 /** Customize global styles here */
 import { css } from '@emotion/react';
+import { COLOR_PALETTE } from 'src/const/theme/color';
 
 const globalStyles = css`
 
@@ -15,6 +16,11 @@ const globalStyles = css`
   .ant-pro-sider-logo {
     margin-top: 27px;
   }
+
+  .ant-layout {
+    background-color: ${COLOR_PALETTE.LEETECHO_WHITE};
+  }
+
 
 `;
 

@@ -56,7 +56,8 @@ export default defineConfig({
           */
           'primary-color': `${COLOR_PALETTE.LEETECHO_BLUE}`,
           'link-color': `${COLOR_PALETTE.LEETECHO_LIGHT_BLACK}`,
-          'component-background': `${COLOR_PALETTE.LEETECHO_WHITE}`,
+          'component-background': `${COLOR_PALETTE.LEETECHO_GREY}`,
+          'primary-color-hover': `${COLOR_PALETTE.LEETECHO_LIGHT_BLUE}`,
         }
       },
     }
