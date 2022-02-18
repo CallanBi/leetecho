@@ -2,34 +2,74 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { COLOR_PALETTE } from 'src/const/theme/color';
 import { css } from '@emotion/react';
+import { Button } from 'antd';
+import { IconGithubLogo, IconGlobeStroke, IconLanguage, IconSetting, IconUpload } from '@douyinfe/semi-icons';
+import { withSemiIconStyle } from '@/style';
 
 const { useRef, useState, useEffect, useMemo } = React;
 
-const Button = styled.button`
-  padding: 32px;
-  background-color: ${COLOR_PALETTE.LEETECHO_BLUE};
-  font-size: 24px;
-  border-radius: 4px;
-  color: ${COLOR_PALETTE.LEETECHO_LIGHT_BLACK};
-  font-weight: bold;
-  cursor: pointer;
-  &:hover {
-    color: ${COLOR_PALETTE.LEETECHO_BLACK};
-  }
+const Footer = styled.section`
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  vertical-align: middle; /** 指定行内元素（inline）或表格单元格（table-cell）元素的垂直对齐方式 */
 `;
+
+const PublishButtonSection = styled.section`
+  flex: 1;
+  margin: 16px;
+  display: flex;
+  justify-content: center;
+  vertical-align: middle;
+  align-items: center;
+`;
+
+const FooterToolSection = styled.section`
+  flex: 1;
+  margin: 18px;
+  display: flex;
+  justify-content: center;
+  vertical-align: middle;
+  align-items: center;
+`;
+
+const publishButtonStyle: React.CSSProperties = {
+  width: 128,
+};
+
+const publishButtonIconStyle: React.CSSProperties = {
+  marginRight: 10,
+  top: 4,
+};
 
 
 
 interface NavFooterProps {
-
 }
 
 const defaultProps: NavFooterProps = {};
 
 const NavFooter: React.FC<NavFooterProps> = (props: React.PropsWithChildren<NavFooterProps> = defaultProps) => {
-  return (<div css={css`
-  background-color: ${COLOR_PALETTE.LEETECHO_LIGHT_BLUE};
-`}> NavFooter <Button>my button</Button></div>);
+  return (
+    <Footer>
+      <PublishButtonSection>
+        <Button type="primary" shape="round" style={publishButtonStyle} icon={<IconUpload style={withSemiIconStyle(publishButtonIconStyle)}/>}>
+          发布
+        </Button>
+      </PublishButtonSection>
+      <FooterToolSection>
+        <Button type="link" icon={<IconSetting />}>
+        </Button>
+        <Button type="link" icon={<IconGlobeStroke />}>
+        </Button>
+        <Button type="link" icon={<IconGithubLogo />}>
+        </Button>
+        <Button type="link" icon={<IconLanguage />}>
+        </Button>
+      </FooterToolSection>
+    </Footer>
+  );
 };
 
 export default NavFooter;

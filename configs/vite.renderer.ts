@@ -2,6 +2,7 @@ import { join } from 'path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import svgrPlugin from 'vite-plugin-svgr';
+import { COLOR_PALETTE } from '../src/const/theme/color';
 
 import pkg from '../package.json';
 
@@ -49,12 +50,14 @@ export default defineConfig({
     preprocessorOptions: {
       less: {
         javascriptEnabled: true,
-        // modifyVars: {
-        //   'root-entry-name': 'default',
-        //   'primary-color': '#1DA57A',
-        //   'link-color': '#1DA57A',
-        //   'border-radius-base': '2px',
-        // }
+        modifyVars: {
+          /** Ant Design Pro theme Customization
+            * https://ant.design/docs/react/customize-theme
+          */
+          'primary-color': `${COLOR_PALETTE.LEETECHO_BLUE}`,
+          'link-color': `${COLOR_PALETTE.LEETECHO_LIGHT_BLACK}`,
+          'component-background': `${COLOR_PALETTE.LEETECHO_WHITE}`,
+        }
       },
     }
   }

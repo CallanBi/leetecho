@@ -95,7 +95,7 @@ const App: React.FC<Record<string, never>> = () => {
           {ROUTE.map(route => <Route key={route.name ?? '/settledProblems'} exact path={route.path ?? '/settledProblems'} component={route.component} />)}
         </Switch>
       </ProLayout>
-      {isDev && <SettingDrawer
+      {/* {isDev && <SettingDrawer
         pathname={path}
         getContainer={() => document.getElementById('main')}
         settings={settings}
@@ -104,7 +104,7 @@ const App: React.FC<Record<string, never>> = () => {
           setSetting(changeSetting);
         }}
         disableUrlParams
-      />}
+      />} */}
     </div>
   ), [isNavCollapsed, path]);
 };

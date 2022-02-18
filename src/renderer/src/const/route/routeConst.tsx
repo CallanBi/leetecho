@@ -8,16 +8,11 @@ import AllProblems from '@/views/allProblems';
 import DefaultTemplate from '@/views/defaultTemplate';
 import RemoteSettings from '@/views/remoteSettings';
 import SettledProblems from '@/views/settledProblems';
+import { withSemiIconStyle } from '@/style';
 
-
-const withIconStyle: (style?: React.CSSProperties | undefined) => React.CSSProperties = (style) => {
-  return {
-    ...style,
-    marginLeft: 16,
-    marginRight: 8,
-    position: 'relative',
-    top: 3,
-  };
+const navIconStyle: React.CSSProperties = {
+  marginLeft: 16,
+  marginRight: 8,
 };
 
 
@@ -29,25 +24,25 @@ const ROUTE: Array<
     {
       path: '/settledProblems',
       name: '已刷习题',
-      icon: <IconCheckList style={withIconStyle()} />,
+      icon: <IconCheckList style={withSemiIconStyle(navIconStyle)} />,
       component: SettledProblems,
     },
     {
       path: '/allProblems',
       name: '所有习题',
-      icon: <IconList style={withIconStyle()} />,
+      icon: <IconList style={withSemiIconStyle(navIconStyle)} />,
       component: AllProblems,
     },
     {
       name: '默认模板',
-      icon: <IconTemplate style={withIconStyle()} />,
+      icon: <IconTemplate style={withSemiIconStyle(navIconStyle)} />,
       path: '/defaultTemplate',
       component: DefaultTemplate,
     },
     {
       path: '/remoteSettings',
       name: ' 远程设置',
-      icon: <IconServer style={withIconStyle()} />,
+      icon: <IconServer style={withSemiIconStyle(navIconStyle)} />,
       component: RemoteSettings,
     },
   ];

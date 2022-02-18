@@ -1,17 +1,20 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
-import './samples/electron-store';
+import './storage/electron-store';
 import './index.less';
 import App from './app';
 import { HashRouter } from 'react-router-dom';
 import WithAppStoreProvider from './store/appStore/withAppStoreProvider';
+import { Global } from '@emotion/react';
+import globalStyles from './style';
 
 const { bridge: { removeLoading, ipcRenderer } } = window;
 
 
 ReactDOM.render(
   <WithAppStoreProvider>
+    <Global styles={globalStyles}></Global>
     <HashRouter>
       <App />
     </HashRouter>,
