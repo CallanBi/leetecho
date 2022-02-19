@@ -66,7 +66,7 @@ app.whenReady().then(() => {
   if (isDev) {
     installDevTools();
   }
-  createWindow;
+  createWindow();
 });
 
 app.on('window-all-closed', () => {

@@ -26,7 +26,7 @@ export const DEFAULT_WINDOW_OPTIONS: BrowserWindowConstructorOptions = {
   height: 850,
   minHeight: 642,
   minWidth: 1000,
-  // frame: process.platform === 'darwin' ? true : false, // 无边框窗口
+  frame: process.platform === 'win32' ? false : true, // 无边框窗口
   titleBarStyle: 'hiddenInset',
   trafficLightPosition: { x: 7, y: 7 },
   webPreferences: {
@@ -37,5 +37,6 @@ export const DEFAULT_WINDOW_OPTIONS: BrowserWindowConstructorOptions = {
   vibrancy: 'fullscreen-ui', // OSX 毛玻璃效果
 };
 
-// console.log('%c APP_ICON_PATH >>>', 'background: yellow; color: blue', APP_ICON_PATH);
+console.log('%c process.platform >>>', 'background: yellow; color: blue', process.platform)
+
 
