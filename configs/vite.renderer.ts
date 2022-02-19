@@ -58,6 +58,12 @@ export default defineConfig({
           'link-color': `${COLOR_PALETTE.LEETECHO_LIGHT_BLACK}`,
           'component-background': `${COLOR_PALETTE.LEETECHO_GREY}`,
           'primary-color-hover': `${COLOR_PALETTE.LEETECHO_LIGHT_BLUE}`,
+          'border-radius-base': '32px',
+          /** Input */
+          'input-bg': `${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}`,
+          'input-placeholder-color': `${COLOR_PALETTE.LEETECHO_INPUT_PLACEHOLDER_COLOR}`,
+          'input-border-color': `${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}`,
+          'input-hover-border-color': `${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BORDER_BG}`,
         }
       },
     }

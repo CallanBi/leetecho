@@ -1,7 +1,5 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
-import { COLOR_PALETTE } from 'src/const/theme/color';
-import { css } from '@emotion/react';
 import { Button } from 'antd';
 import { IconGithubLogo, IconGlobeStroke, IconLanguage, IconSetting, IconUpload } from '@douyinfe/semi-icons';
 import { withSemiIconStyle } from '@/style';
@@ -48,13 +46,11 @@ const publishButtonIconStyle: React.CSSProperties = {
 interface NavFooterProps {
 }
 
-const defaultProps: NavFooterProps = {};
-
-const NavFooter: React.FC<NavFooterProps> = (props: React.PropsWithChildren<NavFooterProps> = defaultProps) => {
+const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
   return (
     <Footer>
       <PublishButtonSection>
-        <Button type="primary" shape="round" style={publishButtonStyle} icon={<IconUpload style={withSemiIconStyle(publishButtonIconStyle)}/>}>
+        <Button type="primary" shape="round" style={publishButtonStyle} icon={<IconUpload style={withSemiIconStyle(publishButtonIconStyle)} />}>
           发布
         </Button>
       </PublishButtonSection>

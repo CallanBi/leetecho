@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Avatar } from 'antd';
-import { ReactComponent as LogoHeader } from '@/assets/logo-vertical.svg';
+import { ReactComponent as NavLogo } from '@/assets/logo-vertical.svg';
 import './index.less';
 
 import { UserOutlined } from '@ant-design/icons';
@@ -14,19 +14,20 @@ import { ROUTE } from './const/route';
 import { useRouter } from './hooks/router/useRouter';
 import { AppStoreContext } from './store/appStore';
 import NavFooter from './components/layout/navFooter';
+import Header, { HeaderRightContent } from './components/layout/header';
 
 const { useState, useRef, useEffect, useContext, useMemo } = React;
 const { bridge: { isDev } } = window;
 
 
 
-const headerLogoStyle: React.CSSProperties = {
+const navLogoStyle: React.CSSProperties = {
   marginTop: 100,
   marginBottom: 20
 };
 
 const renderLogo: () => React.ReactNode = () => {
-  return <section style={headerLogoStyle}><LogoHeader /></section>;
+  return <section style={navLogoStyle}><NavLogo /></section>;
 };
 
 const renderNavFooter: () => React.ReactNode = () => <><NavFooter></NavFooter></>;
@@ -77,11 +78,7 @@ const App: React.FC<Record<string, never>> = () => {
             {dom}
           </a>
         )}
-        rightContentRender={() => (
-          <div>
-            <Avatar shape="square" size="small" icon={<UserOutlined />} />
-          </div>
-        )}
+        headerRender={() => <Header></Header>}
         {...navConfig}
         {...settings}
         location={{
