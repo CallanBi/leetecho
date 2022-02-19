@@ -13,15 +13,20 @@ const globalStyles = css`
     line-height: 56px!important;
   }
 
-  .ant-pro-sider-logo {
-    cursor: default;
+  .ant-input {
+    :hover {
+      border-color: ${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG};
+      background-color: ${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG};
+    }
+    :focus {
+      border-color: ${COLOR_PALETTE.LEETECHO_BLUE};
+      box-shadow: none;
+      background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND};
+    }
   }
 
-  .ant-input {
-    :focus {
-      border-color: ${COLOR_PALETTE.LEETECHO_BLUE}!important;
-      box-shadow: none;
-    }
+  .ant-pro-sider-logo {
+    cursor: default;
   }
 
   /* 设置可拖动区域 **/

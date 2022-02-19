@@ -1,3 +1,4 @@
+import { Input } from 'antd';
 import * as React from 'react';
 
 const { useRef, useState, useEffect, useMemo } = React;
@@ -14,7 +15,7 @@ const SettledProblems: React.FC<SettledProblemsProps> = (props: SettledProblemsP
 
 
   return (
-    <> SettledProblems props: {JSON.stringify(props)}</>
+    <><Input placeholder={JSON.stringify(props)}></Input></>
   );
 };
 

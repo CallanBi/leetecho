@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import svgrPlugin from 'vite-plugin-svgr';
 import { COLOR_PALETTE } from '../src/const/theme/color';
+import { MEASUREMENT } from '../src/const/theme/measurement';
 
 import pkg from '../package.json';
 
@@ -58,12 +59,12 @@ export default defineConfig({
           'link-color': `${COLOR_PALETTE.LEETECHO_LIGHT_BLACK}`,
           'component-background': `${COLOR_PALETTE.LEETECHO_GREY}`,
           'primary-color-hover': `${COLOR_PALETTE.LEETECHO_LIGHT_BLUE}`,
-          'border-radius-base': '32px',
+          'border-radius-base': `${MEASUREMENT.LEETECHO_BORDER_RADIUS_BASE}`,
           /** Input */
           'input-bg': `${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}`,
           'input-placeholder-color': `${COLOR_PALETTE.LEETECHO_INPUT_PLACEHOLDER_COLOR}`,
           'input-border-color': `${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}`,
-          'input-hover-border-color': `${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BORDER_BG}`,
+          'input-hover-border-color': `${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG}`,
         }
       },
     }

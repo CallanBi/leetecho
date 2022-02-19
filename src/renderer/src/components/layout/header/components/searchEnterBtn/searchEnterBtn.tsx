@@ -14,7 +14,7 @@ const SearchEnterBtn: React.FC<SearchEnterBtnProps> = (props: SearchEnterBtnProp
   const { } = props;
 
   return (
-    <IconSearch style={withSemiIconStyle({ marginRight: 8 })} />
+    <IconSearch style={withSemiIconStyle({ marginRight: 4 })} />
   );
 };
 
