@@ -1,0 +1,1 @@
+declare type WindowStatus = 'maximized' | 'minimized' | 'closed' | 'windowed';

@@ -6,7 +6,7 @@ export type AppState = {
     /** 侧边导航条是否折叠，目前禁用折叠，默认展开 */
     isNavCollapsed?: boolean;
     /** 窗口状况 */
-    windowStatus?: 'maximized' | 'maximized' | 'closed' | 'windowed';
+    windowStatus?: 'maximized' | 'minimized' | 'closed' | 'windowed';
   };
 };
 
@@ -23,7 +23,7 @@ export type AppAction = {
   appActionType: 'change-ui-status';
   payload: Partial<AppState['uiStatus']>;
   isReplacement?: boolean;
-};
+}
 
 export const AppStoreContext = React.createContext<{
   state: AppState;

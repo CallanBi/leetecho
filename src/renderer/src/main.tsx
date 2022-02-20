@@ -37,6 +37,6 @@ ipcRenderer.on('main-process-message', (_event, ...args) => {
 
 
 
-const home = ipcRenderer.sendSync('get-path', 'home');
+// const home = ipcRenderer.sendSync('get-path', 'home');
 
-console.log('%c get-path home >>>', 'background: yellow; color: blue', home ?? undefined);
+// console.log('%c get-path home >>>', 'background: yellow; color: blue', home ?? undefined);
