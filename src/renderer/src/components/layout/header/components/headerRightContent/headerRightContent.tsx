@@ -29,6 +29,7 @@ const HeaderToolsSection = styled.section`
   display: flex;
   align-items: center;
   height: ${MEASUREMENT.LEETECHO_HEADER_HEIGHT};
+  margin-right: ${isWinPlatform ? '4px' : '12px'};
 `;
 
 const HeaderToolBtnSection = styled.section`
@@ -78,9 +79,6 @@ const CloseWindowTrafficLightSection = styled(TrafficLightBtnSection)`
   }
 `;
 
-console.log('%c winStatus >>>', 'background: yellow; color: blue', winStatus);
-
-
 
 const HeaderLeftContent: React.FC<HeaderLeftContentProps> = (props: HeaderLeftContentProps) => {
   const { } = props;
@@ -88,26 +86,25 @@ const HeaderLeftContent: React.FC<HeaderLeftContentProps> = (props: HeaderLeftCo
   const initMaximizedVal = winStatus === 'maximized';
   const [isMaximized, setIsMaximized] = useState<boolean>(initMaximizedVal);
 
-  console.log('%c  isMaximized>>>', 'background: yellow; color: blue', isMaximized);
-
   const maximizeWin = () => {
-    ipcRenderer.sendSync('set-win-status', 'maximized' as WindowStatus);
+    ipcRenderer.send('set-win-status', 'maximized' as WindowStatus);
     setIsMaximized(true);
   };
 
   const minimizeWin = () => {
-    ipcRenderer.sendSync('set-win-status', 'minimized' as WindowStatus);
+    ipcRenderer.send('set-win-status', 'minimized' as WindowStatus);
     setIsMaximized(false);
   };
 
-  const restoreWin = () => {
-    ipcRenderer.sendSync('set-win-status', 'windowed' as WindowStatus);
+  const unmaximizeWin = () => {
+    ipcRenderer.send('set-win-status', 'windowed' as WindowStatus);
     setIsMaximized(false);
   };
 
-  console.log('%c 111 >>>', 'background: yellow; color: blue', 111);
-
-
+  const closeWin = () => {
+    ipcRenderer.send('set-win-status', 'closed' as WindowStatus);
+    setIsMaximized(false);
+  };
 
   return (
     <HeaderToolsSection>
@@ -119,10 +116,12 @@ const HeaderLeftContent: React.FC<HeaderLeftContentProps> = (props: HeaderLeftCo
         <Button type="link" shape="round" style={{ cursor: 'default' }} icon={<DownloadOutlined size={MEASUREMENT.LEETECHO_TRAFFIC_LIGHT_ICO_SIZE as number} />}>
         </Button>
       </HeaderToolBtnSection>
-      {<TrafficLightSection>
+      {isWinPlatform && <TrafficLightSection>
         {/* <DivideLine>|</DivideLine> */}
         <TrafficLightBtnSection>
-          <Button type="link" shape="round" icon={<MinusOutlined size={MEASUREMENT.LEETECHO_TRAFFIC_LIGHT_ICO_SIZE as number} />}>
+          <Button type="link" shape="round" onClick={() => {
+            minimizeWin();
+          }} icon={<MinusOutlined size={MEASUREMENT.LEETECHO_TRAFFIC_LIGHT_ICO_SIZE as number} />}>
           </Button>
         </TrafficLightBtnSection>
         {!isMaximized && < TrafficLightBtnSection onClick={() => {
@@ -132,13 +131,13 @@ const HeaderLeftContent: React.FC<HeaderLeftContentProps> = (props: HeaderLeftCo
           </Button>
         </TrafficLightBtnSection>}
         {isMaximized && <TrafficLightBtnSection onClick={() => {
-          minimizeWin();
+          unmaximizeWin();
         }}>
           <Button type="link" shape="round" icon={<Icon component={RestoreIcon} />}>
           </Button>
         </TrafficLightBtnSection>}
         <CloseWindowTrafficLightSection onClick={() => {
-          minimizeWin();
+          closeWin();
         }}>
           <Button type="link" shape="round" icon={<CloseOutlined size={MEASUREMENT.LEETECHO_TRAFFIC_LIGHT_ICO_SIZE as number} />}>
           </Button>

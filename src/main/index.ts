@@ -102,7 +102,7 @@ async function createWindow() {
         win.close();
         break;
       case 'windowed':
-        win.restore();
+        win.unmaximize();
         break;
       default:
         return;
