@@ -8,11 +8,14 @@ declare global {
   type SetWinStatusReq = WindowStatus;
   type SetWinStatusResp = {
     isSuccessful: boolean;
-    winStatus?: WindowStatus | '';
+    winStatus: WindowStatus | '';
   };
 
   /** get-win-status */
   type GetWinStatusReq = undefined;
   type GetWinStatusResp = WindowStatus;
+
+  /** maximized */
+  type MaximizedResp = SetWinStatusResp;
 
 }

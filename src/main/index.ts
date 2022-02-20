@@ -52,9 +52,9 @@ async function createWindow() {
   }
 
   // Test active push message to Renderer-process.
-  win.webContents.on('did-finish-load', () => {
-    win?.webContents.send('main-process-message', (new Date).toLocaleString());
-  });
+  // win.webContents.on('did-finish-load', () => {
+  //   win?.webContents.send('main-process-message', (new Date).toLocaleString());
+  // });
 
   /** renderer 事件监听 */
   /** 注意：需要通过句点表示法访问 win 实例里的方法，不能解构，否则win 实例的 this 得不到保留，会报错*/
@@ -104,6 +104,11 @@ async function createWindow() {
         return;
     }
     event.sender.send('set-win-status', { isSuccessful: true, winStatus: params } as SetWinStatusResp);
+  });
+
+  /** win 状态监听 */
+  win?.on('maximize', () => {
+    win?.webContents.send('maximized', { isSuccessful: true, winStatus: 'maximized' } as MaximizedResp);
   });
 }
 
