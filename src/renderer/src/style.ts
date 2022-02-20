@@ -32,9 +32,24 @@ const globalStyles = css`
   /* 设置可拖动区域 **/
   .ant-layout-header {
     -webkit-app-region: drag;
+    .ant-input-group-wrapper {
+      -webkit-app-region: no-drag;
+    }
+    .ant-btn {
+      -webkit-app-region: no-drag;
+    }
   }
   .ant-layout-sider {
     -webkit-app-region: drag;
+    .ant-menu-item {
+      -webkit-app-region: no-drag;
+    }
+    .semi-icon {
+      -webkit-app-region: no-drag;
+    }
+    button {
+      -webkit-app-region: no-drag;
+    }
   }
 
   /** logo位置 */

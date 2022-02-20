@@ -13,6 +13,7 @@ const { useRef, useState, useEffect, useMemo } = React;
 
 
 const HeaderSearchSection = styled.section`
+  -webkit-app-region: no-drag;
   display: flex;
   vertical-align: middle;
   justify-content: center;

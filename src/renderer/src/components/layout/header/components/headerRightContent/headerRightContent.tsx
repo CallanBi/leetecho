@@ -26,6 +26,7 @@ interface HeaderLeftContentProps {
 
 
 const HeaderToolsSection = styled.section`
+  -webkit-app-region: no-drag;
   display: flex;
   align-items: center;
   height: ${MEASUREMENT.LEETECHO_HEADER_HEIGHT};
@@ -33,6 +34,7 @@ const HeaderToolsSection = styled.section`
 `;
 
 const HeaderToolBtnSection = styled.section`
+  -webkit-app-region: no-drag;
   cursor: default;
   color: ${COLOR_PALETTE.LEETECHO_LIGHT_BLACK};
   &:hover {
@@ -41,6 +43,7 @@ const HeaderToolBtnSection = styled.section`
 `;
 
 const TrafficLightBtnSection = styled.section`
+  -webkit-app-region: no-drag;
   color: ${COLOR_PALETTE.LEETECHO_LIGHT_BLACK};
   &:hover {
     background-color: ${COLOR_PALETTE.LEETECHO_HEADER_SEARCH_BG_HOVER};
@@ -62,6 +65,7 @@ const TrafficLightBtnSection = styled.section`
 // `;
 
 const TrafficLightSection = styled.section`
+  -webkit-app-region: no-drag;
   display: flex;
 `;
 
@@ -116,7 +120,7 @@ const HeaderLeftContent: React.FC<HeaderLeftContentProps> = (props: HeaderLeftCo
         <Button type="link" shape="round" style={{ cursor: 'default' }} icon={<DownloadOutlined size={MEASUREMENT.LEETECHO_TRAFFIC_LIGHT_ICO_SIZE as number} />}>
         </Button>
       </HeaderToolBtnSection>
-      {isWinPlatform && <TrafficLightSection>
+      {true && <TrafficLightSection>
         {/* <DivideLine>|</DivideLine> */}
         <TrafficLightBtnSection>
           <Button type="link" shape="round" onClick={() => {
