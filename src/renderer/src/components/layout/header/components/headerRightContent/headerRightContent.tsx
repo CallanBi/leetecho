@@ -4,10 +4,12 @@ import { css } from '@emotion/react';
 import { withSemiIconStyle } from '@/style';
 import { COLOR_PALETTE } from 'src/const/theme/color';
 import { Button } from 'antd';
-import { IconDownload, IconSync } from '@douyinfe/semi-icons';
+import { IconDownloadStroked, IconServerStroked } from '@douyinfe/semi-icons';
 
 
 const { useRef, useState, useEffect, useMemo } = React;
+
+const isWin = window.bridge.platform === 'win32';
 
 interface HeaderLeftContentProps {
 
@@ -28,19 +30,24 @@ const HeaderToolBtnSection = styled.section`
   }
 `;
 
+const TrafficLightSection = styled.section`
+  display: flex;
+`;
+
 const HeaderLeftContent: React.FC<HeaderLeftContentProps> = (props: HeaderLeftContentProps) => {
   const { } = props;
 
   return (
     <HeaderToolsSection>
       <HeaderToolBtnSection>
-        <Button type="link" shape="round" icon={<IconSync size='large' style={withSemiIconStyle()} />}>
+        <Button type="link" shape="round" icon={<IconServerStroked size='large' style={withSemiIconStyle()} />}>
         </Button>
       </HeaderToolBtnSection>
       <HeaderToolBtnSection>
-        <Button type="link" shape="round" icon={<IconDownload size='large' style={withSemiIconStyle()} />}>
+        <Button type="link" shape="round" icon={<IconDownloadStroked size='large' style={withSemiIconStyle()} />}>
         </Button>
       </HeaderToolBtnSection>
+      {isWin && <TrafficLightSection>traffic light</TrafficLightSection>}
     </HeaderToolsSection>
   );
 };

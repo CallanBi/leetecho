@@ -13,6 +13,7 @@ declare global {
       removeLoading: () => void;
       isDev: boolean;
       // app: typeof import('electron').app;
+      platform: typeof process.platform,
     };
   }
 }

@@ -5,6 +5,8 @@ import { domReady } from './utils';
 import { useLoading } from './loading';
 
 const isDev = process.env.NODE_ENV === 'development';
+const platform = process.platform;
+
 const { appendLoading, removeLoading } = useLoading();
 
 (async () => {
@@ -23,6 +25,7 @@ contextBridge.exposeInMainWorld('bridge', {
   ipcRenderer: withPrototype(ipcRenderer),
   removeLoading,
   isDev,
+  platform,
 });
 
 // `exposeInMainWorld` can not detect `prototype` attribute and methods, manually patch it.
