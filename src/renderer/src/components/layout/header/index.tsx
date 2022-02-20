@@ -1,5 +1,5 @@
 import Header from './header';
-import HeaderRightContent from './headerRightContent';
+import HeaderRightContent from './components/headerLeftContent';
 
 export { HeaderRightContent };
 export default Header;

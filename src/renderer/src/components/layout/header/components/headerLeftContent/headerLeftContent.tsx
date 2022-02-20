@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import { Input } from 'antd';
-import SearchEnterBtn from './components/searchEnterBtn';
+import SearchEnterBtn from '../searchEnterBtn';
 import { COLOR_PALETTE } from 'src/const/theme/color';
 import { MEASUREMENT } from 'src/const/theme/measurement';
 
@@ -13,14 +13,16 @@ const { useRef, useState, useEffect, useMemo } = React;
 
 
 const HeaderSearchSection = styled.section`
-  flex: 1;
   display: flex;
   vertical-align: middle;
   justify-content: center;
-  margin-right: 24px;
+  margin-left: 24px;
+  margin-right: auto;
+  width: 300px;
   .ant-input {
     background-color: ${COLOR_PALETTE.LEETECHO_HEADER_SEARCH_BG};
     border-color: ${COLOR_PALETTE.LEETECHO_HEADER_SEARCH_BG};
+    border-radius: 32px;
 
     :hover {
       border-color: ${COLOR_PALETTE.LEETECHO_HEADER_SEARCH_BG_HOVER};
@@ -29,12 +31,12 @@ const HeaderSearchSection = styled.section`
     :focus {
       border-color: ${COLOR_PALETTE.LEETECHO_BLUE};
       box-shadow: none;
-      background-color: ${COLOR_PALETTE.LEETECHO_HEADER_SEARCH_BG};
+      background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND};
     }
   }
   .ant-btn {
-    border-top-right-radius: ${MEASUREMENT.LEETECHO_BORDER_RADIUS_BASE}!important;
-    border-bottom-right-radius: ${MEASUREMENT.LEETECHO_BORDER_RADIUS_BASE}!important;
+    border-top-right-radius: 32px!important;
+    border-bottom-right-radius: 32px!important;
   }
 `;
 
@@ -42,11 +44,11 @@ const searchStyle: React.CSSProperties = {
   margin: 'auto',
 };
 
-interface HeaderRightContentProps {
+interface HeaderLeftContentProps {
 
 }
 
-const HeaderRightContent: React.FC<HeaderRightContentProps> = (props: HeaderRightContentProps) => {
+const HeaderLeftContent: React.FC<HeaderLeftContentProps> = (props: HeaderLeftContentProps) => {
   const { } = props;
 
   return (
@@ -57,4 +59,4 @@ const HeaderRightContent: React.FC<HeaderRightContentProps> = (props: HeaderRigh
   );
 };
 
-export default HeaderRightContent;
+export default HeaderLeftContent;
