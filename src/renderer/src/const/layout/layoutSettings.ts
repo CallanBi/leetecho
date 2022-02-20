@@ -1,5 +1,6 @@
 import { ProSettings } from '@ant-design/pro-layout';
 import { COLOR_PALETTE } from 'src/const/theme/color';
+import { MEASUREMENT } from 'src/const/theme/measurement';
 
 
 const layoutSettings: Partial<ProSettings> = {
@@ -7,7 +8,7 @@ const layoutSettings: Partial<ProSettings> = {
   'navTheme': 'light',
   'layout': 'side',
   'contentWidth': 'Fluid',
-  'headerHeight': 48,
+  'headerHeight': parseInt(`${MEASUREMENT.LEETECHO_HEADER_HEIGHT}`),
   'primaryColor': COLOR_PALETTE.LEETECHO_BLUE,
   'splitMenus': false,
   'fixedHeader': false

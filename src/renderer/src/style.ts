@@ -9,8 +9,8 @@ const globalStyles = css`
   }
 
   .ant-layout-header {
-    height: 56px!important;
-    line-height: 56px!important;
+    height: 48px!important;
+    line-height: 48px!important;
   }
 
   .ant-input {

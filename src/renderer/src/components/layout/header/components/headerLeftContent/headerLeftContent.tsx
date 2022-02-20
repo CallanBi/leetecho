@@ -18,7 +18,7 @@ const HeaderSearchSection = styled.section`
   justify-content: center;
   margin-left: 24px;
   margin-right: auto;
-  width: 300px;
+  width: 260px;
   .ant-input {
     background-color: ${COLOR_PALETTE.LEETECHO_HEADER_SEARCH_BG};
     border-color: ${COLOR_PALETTE.LEETECHO_HEADER_SEARCH_BG};
@@ -53,7 +53,7 @@ const HeaderLeftContent: React.FC<HeaderLeftContentProps> = (props: HeaderLeftCo
 
   return (
     <HeaderSearchSection>
-      <Search style={searchStyle} placeholder="搜索题目" onSearch={(val, event) => console.log('%c 111 >>>', 'background: yellow; color: blue', { val, event })
+      <Search size="small" style={searchStyle} placeholder="搜索题目" onSearch={(val, event) => console.log('%c 111 >>>', 'background: yellow; color: blue', { val, event })
       } enterButton={<SearchEnterBtn></SearchEnterBtn>} />
     </HeaderSearchSection>
   );

@@ -5,7 +5,7 @@ import './storage/electron-store';
 import './index.less';
 import App from './app';
 import { HashRouter } from 'react-router-dom';
-import WithAppStoreProvider from './store/appStore/withAppStoreProvider';
+import AppStoreProvider from './store/appStore';
 import { Global } from '@emotion/react';
 import globalStyles from './style';
 
@@ -13,12 +13,12 @@ const { bridge: { removeLoading, ipcRenderer } } = window;
 
 
 ReactDOM.render(
-  <WithAppStoreProvider>
+  <AppStoreProvider>
     <Global styles={globalStyles}></Global>
     <HashRouter>
       <App />
     </HashRouter>,
-  </WithAppStoreProvider>,
+  </AppStoreProvider>,
   document.getElementById('root'),
   () => {
     removeLoading();

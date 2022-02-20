@@ -1,27 +1,27 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from 'react';
+import withStoreProvider from '../withStoreProvider';
 
 export type AppState = {
   uiStatus: {
     /** 侧边导航条是否折叠，目前禁用折叠，默认展开 */
-    isNavCollapsed: boolean;
+    isNavCollapsed?: boolean;
+    /** 窗口状况 */
+    windowStatus?: 'maximized' | 'maximized' | 'closed' | 'windowed';
   };
 };
 
 export const initState: AppState = {
   uiStatus: {
     isNavCollapsed: false,
+    windowStatus: 'windowed',
   },
 };
 
 export type AppActionType = 'change-ui-status';
 
-
 export type AppAction = {
   appActionType: 'change-ui-status';
-  payload: {
-    isNavCollapsed: boolean;
-  };
+  payload: Partial<AppState['uiStatus']>;
   isReplacement?: boolean;
 };
 
@@ -39,11 +39,12 @@ export const reducer: React.Reducer<AppState, AppAction> = (state, appAction) =>
       if (appAction.isReplacement) {
         return { ...state, uiStatus: appAction.payload };
       } else {
-        console.log('%c 111 >>>', 'background: yellow; color: blue', appAction);
-
         return { ...state, uiStatus: { ...state.uiStatus, ...appAction.payload } };
       }
     default:
       return state;
   }
 };
+
+const AppStoreProvider = withStoreProvider<AppState, AppAction>({ reducer, initState, StoreContext: AppStoreContext });
+export default AppStoreProvider;

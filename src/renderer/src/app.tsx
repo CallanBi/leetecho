@@ -12,7 +12,7 @@ import { layoutSettings } from './const/layout';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { ROUTE } from './const/route';
 import { useRouter } from './hooks/router/useRouter';
-import { AppStoreContext } from './store/appStore';
+import { AppStoreContext } from './store/appStore/appStore';
 import NavFooter from './components/layout/navFooter';
 import Header, { HeaderRightContent } from './components/layout/header';
 
