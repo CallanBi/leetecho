@@ -110,6 +110,10 @@ async function createWindow() {
   win?.on('maximize', () => {
     win?.webContents.send('maximized', { isSuccessful: true, winStatus: 'maximized' } as MaximizedResp);
   });
+
+  win?.on('unmaximize', () => {
+    win?.webContents.send('windowed', { isSuccessful: true, winStatus: 'windowed' } as WindowedResp);
+  });
 }
 
 /** 监听 IO */

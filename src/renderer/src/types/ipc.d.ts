@@ -18,4 +18,7 @@ declare global {
   /** maximized */
   type MaximizedResp = SetWinStatusResp;
 
+  /** windowed */
+  type WindowedResp = SetWinStatusResp;
+
 }

@@ -88,14 +88,20 @@ const HeaderLeftContent: React.FC<HeaderLeftContentProps> = (props: HeaderLeftCo
       setIsMaximized(false);
       return;
     }
-    if (isMaximized === false) {
+    if (!isMaximized) {
       setIsMaximized(true);
     }
   });
 
   ipcRenderer.on('maximized', () => {
-    if (isMaximized === false) {
+    if (!isMaximized) {
       setIsMaximized(true);
+    }
+  });
+
+  ipcRenderer.on('windowed', () => {
+    if (isMaximized) {
+      setIsMaximized(false);
     }
   });
 
