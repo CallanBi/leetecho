@@ -1,10 +1,6 @@
 import * as React from 'react';
-import { Avatar } from 'antd';
 import { ReactComponent as NavLogo } from '@/assets/logo-vertical.svg';
 import './index.less';
-
-import { UserOutlined } from '@ant-design/icons';
-
 import type { ProSettings } from '@ant-design/pro-layout';
 import ProLayout, { SettingDrawer } from '@ant-design/pro-layout';
 import { navConfig } from './routes/index';
@@ -14,12 +10,10 @@ import { ROUTE } from './const/route';
 import { useRouter } from './hooks/router/useRouter';
 import { AppStoreContext } from './store/appStore/appStore';
 import NavFooter from './components/layout/navFooter';
-import Header, { HeaderRightContent } from './components/layout/header';
+import Header from './components/layout/header';
 
-const { useState, useRef, useEffect, useContext, useMemo } = React;
+const { useState, useContext, useMemo } = React;
 const { bridge: { isDev } } = window;
-
-
 
 const navLogoStyle: React.CSSProperties = {
   marginTop: 100,

@@ -31,11 +31,9 @@ ReactDOM.render(
 // console.log('contextBridge ->', window.bridge);
 
 // Use ipcRenderer.on
-ipcRenderer.on('main-process-message', (_event, ...args) => {
-  console.log('[Receive Main-process message]:', ...args);
-});
-
-
+// ipcRenderer.on('main-process-message', (_event, ...args) => {
+//   console.log('[Receive Main-process message]:', ...args);
+// });
 
 // const home = ipcRenderer.sendSync('get-path', 'home');
 

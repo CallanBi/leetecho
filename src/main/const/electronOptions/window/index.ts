@@ -37,6 +37,4 @@ export const DEFAULT_WINDOW_OPTIONS: BrowserWindowConstructorOptions = {
   vibrancy: 'fullscreen-ui', // OSX 毛玻璃效果
 };
 
-console.log('%c process.platform >>>', 'background: yellow; color: blue', process.platform);
-
 

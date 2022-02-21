@@ -52,9 +52,9 @@ async function createWindow() {
   }
 
   // Test active push message to Renderer-process.
-  win.webContents.on('did-finish-load', () => {
-    win?.webContents.send('main-process-message', (new Date).toLocaleString());
-  });
+  // win.webContents.on('did-finish-load', () => {
+  //   win?.webContents.send('main-process-message', (new Date).toLocaleString());
+  // });
 
   /** renderer 事件监听 */
   /** 注意：需要通过句点表示法访问 win 实例里的方法，不能解构，否则win 实例的 this 得不到保留，会报错*/
@@ -63,31 +63,26 @@ async function createWindow() {
   //   event.returnValue = app.getPath(args);
   // });
 
+  const getWinStatus = () => {
+    if (!win) {
+      return '';
+    }
+
+    const isMaximized = win.isMaximized();
+    const isMinimized = win.isMinimized();
+
+    const allWindows = BrowserWindow.getAllWindows();
+    return isMaximized ? 'maximized' : (isMinimized ? 'minimized' : (allWindows.length === 0 ? 'closed' : 'windowed')) as WindowStatus;
+  };
+
   ipcMain.on('get-win-status', (event) => {
     if (!win) {
       return;
     }
-    // const { isMaximized: getIsMaximized, isMinimized: getIsMinimized } = win;
-    const isMaximized = win.isMaximized();
-    const isMinimized = win.isMinimized();
-
-    // console.log('%c  isMaximized>>>', 'background: yellow; color: blue', isMaximized);
-    // console.log('%c  isMinimized>>>', 'background: yellow; color: blue', isMinimized);
-
-
-
-    const allWindows = BrowserWindow.getAllWindows();
-    const status: WindowStatus = isMaximized ? 'maximized' : (isMinimized ? 'minimized' : (allWindows.length === 0 ? 'closed' : 'windowed'));
-
-    // console.log('%c status >>>', 'background: yellow; color: blue', status);
-    // console.log('%c allWindows.length >>>', 'background: yellow; color: blue', allWindows.length);
-
-
-
-    event.returnValue = status;
+    event.returnValue = getWinStatus();
   });
 
-  ipcMain.on('set-win-status', (_, params: WindowStatus) => {
+  ipcMain.on('set-win-status', (event, params: SetWinStatusReq) => {
     if (!win) {
       return;
     }
@@ -105,8 +100,15 @@ async function createWindow() {
         win.unmaximize();
         break;
       default:
+        event.sender.send('set-win-status', { isSuccessful: false, winStatus: getWinStatus() } as SetWinStatusResp);
         return;
     }
+    event.sender.send('set-win-status', { isSuccessful: true, winStatus: params } as SetWinStatusResp);
+  });
+
+  /** win 状态监听 */
+  win?.on('maximize', () => {
+    win?.webContents.send('maximized', { isSuccessful: true, winStatus: 'maximized' } as MaximizedResp);
   });
 }
 

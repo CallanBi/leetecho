@@ -16,6 +16,4 @@ declare global {
       platform: typeof process.platform,
     };
   }
-
-  type WindowStatus = 'maximized' | 'minimized' | 'closed' | 'windowed';
 }

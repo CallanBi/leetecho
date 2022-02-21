@@ -1,10 +1,8 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
-import { css } from '@emotion/react';
-import { withSemiIconStyle } from '@/style';
+// import { css } from '@emotion/react';
 import { COLOR_PALETTE } from 'src/const/theme/color';
 import { Button } from 'antd';
-import { IconCrossStroked, IconDownloadStroked, IconMinusStroked, IconServerStroked } from '@douyinfe/semi-icons';
 import { BorderOutlined, CloseOutlined, CloudSyncOutlined, DownloadOutlined, MinusOutlined } from '@ant-design/icons';
 import { MEASUREMENT } from 'src/const/theme/measurement';
 import Icon from '@ant-design/icons';
@@ -17,12 +15,7 @@ const isWinPlatform = window.bridge.platform === 'win32';
 
 const { bridge: { ipcRenderer } } = window;
 
-const winStatus = ipcRenderer.sendSync('get-win-status') as WindowStatus;
-
-
-interface HeaderLeftContentProps {
-
-}
+const winStatus = ipcRenderer.sendSync('get-win-status') as GetWinStatusResp;
 
 
 const HeaderToolsSection = styled.section`
@@ -30,7 +23,7 @@ const HeaderToolsSection = styled.section`
   display: flex;
   align-items: center;
   height: ${MEASUREMENT.LEETECHO_HEADER_HEIGHT};
-  margin-right: ${isWinPlatform ? '4px' : '12px'};
+  margin-right: ${isWinPlatform ? '0px' : '12px'};
 `;
 
 const HeaderToolBtnSection = styled.section`
@@ -56,14 +49,6 @@ const TrafficLightBtnSection = styled.section`
   }
 `;
 
-// const DivideLine = styled.div`
-//   font-size: ${MEASUREMENT.LEETECHO_TRAFFIC_LIGHT_ICO_SIZE}px;
-//   color: ${COLOR_PALETTE.LEETECHO_LIGHT_BLACK};
-//   margin-left: 12px;
-//   margin-right: 12px;
-
-// `;
-
 const TrafficLightSection = styled.section`
   -webkit-app-region: no-drag;
   display: flex;
@@ -83,6 +68,10 @@ const CloseWindowTrafficLightSection = styled(TrafficLightBtnSection)`
   }
 `;
 
+interface HeaderLeftContentProps {
+
+}
+
 
 const HeaderLeftContent: React.FC<HeaderLeftContentProps> = (props: HeaderLeftContentProps) => {
   const { } = props;
@@ -90,24 +79,40 @@ const HeaderLeftContent: React.FC<HeaderLeftContentProps> = (props: HeaderLeftCo
   const initMaximizedVal = winStatus === 'maximized';
   const [isMaximized, setIsMaximized] = useState<boolean>(initMaximizedVal);
 
+  ipcRenderer.on('set-win-status', (_, params: SetWinStatusResp) => {
+    const { isSuccessful, winStatus = '' } = params;
+    if (!isSuccessful) {
+      return;
+    }
+    if (winStatus !== 'maximized') {
+      setIsMaximized(false);
+      return;
+    }
+    if (isMaximized === false) {
+      setIsMaximized(true);
+    }
+  });
+
+  ipcRenderer.on('maximized', () => {
+    if (isMaximized === false) {
+      setIsMaximized(true);
+    }
+  });
+
   const maximizeWin = () => {
-    ipcRenderer.send('set-win-status', 'maximized' as WindowStatus);
-    setIsMaximized(true);
+    ipcRenderer.send('set-win-status', 'maximized' as SetWinStatusReq);
   };
 
   const minimizeWin = () => {
-    ipcRenderer.send('set-win-status', 'minimized' as WindowStatus);
-    setIsMaximized(false);
+    ipcRenderer.send('set-win-status', 'minimized' as SetWinStatusReq);
   };
 
   const unmaximizeWin = () => {
-    ipcRenderer.send('set-win-status', 'windowed' as WindowStatus);
-    setIsMaximized(false);
+    ipcRenderer.send('set-win-status', 'windowed' as SetWinStatusReq);
   };
 
   const closeWin = () => {
-    ipcRenderer.send('set-win-status', 'closed' as WindowStatus);
-    setIsMaximized(false);
+    ipcRenderer.send('set-win-status', 'closed' as SetWinStatusReq);
   };
 
   return (
@@ -120,7 +125,7 @@ const HeaderLeftContent: React.FC<HeaderLeftContentProps> = (props: HeaderLeftCo
         <Button type="link" shape="round" style={{ cursor: 'default' }} icon={<DownloadOutlined size={MEASUREMENT.LEETECHO_TRAFFIC_LIGHT_ICO_SIZE as number} />}>
         </Button>
       </HeaderToolBtnSection>
-      {true && <TrafficLightSection>
+      {isWinPlatform && <TrafficLightSection>
         {/* <DivideLine>|</DivideLine> */}
         <TrafficLightBtnSection>
           <Button type="link" shape="round" onClick={() => {
