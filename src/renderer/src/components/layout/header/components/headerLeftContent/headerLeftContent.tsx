@@ -38,6 +38,12 @@ const HeaderSearchSection = styled.section`
     border-top-right-radius: 32px!important;
     border-bottom-right-radius: 32px!important;
   }
+
+  input {
+    padding-left: 13.5px;
+    font-size: 13.5px;
+  }
+
 `;
 
 const searchStyle: React.CSSProperties = {
