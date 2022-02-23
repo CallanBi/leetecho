@@ -1,6 +1,6 @@
 process.env.NODE_ENV = "production";
 
-import { build as viteBuild } from "vite";
+import { build as viteBuild, createServer } from "vite";
 import chalk from "chalk";
 
 const TAG = chalk.bgBlue("[build.mjs]");
@@ -25,3 +25,9 @@ async function buildElectron() {
 
 // bootstrap
 await buildElectron();
+
+// const viteDevServer = await createServer({
+//   configFile: "configs/vite.renderer.ts",
+// });
+
+// await viteDevServer.listen();

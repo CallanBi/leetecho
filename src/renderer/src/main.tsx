@@ -9,7 +9,7 @@ import AppStoreProvider from './store/appStore';
 import { Global } from '@emotion/react';
 import globalStyles from './style';
 
-const { bridge: { removeLoading, ipcRenderer } } = window;
+const { bridge: { removeLoading } } = window;
 
 
 ReactDOM.render(

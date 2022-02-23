@@ -3,7 +3,6 @@ import * as React from 'react';
 
 const { useRef, useState, useEffect, useMemo } = React;
 
-
 interface SettledProblemsProps {
 }
 

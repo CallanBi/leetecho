@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "prebuild",
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: prebuild",
+      "detail": "node scripts/build.mjs"
+    },
+    {
+      "type": "npm",
+      "script": "debug",
+      "problemMatcher": [],
+      "label": "npm: debug",
+      "detail": "pnpm run prebuild && vite ./src/renderer",
+      "group": "build"
+    },
+  ]
+}
