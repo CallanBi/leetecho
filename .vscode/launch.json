@@ -18,13 +18,13 @@
       },
       "sourceMaps": true
     },
-    {
-      "type": "chrome",
-      "request": "launch",
-      "name": "Renderer(inspector)",
-      "url": "http://localhost:9222",
-      "webRoot": "${workspaceFolder}/dist/renderer",
-    },
+    // {
+    //   "type": "chrome",
+    //   "request": "launch",
+    //   "name": "Renderer(inspector)",
+    //   "url": "http://localhost:9222",
+    //   "webRoot": "${workspaceFolder}/dist/renderer",
+    // },
     {
       "type": "node",
       "request": "launch",
@@ -42,30 +42,30 @@
       },
       "sourceMaps": true
     },
-    {
-      "type": "chrome",
-      "request": "launch",
-      "name": "Renderer(vite)",
-      "url": "http://localhost:3344",
-      "webRoot": "${workspaceFolder}/src/renderer",
-    },
+    // {
+    //   "type": "chrome",
+    //   "request": "launch",
+    //   "name": "Renderer(vite)",
+    //   "url": "http://localhost:3344",
+    //   "webRoot": "${workspaceFolder}/src/renderer",
+    // },
   ],
-  "compounds": [
-    {
-      "name": "All(inspector)",
-      "configurations": [
-        "Renderer(inspector)",
-        "Main(inspector)",
-      ],
-      "preLaunchTask": "npm: prebuild"
-    },
-    {
-      "name": "All(vite serve)",
-      "configurations": [
-        "Renderer(vite)",
-        "Main(vite)",
-      ],
-      "preLaunchTask": "npm: debug"
-    }
-  ]
+  // "compounds": [
+  //   {
+  //     "name": "All(inspector)",
+  //     "configurations": [
+  //       "Renderer(inspector)",
+  //       "Main(inspector)",
+  //     ],
+  //     "preLaunchTask": "npm: prebuild"
+  //   },
+  //   {
+  //     "name": "All(vite serve)",
+  //     "configurations": [
+  //       "Renderer(vite)",
+  //       "Main(vite)",
+  //     ],
+  //     "preLaunchTask": "npm: debug"
+  //   }
+  // ]
 }

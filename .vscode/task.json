@@ -14,8 +14,8 @@
       "script": "debug",
       "problemMatcher": [],
       "label": "npm: debug",
-      "detail": "pnpm run prebuild && vite ./src/renderer",
+      "detail": "node scripts/build.mjs && vite --config ./configs/vite.renderer.ts && vite ./src/renderer",
       "group": "build"
-    },
+    }
   ]
 }
