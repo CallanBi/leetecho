@@ -174,6 +174,10 @@ app.on('activate', () => {
 
 
   const problems: Array<Problem> = await leetcode.getAllProblems();
-  // console.log('%c problems >>>', 'background: yellow; color: blue', problems);
+
+  if (problem) {
+    console.log('%c problems >>>', 'background: yellow; color: blue', problems);
+  }
+
 
 })();

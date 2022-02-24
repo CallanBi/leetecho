@@ -25,9 +25,3 @@ async function buildElectron() {
 
 // bootstrap
 await buildElectron();
-
-// const viteDevServer = await createServer({
-//   configFile: "configs/vite.renderer.ts",
-// });
-
-// await viteDevServer.listen();

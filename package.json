@@ -8,9 +8,10 @@
   "scripts": {
     "dev": "node scripts/watch.mjs",
     "prebuild": "node scripts/build.mjs",
-    "build": "pnpm run prebuild && electron-builder",
+    "build": "node scripts/build.mjs && electron-builder",
+    "win-build": "node scripts/build.mjs && electron-builder --win",
     "lint": "eslint --fix --ext .ts,.tsx src",
-    "debug": "pnpm run prebuild && vite --config ./configs/vite.renderer.ts && vite ./src/renderer"
+    "debug": "node scripts/build.mjs && vite --config ./configs/vite.renderer.ts && vite ./src/renderer"
   },
   "engines": {
     "node": ">=14.17.0"
@@ -61,7 +62,6 @@
     "dotenv": "^16.0.0",
     "graphql": "^16.3.0",
     "graphql-request": "^4.0.0",
-    "icons": "link:@types/ant-design/icons",
     "lodash": "^4.17.21",
     "query-string": "^7.1.1",
     "request": "^2.88.2",
