@@ -7,11 +7,10 @@
   "main": "dist/main/index.cjs",
   "scripts": {
     "dev": "node scripts/watch.mjs",
-    "prebuild": "node scripts/build.mjs",
     "build": "node scripts/build.mjs && electron-builder",
     "win-build": "node scripts/build.mjs && electron-builder --win",
     "lint": "eslint --fix --ext .ts,.tsx src",
-    "debug": "node scripts/build.mjs && vite --config ./configs/vite.renderer.ts && vite ./src/renderer"
+    "debug": "cross-env-shell NODE_ENV=debug \"node scripts/build.mjs && vite --config ./configs/vite.renderer.ts && vite ./src/renderer\""
   },
   "engines": {
     "node": ">=14.17.0"
@@ -34,6 +33,7 @@
     "@typescript-eslint/parser": "^5.10.0",
     "@vitejs/plugin-react": "^1.0.7",
     "antd": "^4.18.5",
+    "cross-env": "^7.0.3",
     "electron": "^15.3.0",
     "electron-builder": "^22.13.1",
     "electron-devtools-installer": "^3.2.0",

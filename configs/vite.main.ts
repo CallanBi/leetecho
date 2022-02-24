@@ -12,8 +12,8 @@ export default defineConfig({
       entry: 'index.ts',
       formats: ['cjs'],
     },
-    minify: false,
-    sourcemap: true,
+    minify: process.env./* from mode option */NODE_ENV === 'production',
+    sourcemap: process.env./* from mode option */NODE_ENV === 'debug',
     emptyOutDir: true,
     rollupOptions: {
       external: [

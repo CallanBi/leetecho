@@ -1,5 +1,3 @@
-process.env.NODE_ENV = "production";
-
 import { build as viteBuild, createServer } from "vite";
 import chalk from "chalk";
 
@@ -16,7 +14,7 @@ async function buildElectron() {
     console.group(TAG, name);
     await viteBuild({
       configFile: configPath,
-      mode: process.env.NODE_ENV,
+      mode: process.env.NODE_ENV === 'debug' ? 'debug' : 'production',
     });
     console.groupEnd();
     console.log(); // for beautiful log.

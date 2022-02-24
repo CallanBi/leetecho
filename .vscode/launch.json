@@ -34,8 +34,8 @@
         "${workspaceFolder}/dist/main/index.cjs",
       ],
       "env": {
-        "VITE_DEV_SERVER_HOST": "127.0.0.1",
-        "VITE_DEV_SERVER_PORT": "3344",
+        "HOST": "127.0.0.1",
+        "PORT": "3344",
       },
       "windows": {
         "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
