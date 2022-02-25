@@ -45,7 +45,8 @@ async function createWindow() {
   /** 去除菜单栏，保持跨平台风格统一 */
   win.removeMenu();
 
-  if (app.isPackaged || process.env['DEBUG']) {
+  if (Boolean(app.isPackaged) && !Boolean(process.env.DEBUG)) {
+    // isProductionEnv
     win.loadFile(join(__dirname, '../renderer/index.html'));
   } else {
     const pkg = await import('../../package.json');
@@ -54,6 +55,14 @@ async function createWindow() {
     win.loadURL(url);
     win.webContents.openDevTools();
   }
+
+
+  console.log('%c 23` >>>', 'background: yellow; color: blue', 2234);
+
+  console.log('%c 2345 >>>', 'background: yellow; color: blue', 23456);
+
+
+
 
   // Test active push message to Renderer-process.
   // win.webContents.on('did-finish-load', () => {
@@ -69,7 +78,7 @@ async function createWindow() {
 
   const getWinStatus = () => {
     if (!win) {
-      return '';
+      return;
     }
 
     const isMaximized = win.isMaximized();

@@ -13,6 +13,7 @@ export default defineConfig({
       formats: ['cjs'],
     },
     minify: process.env.NODE_ENV === 'production',
+    sourcemap: process.env.NODE_ENV === 'debug',
     emptyOutDir: true,
     rollupOptions: {
       external: [
