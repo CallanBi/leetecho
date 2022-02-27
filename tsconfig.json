@@ -13,7 +13,8 @@
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react",
     "include": [
-      "types/*/*.d.ts"
+      "types/**/*.d.ts",
+      "src/main/api/**/*.d.ts"
     ]
   }
 }

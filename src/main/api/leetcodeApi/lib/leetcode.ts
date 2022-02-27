@@ -1,3 +1,4 @@
+import to from 'await-to-js';
 import { StatusCodeError } from 'request-promise-native/errors';
 import Helper from '../utils/helper';
 import { Credit, EndPoint, Uris } from '../utils/interfaces';
@@ -27,17 +28,23 @@ class Leetcode {
 
   static async build(username: string, password: string, endpoint: EndPoint): Promise<Leetcode> {
     Helper.switchEndPoint(endpoint);
-    const credit: Credit = await this.login(username, password);
+    const [err, credit] = await to(this.login(username, password)) as any as [Error, Credit];
+    if (err) {
+      throw new Error('Login Fail');
+    }
     Helper.setCredit(credit);
     return new Leetcode(credit);
   }
 
   static async login(username: string, password: string): Promise<Credit> {
     // got login token first
-    const response = await Helper.HttpRequest({
+    const [err, response] = await to(Helper.HttpRequest({
       url: Leetcode.uris.login,
       resolveWithFullResponse: true,
-    });
+    }));
+    if (err) {
+      throw new Error('Login Fail');
+    }
     const token: string = Helper.parseCookie(response.headers['set-cookie'], 'csrftoken');
     // Leetcode CN return null here, but it's does not matter
     let credit: Credit = {

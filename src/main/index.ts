@@ -8,9 +8,7 @@ import { DEFAULT_WINDOW_OPTIONS } from './const/electronOptions/window';
 // const { default: installExtension, REACT_DEVELOPER_TOOLS } = await import('electron-devtools-installer');
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
-import Leetcode from './api/leetcodeApi';
-import { EndPoint } from './api/leetcodeApi/utils/interfaces';
-import Problem from './api/leetcodeApi/lib/problem';
+import './api/index';
 
 process.setMaxListeners(0);
 
@@ -55,13 +53,6 @@ async function createWindow() {
     win.loadURL(url);
     win.webContents.openDevTools();
   }
-
-
-  console.log('%c 23` >>>', 'background: yellow; color: blue', 2234);
-
-  console.log('%c 2345 >>>', 'background: yellow; color: blue', 23456);
-
-
 
 
   // Test active push message to Renderer-process.
@@ -162,31 +153,3 @@ app.on('activate', () => {
     createWindow();
   }
 });
-
-
-(async (): Promise<void> => {
-
-  // Login
-  const leetcode: Leetcode = await Leetcode.build(
-    "your_account",
-    "your_pass",
-    EndPoint.CN
-  );
-
-
-  const problem: Problem = new Problem("two-sum");
-
-  // Fetch more properties of this problem
-  await problem.detail();
-
-  // console.log('%c problem >>>', 'background: yellow; color: blue', problem);
-
-
-  const problems: Array<Problem> = await leetcode.getAllProblems();
-
-  if (problem) {
-    console.log('%c problems >>>', 'background: yellow; color: blue', problems);
-  }
-
-
-})();

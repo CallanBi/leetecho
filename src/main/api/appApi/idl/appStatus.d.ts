@@ -1,4 +1,4 @@
-/** IPC types */
+/** appStatus types */
 export { };
 
 declare global {
