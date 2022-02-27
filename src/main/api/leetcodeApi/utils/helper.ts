@@ -71,14 +71,14 @@ class Helper {
       case '11': return SubmissionStatus['Wrong Answer'];
       case '14': return SubmissionStatus['Time Limit Exceeded'];
       case '20': return SubmissionStatus['Compile Error'];
-        // TODO : find out what this numbers mean
-        // 12 => MLE
-        // 13 => OLE
-        // 15 => RE
-        // 16 => IE
-        // 21 => UE
-        // 30 => TO
-        // default => UE
+      // TODO : find out what this numbers mean
+      // 12 => MLE
+      // 13 => OLE
+      // 15 => RE
+      // 16 => IE
+      // 21 => UE
+      // 30 => TO
+      // default => UE
       default: return SubmissionStatus['Wrong Answer'];
     }
   }
@@ -89,7 +89,7 @@ class Helper {
       uri: options.url,
       followRedirect: false,
       headers: {
-        Cookie: Helper.credit ? `LEETCODE_SESSION=${Helper.credit.session};csrftoken=${Helper.credit.csrfToken}` : '',
+        Cookie: Helper.credit ? `LEETCODE_SESSION=${Helper.credit.session || ''};csrftoken=${Helper.credit.csrfToken || ''}` : '',
         'X-Requested-With': 'XMLHttpRequest',
         'X-CSRFToken': Helper.credit ? Helper.credit.csrfToken : '',
         Referer: options.referer || Helper.uris.base,

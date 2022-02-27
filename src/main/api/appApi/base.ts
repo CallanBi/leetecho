@@ -11,6 +11,7 @@ export class ErrorResp extends Error {
   constructor ({ code = 1, message = getErrorCodeMessage() }) {
     super(message);
     this.code = code;
+    this.message = message;
   }
 };
 

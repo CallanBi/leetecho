@@ -12,8 +12,13 @@ import { AppStoreContext } from './store/appStore/appStore';
 import NavFooter from './components/layout/navFooter';
 import Header from './components/layout/header';
 
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
+
+const queryClient = new QueryClient();
+
 const { useState, useContext, useMemo } = React;
-const { bridge: { isDev } } = window;
+const { bridge: { isNotProduction } } = window;
 
 const navLogoStyle: React.CSSProperties = {
   marginTop: 100,
@@ -37,56 +42,58 @@ const App: React.FC<Record<string, never>> = () => {
   const router = useRouter();
 
   return useMemo(() => (
-    <div
-      id="main"
-      style={{
-        height: '100vh',
-      }}
-    >
-      <ProLayout
-        title={false}
-        logo={renderLogo()}
-        // onCollapse={isCollapsed => {
-        //   dispatch({
-        //     appActionType: 'change-ui-status',
-        //     payload: {
-        //       isNavCollapsed: isCollapsed,
-        //     },
-        //   });
-        // }}
-        collapsed={false}
-        hasSiderMenu={false}
-        defaultCollapsed={false}
-        menuFooterRender={renderNavFooter}
-        collapsedButtonRender={false}
-        menuItemRender={(item, dom) => (
-          <a
-            onClick={() => {
-              const { path = 'settledProblems' } = item;
-              setPath(path);
-              if (router.pathname !== path) {
-                router.history.push(path);
-              }
-            }}
-          >
-            {dom}
-          </a>
-        )}
-        headerRender={() => <Header></Header>}
-        {...navConfig}
-        {...settings}
-        location={{
-          pathname: path,
+    <QueryClientProvider client={queryClient}>
+      {isNotProduction && <ReactQueryDevtools initialIsOpen />}
+      <div
+        id="main"
+        style={{
+          height: '100vh',
         }}
       >
-        <Switch>
-          <Route path='/' exact render={() => (
-            <Redirect to='/settledProblems' />
-          )} />
-          {ROUTE.map(route => <Route key={route.name ?? '/settledProblems'} exact path={route.path ?? '/settledProblems'} component={route.component} />)}
-        </Switch>
-      </ProLayout>
-      {/* {isDev && <SettingDrawer
+        <ProLayout
+          title={false}
+          logo={renderLogo()}
+          // onCollapse={isCollapsed => {
+          //   dispatch({
+          //     appActionType: 'change-ui-status',
+          //     payload: {
+          //       isNavCollapsed: isCollapsed,
+          //     },
+          //   });
+          // }}
+          collapsed={false}
+          hasSiderMenu={false}
+          defaultCollapsed={false}
+          menuFooterRender={renderNavFooter}
+          collapsedButtonRender={false}
+          menuItemRender={(item, dom) => (
+            <a
+              onClick={() => {
+                const { path = 'settledProblems' } = item;
+                setPath(path);
+                if (router.pathname !== path) {
+                  router.history.push(path);
+                }
+              }}
+            >
+              {dom}
+            </a>
+          )}
+          headerRender={() => <Header></Header>}
+          {...navConfig}
+          {...settings}
+          location={{
+            pathname: path,
+          }}
+        >
+          <Switch>
+            <Route path='/' exact render={() => (
+              <Redirect to='/settledProblems' />
+            )} />
+            {ROUTE.map(route => <Route key={route.name ?? '/settledProblems'} exact path={route.path ?? '/settledProblems'} component={route.component} />)}
+          </Switch>
+        </ProLayout>
+        {/* {isNotProduction && <SettingDrawer
         pathname={path}
         getContainer={() => document.getElementById('main')}
         settings={settings}
@@ -96,7 +103,8 @@ const App: React.FC<Record<string, never>> = () => {
         }}
         disableUrlParams
       />} */}
-    </div>
+      </div>
+    </QueryClientProvider>
   ), [isNavCollapsed, path]);
 };
 

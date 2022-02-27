@@ -1,5 +1,7 @@
 import to from 'await-to-js';
 import { StatusCodeError } from 'request-promise-native/errors';
+import { ErrorResp } from '../../appApi/base';
+import ERROR_CODE, { getErrorCodeMessage } from '../../errorCode';
 import Helper from '../utils/helper';
 import { Credit, EndPoint, Uris } from '../utils/interfaces';
 import Problem from './problem';
@@ -30,8 +32,12 @@ class Leetcode {
     Helper.switchEndPoint(endpoint);
     const [err, credit] = await to(this.login(username, password)) as any as [Error, Credit];
     if (err) {
-      throw new Error('Login Fail');
+      throw new ErrorResp({
+        code: (err as ErrorResp).code ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: (err as ErrorResp).message ?? getErrorCodeMessage(),
+      });
     }
+
     Helper.setCredit(credit);
     return new Leetcode(credit);
   }
@@ -43,49 +49,47 @@ class Leetcode {
       resolveWithFullResponse: true,
     }));
     if (err) {
-      throw new Error('Login Fail');
+      throw new ErrorResp({
+        code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: (err as StatusCodeError).message ?? getErrorCodeMessage(),
+      });
     }
     const token: string = Helper.parseCookie(response.headers['set-cookie'], 'csrftoken');
-    // Leetcode CN return null here, but it's does not matter
+    // Leetcode CN returns null here, but it does not matter
     let credit: Credit = {
       csrfToken: token
     };
     Helper.setCredit(credit);
 
     // then login
-    try {
-      const _response = await Helper.HttpRequest({
-        method: 'POST',
-        url: Leetcode.uris.login,
-        form: {
-          csrfmiddlewaretoken: token,
-          login: username,
-          password: password,
-        },
-        resolveWithFullResponse: true,
-        header: {
-          Referer: Leetcode.uris.login,
-          Origin: Leetcode.uris.base,
-          Cookie: `csrftoken=${token};`
-        }
+    const [e, _response] = await to(Helper.HttpRequest({
+      method: 'POST',
+      url: Leetcode.uris.login,
+      form: {
+        csrfmiddlewaretoken: token,
+        login: username,
+        password: password,
+      },
+      resolveWithFullResponse: true,
+    }));
+    if (e) {
+      throw new ErrorResp({
+        code: (e as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: (e as StatusCodeError).statusCode === 400 ? 'Invalid username or password' : e.message || getErrorCodeMessage(),
       });
-      const session = Helper.parseCookie(_response.headers['set-cookie'], 'LEETCODE_SESSION');
-      const csrfToken = Helper.parseCookie(_response.headers['set-cookie'], 'csrftoken');
-      credit = {
-        session: session,
-        csrfToken: csrfToken,
-      };
-    } catch (e) {
-      if (e instanceof StatusCodeError) {
-        throw new Error('Login Fail');
-      }
     }
+    const session = Helper.parseCookie(_response.headers['set-cookie'], 'LEETCODE_SESSION');
+    const csrfToken = Helper.parseCookie(_response.headers['set-cookie'], 'csrftoken');
+    credit = {
+      session: session,
+      csrfToken: csrfToken,
+    };
     return credit;
   }
 
   async getProfile(): Promise<any> {
     // ? TODO : fetch more user profile.
-    const response: any = await Helper.GraphQLRequest({
+    const [err, response]: any = await to(Helper.GraphQLRequest({
       query: `
             {
                 user {
@@ -93,14 +97,26 @@ class Leetcode {
                 }
             }
             `
-    });
+    }));
+    if (err) {
+      throw new ErrorResp({
+        code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: (err as StatusCodeError).message ?? getErrorCodeMessage(),
+      });
+    }
     return response.user;
   }
 
   async getAllProblems(): Promise<Array<Problem>> {
-    let response = await Helper.HttpRequest({
+    let [err, response] = await to(Helper.HttpRequest({
       url: Leetcode.uris.problemsAll,
-    });
+    }));
+    if (err) {
+      throw new ErrorResp({
+        code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: (err as StatusCodeError).message ?? getErrorCodeMessage(),
+      });
+    }
     response = JSON.parse(response);
     const problems: Array<Problem> = response.stat_status_pairs.map((p: any) => {
       return new Problem(
@@ -169,7 +185,7 @@ class Leetcode {
       );
     });
     return problems;
-  }
+  };
 
 }
 

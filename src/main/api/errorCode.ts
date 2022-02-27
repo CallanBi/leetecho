@@ -36,7 +36,7 @@ type ErrorCode = keyof typeof ErrorCodeMessageMap;
 
 type ErrorMessage = (typeof ErrorCodeMessageMap)[ErrorCode];
 
-const getErrorCodeMessage: (code?: ErrorCode | number) => ErrorMessage = (code) => ErrorCodeMessageMap[code as ErrorCodeType] ?? 'UNKNOWN ERROR';
+const getErrorCodeMessage: (code?: ErrorCode | number) => ErrorMessage | string = (code) => ErrorCodeMessageMap[code as ErrorCodeType] ?? 'UNKNOWN ERROR';
 
 export default ERROR_CODE;
 

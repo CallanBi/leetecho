@@ -42,21 +42,12 @@ ReactDOM.render(
 
 /** Test api from main process */
 (async () => {
-  const [loginErr, _] = await to(ipcRenderer.invoke('login', { usrName: 'yourUsrName', pwd: 'yourUsrPwd' } as LoginReq)) as [ErrorResp | null, LoginResp];
+  const [loginErr, _] = await to(ipcRenderer.invoke('login', { usrName: 'yourUsrName', pwd: 'yourPassWord' } as LoginReq)) as [Error | null, LoginResp];
   if (loginErr) {
+    debugger;
     console.log('%c err >>>', 'background: yellow; color: blue', loginErr);
   }
-
-  const [getAllProblemsErr, res] = await to(ipcRenderer.invoke('getAllProblems')) as [ErrorResp | null, GetAllProblemsResp];
-  if (getAllProblemsErr) {
-    console.log('%c err >>>', 'background: yellow; color: blue', loginErr);
-  }
+  console.log('%c _ >>>', 'background: yellow; color: blue', _);
   debugger;
-  console.log('%c res >>>', 'background: yellow; color: blue', res);
-
-  const { data: { problems } } = res;
-  debugger;
-  console.log('%c  problems>>>', 'background: yellow; color: blue', problems);
-
 
 })();
