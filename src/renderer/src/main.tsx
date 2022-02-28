@@ -41,13 +41,13 @@ ReactDOM.render(
 // console.log('%c get-path home >>>', 'background: yellow; color: blue', home ?? undefined);
 
 /** Test api from main process */
-(async () => {
-  const [loginErr, _] = await to(ipcRenderer.invoke('login', { usrName: 'yourUsrName', pwd: 'yourPassWord' } as LoginReq)) as [Error | null, LoginResp];
-  if (loginErr) {
-    debugger;
-    console.log('%c err >>>', 'background: yellow; color: blue', loginErr);
-  }
-  console.log('%c _ >>>', 'background: yellow; color: blue', _);
-  debugger;
+// (async () => {
+//   const [loginErr, _] = await to(ipcRenderer.invoke('login', { usrName: 'yourUsrName', pwd: 'yourPwd' } as LoginReq)) as [Error | null, LoginResp];
+//   if (loginErr) {
+//     debugger;
+//     console.log('%c err >>>', 'background: yellow; color: blue', loginErr);
+//   }
+//   console.log('%c _ >>>', 'background: yellow; color: blue', _);
+//   debugger;
 
-})();
+// })();

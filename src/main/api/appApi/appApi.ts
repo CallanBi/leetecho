@@ -34,6 +34,16 @@ class AppApi {
       problems: problems as UnPromisifyFunction<typeof this.leetcode.getAllProblems>,
     };
   }
+
+  async getAllTags() {
+    const [err, problems] = await to(this.leetcode.getAllTags());
+    if (err) {
+      throw err;
+    }
+    return {
+      tagGroups: problems as UnPromisifyFunction<typeof this.leetcode.getAllTags>,
+    };
+  }
 }
 
 export default AppApi;

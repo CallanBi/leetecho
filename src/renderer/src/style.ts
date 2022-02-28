@@ -56,7 +56,6 @@ const globalStyles = css`
   .ant-pro-sider-logo {
     margin-top: 27px;
   }
-
 `;
 
 /** fix Semi icon align style */

@@ -54,5 +54,23 @@ interface Uris {
     submission: string;
 }
 
-export { HttpRequestOptions, GraphQLRequestOptions, Credit, ProblemStatus, ProblemDifficulty, SubmissionStatus, EndPoint, Uris, };
+interface TagItem {
+    id: string;
+    name: string;
+    nameTranslated: string;
+    slug: string;
+}
+
+interface TagRelationItem {
+    questionNum: number;
+    tag: TagItem[];
+}
+
+interface TagGroupItem {
+    name: string;
+    transName: string;
+    tagRelation: TagRelationItem[];
+}
+
+export { HttpRequestOptions, GraphQLRequestOptions, Credit, ProblemStatus, ProblemDifficulty, SubmissionStatus, EndPoint, Uris, TagItem, TagRelationItem, TagGroupItem };
 

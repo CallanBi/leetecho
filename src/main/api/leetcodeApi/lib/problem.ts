@@ -11,6 +11,7 @@ class Problem {
   }
 
   constructor (
+    /**slug: A string that distinctly identifies a problem */
     readonly slug: string,
     public id?: number,
     public title?: string,
@@ -32,30 +33,22 @@ class Problem {
   async detail(): Promise<Problem> {
     const response = await Helper.GraphQLRequest({
       query: `
-                query getQuestionDetail($titleSlug: String!) {
-                    question(titleSlug: $titleSlug) {
-                        questionId
-                        title
-                        difficulty
-                        likes
-                        dislikes
-                        isLiked
-                        isPaidOnly
-                        stats
-                        status
-                        content
-                        topicTags {
-                            name
-                        }
-                        codeSnippets {
-                            lang
-                            langSlug
-                            code
-                        }
-                        sampleTestCase
-                    }
-                }
-            `,
+        query questionTagTypeWithTags {
+          questionTagTypeWithTags {
+            name
+            transName
+            tagRelation {
+              questionNum
+              tag {
+                name
+                id
+                nameTranslated
+                slug
+              }
+            }
+          }
+        }
+      `,
       variables: {
         titleSlug: this.slug,
       }
@@ -90,23 +83,23 @@ class Problem {
     while (hasNext) {
       const response = await Helper.GraphQLRequest({
         query: `
-                query Submissions($offset: Int!, $limit: Int!, $questionSlug: String!) {
-                    submissionList(offset: $offset, limit: $limit, questionSlug: $questionSlug) {
-                        lastKey
-                        hasNext
-                        submissions {
-                            id
-                            statusDisplay
-                            lang
-                            runtime
-                            timestamp
-                            url
-                            isPending
-                            memory
-                        }
-                    }
-                }
-                `,
+          query Submissions($offset: Int!, $limit: Int!, $questionSlug: String!) {
+              submissionList(offset: $offset, limit: $limit, questionSlug: $questionSlug) {
+                  lastKey
+                  hasNext
+                  submissions {
+                      id
+                      statusDisplay
+                      lang
+                      runtime
+                      timestamp
+                      url
+                      isPending
+                      memory
+                  }
+              }
+          }
+        `,
         variables: {
           offset: offet,
           limit: limit,

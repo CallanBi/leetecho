@@ -3,7 +3,7 @@ import { StatusCodeError } from 'request-promise-native/errors';
 import { ErrorResp } from '../../appApi/base';
 import ERROR_CODE, { getErrorCodeMessage } from '../../errorCode';
 import Helper from '../utils/helper';
-import { Credit, EndPoint, Uris } from '../utils/interfaces';
+import { Credit, EndPoint, TagGroupItem, Uris } from '../utils/interfaces';
 import Problem from './problem';
 
 class Leetcode {
@@ -119,6 +119,8 @@ class Leetcode {
     }
     response = JSON.parse(response);
     const problems: Array<Problem> = response.stat_status_pairs.map((p: any) => {
+      console.log('%c p >>>', 'background: yellow; color: blue', p);
+
       return new Problem(
         p.stat.question__title_slug,
         p.stat.question_id,
@@ -141,29 +143,35 @@ class Leetcode {
   }
 
   async getProblemsByTag(tag: string): Promise<Array<Problem>> {
-    const response = await Helper.GraphQLRequest({
+    const [err, response] = await to(Helper.GraphQLRequest({
       query: `
-                query getTopicTag($slug: String!) {
-                    topicTag(slug: $slug) {
-                        questions {
-                            status
-                            questionId
-                            title
-                            titleSlug
-                            stats
-                            difficulty
-                            isPaidOnly
-                            topicTags {
-                                slug
-                            }
-                        }
+        query getTopicTag($slug: String!) {
+            topicTag(slug: $slug) {
+                questions {
+                    status
+                    questionId
+                    title
+                    titleSlug
+                    stats
+                    difficulty
+                    isPaidOnly
+                    topicTags {
+                        slug
                     }
                 }
-            `,
+            }
+        }
+      `,
       variables: {
         slug: tag,
       }
-    });
+    }));
+    if (err) {
+      throw new ErrorResp({
+        code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: err.message || getErrorCodeMessage(),
+      });
+    }
     const problems: Array<Problem> = response.topicTag.questions.map((p: any) => {
       const stat: any = JSON.parse(p.stats);
       return new Problem(
@@ -187,6 +195,38 @@ class Leetcode {
     return problems;
   };
 
+  async getAllTags(): Promise<any> {
+    const [err, response] = await to(Helper.GraphQLRequest({
+      query: `
+        query questionTagTypeWithTags {
+          questionTagTypeWithTags {
+            name
+            transName
+            tagRelation {
+              questionNum
+              tag {
+                name
+                id
+                nameTranslated
+                slug
+              }
+            }
+          }
+        }
+      `,
+    }));
+    if (err) {
+      throw new ErrorResp({
+        code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: err.message || getErrorCodeMessage(),
+      });
+    }
+
+    console.log('%c response >>>', 'background: yellow; color: blue', response);
+
+    const { questionTagTypeWithTags: tagGroups } = response as { questionTagTypeWithTags: TagGroupItem[]; };
+    return tagGroups;
+  }
 }
 
 export default Leetcode;

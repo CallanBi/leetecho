@@ -8,6 +8,7 @@ import AllProblems from '@/views/allProblems';
 import DefaultTemplate from '@/views/defaultTemplate';
 import RemoteSettings from '@/views/remoteSettings';
 import SettledProblems from '@/views/settledProblems';
+import Login from '@/views/login';
 import { withSemiIconStyle } from '@/style';
 
 const navIconStyle: React.CSSProperties = {

@@ -14,6 +14,7 @@ import Header from './components/layout/header';
 
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+import Login from './views/login';
 
 const queryClient = new QueryClient();
 
@@ -35,16 +36,18 @@ const App: React.FC<Record<string, never>> = () => {
   const [settings, setSetting] = useState<Partial<ProSettings> | undefined>(layoutSettings);
   const [path, setPath] = useState<typeof ROUTE[number]['path']>('/settledProblems');
 
-  const { state, dispatch } = useContext(AppStoreContext);
+  const { state: appState, dispatch: appDispatch } = useContext(AppStoreContext);
 
-  const { uiStatus: { isNavCollapsed } } = state;
+  // const { uiStatus: { isNavCollapsed } } = state;
+
+  const { userState: { isLogin } } = appState;
 
   const router = useRouter();
 
   return useMemo(() => (
     <QueryClientProvider client={queryClient}>
       {isNotProduction && <ReactQueryDevtools initialIsOpen />}
-      <div
+      {isLogin && <div
         id="main"
         style={{
           height: '100vh',
@@ -103,9 +106,10 @@ const App: React.FC<Record<string, never>> = () => {
         }}
         disableUrlParams
       />} */}
-      </div>
+      </div>}
+      {!isLogin && <Login />}
     </QueryClientProvider>
-  ), [isNavCollapsed, path]);
+  ), [path]);
 };
 
 export default App;
