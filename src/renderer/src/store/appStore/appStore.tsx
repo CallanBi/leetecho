@@ -27,10 +27,12 @@ export type AppActionType = 'change-ui-status';
 export type AppAction = {
   appActionType: 'change-ui-status';
   payload: Partial<AppState['uiStatus']>;
+  /** isReplacement: decide whether to replace or merge original data, false as default */
   isReplacement?: boolean;
 } | {
   appActionType: 'change-user-status';
   payload: Partial<AppState['userState']>;
+  /** isReplacement: decide whether to replace or merge original data, false as default */
   isReplacement?: boolean;
 };
 
@@ -43,6 +45,8 @@ export const AppStoreContext = React.createContext<{
 export const reducer: React.Reducer<AppState, AppAction> = (state, appAction) => {
   const { appActionType } = appAction;
 
+  debugger;
+
   switch (appActionType) {
     case 'change-ui-status':
       if (appAction.isReplacement) {
@@ -50,6 +54,12 @@ export const reducer: React.Reducer<AppState, AppAction> = (state, appAction) =>
       } else {
         return { ...state, uiStatus: { ...state.uiStatus, ...appAction.payload } };
       }
+    case 'change-user-status':
+    if (appAction.isReplacement) {
+      return { ...state, uiStatus: appAction.payload };
+    } else {
+      return { ...state, userState: { ...state.userState, ...appAction.payload } };
+    }
     default:
       return state;
   }

@@ -7,7 +7,7 @@ export * from './allProblems/allProblems';
  * @param err Error
  * @returns number | null
  */
-export const getCodeFromMessage: (err: Error) =>
+export const getErrorCodeFromMessage: (err: Error) =>
   ErrorCodeType | null = (err) => err.message.match(/\d+/)?.[0] ?
     parseInt((err.message.match(/\d+/) as any as RegExpMatchArray)[0]) as ErrorCodeType :
     null;
@@ -17,7 +17,7 @@ export const getCodeFromMessage: (err: Error) =>
  * @param err Error
  * @returns string
  */
-export const getTypeFromMessage: (err: Error) => string = (err) => {
-  const code = getCodeFromMessage(err) ?? ERROR_CODE.UNKNOWN_ERROR as ErrorCodeType;
+export const getErrorTypeFromMessage: (err: Error) => string = (err) => {
+  const code = getErrorCodeFromMessage(err) ?? ERROR_CODE.UNKNOWN_ERROR as ErrorCodeType;
   return `${code} ${ErrorCodeMessageMap[code]}`;
 };

@@ -2,17 +2,15 @@ import to from 'await-to-js';
 import {
   useQuery,
 } from "react-query";
-import { ErrorResp } from 'src/main/api/appApi/base';
-import ERROR_CODE, { getErrorCodeMessage } from 'src/main/api/errorCode';
 
 const { bridge: { ipcRenderer } } = window;
 
 const useGetAllTags = () => {
-  return useQuery<GetAllTagsResp['data']['tagGroups'], ErrorResp>("getAllTags", async () => {
-    const [err, res] = await to(ipcRenderer.invoke('getAllTags')) as [ErrorResp | null, GetAllTagsResp];
+  return useQuery<GetAllTagsResp['data']['tagGroups'], Error>("getAllTags", async () => {
+    const [err, res] = await to(ipcRenderer.invoke('getAllTags')) as [Error | null, GetAllTagsResp];
     if (err) {
       console.log('%c err >>>', 'background: yellow; color: blue', err);
-      throw new ErrorResp({ code: 1, message: getErrorCodeMessage(ERROR_CODE.UNKNOWN_ERROR) });
+      throw err;
     }
     console.log('%c res >>>', 'background: yellow; color: blue', res);
 

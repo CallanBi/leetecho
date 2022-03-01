@@ -9,18 +9,26 @@ import AppStoreProvider from './store/appStore';
 import { Global } from '@emotion/react';
 import globalStyles from './style';
 import to from 'await-to-js';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { defaultOptions } from './const/reactQuery/reactQuerySettings';
 
 const { bridge: { removeLoading, ipcRenderer } } = window;
 
+const queryClient = new QueryClient({
+  defaultOptions: defaultOptions,
+});
+
 
 ReactDOM.render(
-  <AppStoreProvider>
-    <Global styles={globalStyles}></Global>
-    <HashRouter>
-      <App />
-    </HashRouter>,
-  </AppStoreProvider>,
-  document.getElementById('root'),
+  <QueryClientProvider client={queryClient}>
+    <AppStoreProvider>
+      <Global styles={globalStyles}></Global>
+      <HashRouter>
+        <App />
+      </HashRouter>,
+    </AppStoreProvider>,
+  </QueryClientProvider>,
+    document.getElementById('root'),
   () => {
     removeLoading();
   },

@@ -11,12 +11,9 @@ import { useRouter } from './hooks/router/useRouter';
 import { AppStoreContext } from './store/appStore/appStore';
 import NavFooter from './components/layout/navFooter';
 import Header from './components/layout/header';
-
-import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import Login from './views/login';
-
-const queryClient = new QueryClient();
+import { useQueryClient } from 'react-query';
 
 const { useState, useContext, useMemo } = React;
 const { bridge: { isNotProduction } } = window;
@@ -38,14 +35,16 @@ const App: React.FC<Record<string, never>> = () => {
 
   const { state: appState, dispatch: appDispatch } = useContext(AppStoreContext);
 
-  // const { uiStatus: { isNavCollapsed } } = state;
-
   const { userState: { isLogin } } = appState;
+
+  debugger;
+
+  const queryClient = useQueryClient();
 
   const router = useRouter();
 
-  return useMemo(() => (
-    <QueryClientProvider client={queryClient}>
+  return (
+    <>
       {isNotProduction && <ReactQueryDevtools initialIsOpen />}
       {isLogin && <div
         id="main"
@@ -108,8 +107,8 @@ const App: React.FC<Record<string, never>> = () => {
       />} */}
       </div>}
       {!isLogin && <Login />}
-    </QueryClientProvider>
-  ), [path]);
+    </>
+  );
 };
 
 export default App;
