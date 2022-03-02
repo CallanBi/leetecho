@@ -2,6 +2,7 @@ import App from '@/app';
 import to from 'await-to-js';
 import Leetcode from '../leetcodeApi';
 import { EndPoint } from '../leetcodeApi/utils/interfaces';
+import { GetProblemsRequest } from './idl/problems';
 
 interface UsrInfo {
   usrName: string;
@@ -43,6 +44,14 @@ class AppApi {
     return {
       tagGroups: problems as UnPromisifyFunction<typeof this.leetcode.getAllTags>,
     };
+  }
+
+  async getProblems(conditions: GetProblemsRequest) {
+    const [err, res] = await to(this.leetcode.getProblems(conditions));
+    if (err) {
+      throw err;
+    }
+    return res as UnPromisifyFunction<typeof this.leetcode.getProblems>;
   }
 }
 

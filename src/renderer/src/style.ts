@@ -56,6 +56,15 @@ const globalStyles = css`
   .ant-pro-sider-logo {
     margin-top: 27px;
   }
+
+  div.ant-layout {
+    height: 100vh;
+    .ant-layout-content {
+      overflow-y: auto;
+      margin: 0;
+      padding: 24px;
+    }
+  }
 `;
 
 /** fix Semi icon align style */

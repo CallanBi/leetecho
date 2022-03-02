@@ -37,8 +37,6 @@ const App: React.FC<Record<string, never>> = () => {
 
   const { userState: { isLogin } } = appState;
 
-  debugger;
-
   const queryClient = useQueryClient();
 
   const router = useRouter();

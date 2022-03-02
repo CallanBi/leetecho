@@ -1,6 +1,6 @@
 import ERROR_CODE, { ErrorCodeMessageMap } from 'src/main/api/errorCode';
 
-export * from './allProblems/allProblems';
+export * from './problems/problems';
 
 /**
  * Get error code from error message in renderer process.

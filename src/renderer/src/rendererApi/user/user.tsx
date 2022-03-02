@@ -7,7 +7,6 @@ import { ErrorResp } from 'src/main/api/appApi/base';
 const { bridge: { ipcRenderer } } = window;
 
 const useLogin = (params: LoginReq, enableVal: boolean) => {
-  debugger;
   return useQuery<LoginResp['data'], ErrorResp>(['login', params], async () => {
     const [err, res] = await to(ipcRenderer.invoke('login', params)) as [Error | null, LoginResp];
     if (err) {

@@ -1,5 +1,5 @@
 import Helper from '../utils/helper';
-import { ProblemDifficulty, ProblemStatus, Uris } from '../utils/interfaces';
+import { ProblemDifficulty, ProblemStatus, TopicTag, Uris } from '../utils/interfaces';
 import Submission from './submission';
 
 class Problem {
@@ -28,6 +28,15 @@ class Problem {
     public sampleTestCase?: string,
     public content?: string,
     public codeSnippets?: Array<any>,
+
+
+    public titleCN?: string,
+    public acRate?: number,
+    public difficultyString?: string,
+    public extra?: any,
+    public freqBar?: number,
+    public frontendQuestionId?: number,
+    public topicTags?: TopicTag[],
   ) { }
 
   async detail(): Promise<Problem> {
@@ -72,6 +81,7 @@ class Problem {
     this.sampleTestCase = question.sampleTestCase;
     this.content = question.content;
     this.codeSnippets = question.codeSnippets;
+
     return this;
   }
 

@@ -61,11 +61,25 @@ export default defineConfig({
           'component-background': `${COLOR_PALETTE.LEETECHO_GREY}`,
           'primary-color-hover': `${COLOR_PALETTE.LEETECHO_LIGHT_BLUE}`,
           'border-radius-base': `${MEASUREMENT.LEETECHO_BORDER_RADIUS_BASE}`,
+
+          /** Tips color */
+          'success-color': `${COLOR_PALETTE.LEETECHO_GREEN}`,
+          'warning-color': `${COLOR_PALETTE.LEETECHO_YELLOW}`,
+          'error-color': `${COLOR_PALETTE.LEETECHO_RED}`,
+
+
           /** Input */
           'input-bg': `${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}`,
           'input-placeholder-color': `${COLOR_PALETTE.LEETECHO_INPUT_PLACEHOLDER_COLOR}`,
           'input-border-color': `${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}`,
           'input-hover-border-color': `${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG}`,
+
+          /** Table */
+          'table-bg': `${COLOR_PALETTE.LEETECHO_WHITE}`,
+          'table-header-bg': `${COLOR_PALETTE.LEETECHO_WHITE}`,
+          'table-row-hover-bg': `${COLOR_PALETTE.LEETECHO_GREY}`,
+          'table-border-color': `${COLOR_PALETTE.LEETECHO_WHITE}`,
+          'table-header-cell-split-color': `${COLOR_PALETTE.LEETECHO_WHITE}`,
         }
       },
     }

@@ -45,8 +45,6 @@ export const AppStoreContext = React.createContext<{
 export const reducer: React.Reducer<AppState, AppAction> = (state, appAction) => {
   const { appActionType } = appAction;
 
-  debugger;
-
   switch (appActionType) {
     case 'change-ui-status':
       if (appAction.isReplacement) {

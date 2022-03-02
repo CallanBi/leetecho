@@ -1,9 +1,11 @@
 import to from 'await-to-js';
 import { StatusCodeError } from 'request-promise-native/errors';
+import { deleteNilVal } from '../../../tools';
 import { ErrorResp } from '../../appApi/base';
+import { GetProblemsRequest } from '../../appApi/idl/problems';
 import ERROR_CODE, { getErrorCodeMessage } from '../../errorCode';
 import Helper from '../utils/helper';
-import { Credit, EndPoint, TagGroupItem, Uris } from '../utils/interfaces';
+import { Credit, EndPoint, GetProblemsFromGraphQLResponse, TagGroupItem, Uris } from '../utils/interfaces';
 import Problem from './problem';
 
 class Leetcode {
@@ -140,6 +142,89 @@ class Leetcode {
       );
     });
     return problems;
+  }
+
+  async getProblems(conditions: GetProblemsRequest): Promise<GetProblemsFromGraphQLResponse['problemsetQuestionList']> {
+    const [err, response] = await to(Helper.GraphQLRequest({
+      query: `
+      query problemsetQuestionList($categorySlug: String, $limit: Int, $skip: Int, $filters: QuestionListFilterInput) {
+        problemsetQuestionList(
+          categorySlug: $categorySlug
+          limit: $limit
+          skip: $skip
+          filters: $filters
+        ) {
+          hasMore
+          total
+          questions {
+            acRate
+            difficulty
+            freqBar
+            frontendQuestionId
+            isFavor
+            paidOnly
+            solutionNum
+            status
+            title
+            titleCn
+            titleSlug
+            topicTags {
+              name
+              nameTranslated
+              id
+              slug
+            }
+            extra {
+              hasVideoSolution
+              topCompanyTags {
+                imgUrl
+                slug
+                numSubscribed
+              }
+            }
+          }
+        }
+      }
+      `,
+      variables: deleteNilVal({
+        categorySlug: '',
+        filters: {},
+        limit: 50,
+        skip: 0,
+        ...conditions,
+      }),
+    }));
+    if (err) {
+      throw new ErrorResp({
+        code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: err.message || getErrorCodeMessage(),
+      });
+    }
+    // console.log('%c getProblemsResponse >>>', 'background: yellow; color: blue', response);
+    const { problemsetQuestionList } = response;
+    return problemsetQuestionList as GetProblemsFromGraphQLResponse['problemsetQuestionList'];
+
+    // const problems: Array<Problem> = response.topicTag.questions.map((p: any) => {
+    //   const stat: any = JSON.parse(p.stats);
+    //   return new Problem(
+    //     p.titleSlug,
+    //     p.questionId,
+    //     p.title,
+    //     stat.title,
+    //     undefined,
+    //     p.isPaidOnly,
+    //     undefined,
+    //     undefined,
+    //     Helper.statusMap(p.status),
+    //     p.topicTags.map((t: any) => t.slug),
+    //     stat.totalAcceptedRaw,
+    //     stat.totalSubmissionRaw,
+    //     undefined,
+    //     undefined,
+    //     undefined
+    //   );
+    // });
+    // return problems;
   }
 
   async getProblemsByTag(tag: string): Promise<Array<Problem>> {

@@ -57,7 +57,7 @@ interface Uris {
 interface TagItem {
     id: string;
     name: string;
-    nameTranslated: string;
+    nameTranslated?: string;
     slug: string;
 }
 
@@ -70,6 +70,61 @@ interface TagGroupItem {
     name: string;
     transName: string;
     tagRelation: TagRelationItem[];
+}
+
+export interface TopicTag {
+    id: string;
+    name: string;
+    slug: string;
+    nameTranslated?: string;
+    __typename: string;
+}
+
+export interface TopCompanyTag {
+    imgUrl: string;
+    slug: string;
+    __typename: string;
+}
+
+
+type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
+type Status = 'NOT_STARTED' | 'AC' | 'TRIED';
+type CategorySlug = '' | 'algorithms' | 'database' | 'shell';
+
+export interface Extra {
+    companyTagNum?: number;
+    hasVideoSolution?: boolean;
+    topCompanyTags?: TopCompanyTag[];
+    __typename?: string;
+    [key: string]: unknown;
+}
+
+export type ProblemItemFromGraphQL = {
+    __typename: string;
+    acRate: number;
+    difficulty: Difficulty;
+    freqBar: number;
+    paidOnly: boolean;
+    status: Status;
+    frontendQuestionId: string;
+    isFavor: boolean;
+    solutionNum: number;
+    title: string;
+    titleCn: string;
+    titleSlug: string;
+    topicTags: TopicTag[];
+    extra: Extra;
+};
+
+export type ProblemsetQuestionList = {
+    hasMore: boolean;
+    total: number;
+    questions: ProblemItemFromGraphQL[];
+    __typename: string;
+};
+
+export interface GetProblemsFromGraphQLResponse {
+    problemsetQuestionList: ProblemsetQuestionList;
 }
 
 export { HttpRequestOptions, GraphQLRequestOptions, Credit, ProblemStatus, ProblemDifficulty, SubmissionStatus, EndPoint, Uris, TagItem, TagRelationItem, TagGroupItem };

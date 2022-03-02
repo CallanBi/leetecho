@@ -40,7 +40,19 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     submittedVal: { username: '', password: '' },
   });
 
-  const { isLoading, isSuccess, isError, data, error } = useLogin({ usrName: loginInfo.submittedVal.username, pwd: loginInfo.submittedVal.password }, loginInfo.isSubmitted);
+  const {
+    isLoading,
+    isSuccess,
+    isError,
+    data,
+    error
+  } = useLogin(
+    {
+      usrName: loginInfo.submittedVal.username,
+      pwd: loginInfo.submittedVal.password
+    },
+    loginInfo.isSubmitted
+  );
 
   const onSubmit = (val: { username: string; password: string; }) => {
     setLoginInfo({
