@@ -6,11 +6,16 @@ const {
   bridge: { ipcRenderer },
 } = window;
 
-const useLogin = (params: LoginReq, enableVal: boolean) =>
+const useLogin = (
+  params: LoginReq,
+  enableVal: boolean,
+  onSuccess: (data: LoginResp['data']) => void,
+  onError: (err: Error) => unknown,
+) =>
   useQuery<LoginResp['data'], Error>(
     ['login', params],
     async () => {
-      const [err, res] = (await to(ipcRenderer.invoke('login', params))) as [Error | null, LoginResp];
+      const [err, res] = (await to(ipcRenderer.invoke('login', params))) as [Error | null, LoginResp['data']];
       if (err) {
         console.log('%c err >>>', 'background: yellow; color: blue', err);
         throw err;
@@ -22,6 +27,8 @@ const useLogin = (params: LoginReq, enableVal: boolean) =>
       enabled: enableVal,
       retry: false,
       cacheTime: 0 /** user info should not be cached */,
+      onSuccess,
+      onError,
     },
   );
 

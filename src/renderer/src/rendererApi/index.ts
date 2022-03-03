@@ -7,10 +7,11 @@ export * from './problems/problems';
  * @param err Error
  * @returns number | null
  */
-export const getErrorCodeFromMessage: (err: Error) => ErrorCodeType | null = (err) =>
-  err.message.match(/\d+/)?.[0]
-    ? (parseInt((err.message.match(/\d+/) as any as RegExpMatchArray)[0]) as ErrorCodeType)
+export const getErrorCodeFromMessage: (err: Error) => ErrorCodeType | null = (err) => {
+  return err.message.match(/\d+/)?.[0]
+    ? (parseInt((err.message?.match(/\d+/) as any as RegExpMatchArray)[0]) as ErrorCodeType)
     : null;
+};
 
 /**
  * Get formatted message from error message in renderer process.

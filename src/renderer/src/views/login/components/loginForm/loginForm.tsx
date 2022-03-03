@@ -1,9 +1,7 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
-import {
-  Button, Form, Input, message,
-} from 'antd';
+import { Button, Form, Input, message } from 'antd';
 import { IconArrowRight } from '@douyinfe/semi-icons';
 import { useQuery } from 'react-query';
 import { app } from 'electron';
@@ -12,63 +10,34 @@ import { useLogin } from '@/rendererApi/user';
 import { getErrorCodeFromMessage } from '@/rendererApi';
 import { AppStoreContext } from '@/store/appStore/appStore';
 
-const {
-  useRef, useState, useEffect, useMemo, useContext,
-} = React;
+const { useRef, useState, useEffect, useMemo, useContext } = React;
 
 const LoginInputSection = styled.section`
   -webkit-app-region: no-drag;
   .ant-form-item-required {
     ::before {
-      visibility: hidden!important;
+      visibility: hidden !important;
     }
   }
 `;
 
-interface LoginFormProps {
-}
+interface LoginFormProps {}
 
 const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
-  const { } = props;
+  const {} = props;
   const [form] = Form.useForm();
 
   const { state: appState, dispatch: appDispatch } = useContext(AppStoreContext);
 
-  const { userState: { isLogin } } = appState;
-
   const [loginInfo, setLoginInfo] = useState<{
     isSubmitted: boolean;
-    submittedVal: { username: string; password: string; };
+    submittedVal: { username: string; password: string };
   }>({
     isSubmitted: false,
     submittedVal: { username: '', password: '' },
   });
 
-  const {
-    isLoading,
-    isSuccess,
-    isError,
-    data,
-    error,
-  } = useLogin(
-    {
-      usrName: loginInfo.submittedVal.username,
-      pwd: loginInfo.submittedVal.password,
-    },
-    loginInfo.isSubmitted,
-  );
-
-  const onSubmit = (val: { username: string; password: string; }) => {
-    setLoginInfo({
-      isSubmitted: true,
-      submittedVal: {
-        username: val.username,
-        password: val.password,
-      },
-    });
-  };
-
-  if (isSuccess) {
+  const onLoginSuccess = () => {
     if (loginInfo.isSubmitted) {
       setLoginInfo({ ...loginInfo, isSubmitted: false });
       appDispatch({
@@ -79,18 +48,38 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
       });
       message.success('登录成功');
     }
-  }
+  };
 
-  if (isError) {
+  const onLoginError = (error: Error) => {
     if (loginInfo.isSubmitted) {
       setLoginInfo({ ...loginInfo, isSubmitted: false });
-      if (getErrorCodeFromMessage(error!) === 400) {
+      if (getErrorCodeFromMessage(error) === 400) {
         message.error('用户名或密码错误，请重新输入');
       } else {
         message.error('未知错误');
       }
     }
-  }
+  };
+
+  const { isLoading } = useLogin(
+    {
+      usrName: loginInfo.submittedVal.username,
+      pwd: loginInfo.submittedVal.password,
+    },
+    loginInfo.isSubmitted,
+    onLoginSuccess,
+    onLoginError,
+  );
+
+  const onSubmit = (val: { username: string; password: string }) => {
+    setLoginInfo({
+      isSubmitted: true,
+      submittedVal: {
+        username: val.username,
+        password: val.password,
+      },
+    });
+  };
 
   return (
     <LoginInputSection>
@@ -113,11 +102,7 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
           <Input />
         </Form.Item>
 
-        <Form.Item
-          label="LeetCode 密码"
-          name="password"
-          rules={[{ required: true, message: '请输入 Leetcode 密码' }]}
-        >
+        <Form.Item label="LeetCode 密码" name="password" rules={[{ required: true, message: '请输入 Leetcode 密码' }]}>
           <Input.Password />
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 11, span: 16 }}>

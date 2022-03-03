@@ -2,12 +2,13 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import { SpinProps, Table, Tag } from 'antd';
-import { ColumnsType, ColumnType, TablePaginationConfig } from 'antd/lib/table';
+import { ColumnsType, ColumnType, TablePaginationConfig, TableProps } from 'antd/lib/table';
 import { COLOR_PALETTE } from 'src/const/theme/color';
 import { IconMinus, IconPulse, IconTick } from '@douyinfe/semi-icons';
 import { getI18nWord } from '@/const/i18n';
 import { withSemiIconStyle } from '@/style';
 import { random } from 'lodash';
+import { FilterValue, SorterResult, TableCurrentDataSource } from 'antd/lib/table/interface';
 
 const { useRef, useState, useEffect, useMemo } = React;
 
@@ -20,6 +21,8 @@ interface ProblemTableProps<RecordType extends UnArray<GetProblemsResp['data']['
     isLoading?: boolean | SpinProps;
     pagination?: TablePaginationConfig;
   };
+  onChange: TableProps<RecordType>['onChange'];
+  isError?: boolean;
 }
 
 const defaultColumns: ColumnType<UnArray<GetProblemsResp['data']['questions']>>[] = [
@@ -45,6 +48,7 @@ const defaultColumns: ColumnType<UnArray<GetProblemsResp['data']['questions']>>[
     title: '题目',
     dataIndex: 'title',
     key: 'title',
+    sorter: true,
     render: (_, record) => (
       <>
         <section>{`${record.titleCn}`}</section>
@@ -56,12 +60,14 @@ const defaultColumns: ColumnType<UnArray<GetProblemsResp['data']['questions']>>[
     title: '通过率',
     dataIndex: 'acRate',
     key: 'acRate',
+    sorter: true,
     render: (acRate: number) => <>{`${(acRate * 100).toFixed(2)}%`}</>,
   },
   {
     title: '难度',
     dataIndex: 'difficulty',
     key: 'difficulty',
+    sorter: true,
     render: (difficulty: Difficulty) => {
       const difficultyColorMap: { [key in Difficulty]: string } = {
         EASY: COLOR_PALETTE.LEETECHO_GREEN,
@@ -94,19 +100,27 @@ function ProblemTable<RecordType extends UnArray<GetProblemsResp['data']['questi
   props: React.PropsWithChildren<ProblemTableProps<RecordType>>,
 ) {
   const {
-    tableStatus: { isLoading, pagination = {} },
+    tableStatus: { isLoading, pagination: problemsPagination = {} },
     tableConst: { dataSource = [], columns = defaultColumns },
+    isError = false,
+    onChange,
   } = props;
 
   console.log('%c dataSource >>>', 'background: yellow; color: blue', dataSource);
 
   return (
-    <Table
-      dataSource={dataSource || []}
-      loading={isLoading}
-      columns={columns as ColumnsType<RecordType>}
-      pagination={pagination}
-    />
+    <>
+      {/* TODO: Add Error Components */}
+      {isError && <div>Something goes wrong</div>}
+      <Table
+        dataSource={dataSource || []}
+        rowKey={(record) => record.titleSlug}
+        loading={isLoading}
+        columns={columns as ColumnsType<RecordType>}
+        pagination={problemsPagination}
+        onChange={onChange}
+      />
+    </>
   );
 }
 
