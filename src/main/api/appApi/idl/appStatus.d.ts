@@ -1,5 +1,5 @@
 /** appStatus types */
-export { };
+export {};
 
 declare global {
   type WindowStatus = 'maximized' | 'minimized' | 'closed' | 'windowed';
@@ -20,5 +20,4 @@ declare global {
 
   /** windowed */
   type WindowedResp = SetWinStatusResp;
-
 }

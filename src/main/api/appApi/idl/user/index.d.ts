@@ -1,5 +1,5 @@
 /** user types */
-export { };
+export {};
 
 declare global {
   type LoginReq = {
@@ -7,6 +7,5 @@ declare global {
     pwd: string;
   };
 
-  type LoginResp = SuccessResp<{
-  }>;
+  type LoginResp = SuccessResp<Record<string, never>>;
 }

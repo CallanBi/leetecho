@@ -10,7 +10,7 @@ export type GetAllProblemsResponse = SuccessResp<{
 
 export type GetProblemsRequest = {
   categorySlug?: '' | 'algorithms' | 'database' | 'shell';
-  /** skip: for pagination, the number of problems to skip. Calculated by pageSize * pageNum. Default value is 0*/
+  /** skip: for pagination, the number of problems to skip. Calculated by pageSize * pageNum. Default value is 0 */
   skip?: number;
   /** limit: for pagination, default value is 50 */
   limit?: number;

@@ -1,5 +1,4 @@
-
-export { };
+export {};
 
 declare global {
   interface Window {
@@ -15,7 +14,7 @@ declare global {
       isDebug: boolean;
       isNotProduction: boolean;
       // app: typeof import('electron').app;
-      platform: typeof process.platform,
+      platform: typeof process.platform;
     };
   }
 }

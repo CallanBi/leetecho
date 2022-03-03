@@ -3,10 +3,10 @@ import { join } from 'path';
 import to from 'await-to-js';
 import { app, BrowserWindow, ipcMain } from 'electron';
 import './electronStore/electronStore';
+import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { DEFAULT_WINDOW_OPTIONS } from './const/electronOptions/window';
 
 // const { default: installExtension, REACT_DEVELOPER_TOOLS } = await import('electron-devtools-installer');
-import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 
 import './api/index';
 
@@ -14,7 +14,7 @@ process.setMaxListeners(0);
 
 const isDev = process.env.NODE_ENV === 'development';
 
-/* devTools 安装*/
+/* devTools 安装 */
 const installDevTools = async () => {
   const [err, name] = await to(installExtension(REACT_DEVELOPER_TOOLS.id));
   if (err) {
@@ -23,7 +23,6 @@ const installDevTools = async () => {
   }
   console.log(`Added Extension:  ${name}`);
 };
-
 
 const isWin7 = os.release().startsWith('6.1');
 if (isWin7) app.disableHardwareAcceleration();
@@ -43,7 +42,7 @@ async function createWindow() {
   /** 去除菜单栏，保持跨平台风格统一 */
   win.removeMenu();
 
-  if (Boolean(app.isPackaged) && !Boolean(process.env.DEBUG)) {
+  if (Boolean(app.isPackaged) && !process.env.DEBUG) {
     // isProductionEnv
     win.loadFile(join(__dirname, '../renderer/index.html'));
   } else {
@@ -54,14 +53,13 @@ async function createWindow() {
     win.webContents.openDevTools();
   }
 
-
   // Test active push message to Renderer-process.
   // win.webContents.on('did-finish-load', () => {
   //   win?.webContents.send('main-process-message', (new Date).toLocaleString());
   // });
 
   /** renderer 事件监听 */
-  /** 注意：需要通过句点表示法访问 win 实例里的方法，不能解构，否则win 实例的 this 得不到保留，会报错*/
+  /** 注意：需要通过句点表示法访问 win 实例里的方法，不能解构，否则win 实例的 this 得不到保留，会报错 */
 
   // ipcMain.on('get-path', (event, args: Parameters<typeof app.getPath>[0]) => {
   //   event.returnValue = app.getPath(args);
@@ -76,7 +74,9 @@ async function createWindow() {
     const isMinimized = win.isMinimized();
 
     const allWindows = BrowserWindow.getAllWindows();
-    return isMaximized ? 'maximized' : (isMinimized ? 'minimized' : (allWindows.length === 0 ? 'closed' : 'windowed')) as WindowStatus;
+    return isMaximized
+      ? 'maximized'
+      : ((isMinimized ? 'minimized' : allWindows.length === 0 ? 'closed' : 'windowed') as WindowStatus);
   };
 
   ipcMain.on('get-win-status', (event) => {

@@ -47,11 +47,7 @@ describe('# Leetcode', () => {
     this.enableTimeouts(false);
     it('Should throw login error', async () => {
       try {
-        await Leetcode.build(
-          'a wrong username',
-          'a wrong password',
-          EndPoint.US
-        );
+        await Leetcode.build('a wrong username', 'a wrong password', EndPoint.US);
       } catch (e) {
         expect(e).to.be.an('Error');
         expect(e.message).to.equal('Login Fail');

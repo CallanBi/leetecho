@@ -28,4 +28,4 @@ const store = {
 //   console.log('electron-store ->', 'path:', await window.bridge.ipcRenderer.invoke('electron-store', 'path'));
 // })();
 
-export { };
+export {};

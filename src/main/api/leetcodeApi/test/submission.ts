@@ -17,9 +17,7 @@ describe('# Submission', async function () {
       process.env.LEETCODE_ENDPOINT === 'CN' ? EndPoint.CN : EndPoint.US,
     );
     const problems: Array<Problem> = await leetcode.getAllProblems();
-    const acceptedProblems: Array<Problem> = problems.filter((p: Problem) => {
-      return p.status === ProblemStatus.Accept;
-    });
+    const acceptedProblems: Array<Problem> = problems.filter((p: Problem) => p.status === ProblemStatus.Accept);
     const submissions: Array<Submission> = await acceptedProblems[0].getSubmissions();
     submission = submissions[0];
     await submission.detail();
@@ -36,7 +34,7 @@ describe('# Submission', async function () {
     expect(submission.memory).to.be.a('string');
     expect(submission.runtime).to.be.a('string');
     expect(submission.status).to.be.oneOf([
-      SubmissionStatus['Accepted'],
+      SubmissionStatus.Accepted,
       SubmissionStatus['Compile Error'],
       SubmissionStatus['Time Limit Exceeded'],
       SubmissionStatus['Wrong Answer'],

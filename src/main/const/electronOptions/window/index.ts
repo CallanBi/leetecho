@@ -1,8 +1,8 @@
 import { app, BrowserWindowConstructorOptions } from 'electron';
+import { join } from 'path';
 
 /** 应用名称 */
 export const APP_NAME = app.name;
-import { join } from 'path';
 
 /** 应用版本 */
 export const APP_VERSION = app.getVersion();
@@ -26,7 +26,7 @@ export const DEFAULT_WINDOW_OPTIONS: BrowserWindowConstructorOptions = {
   height: 850,
   minHeight: 642,
   minWidth: 1000,
-  frame: process.platform === 'win32' ? false : true, // 无边框窗口
+  frame: process.platform !== 'win32', // 无边框窗口
   titleBarStyle: 'hiddenInset',
   trafficLightPosition: { x: 7, y: 7 },
   webPreferences: {
@@ -36,5 +36,3 @@ export const DEFAULT_WINDOW_OPTIONS: BrowserWindowConstructorOptions = {
   hasShadow: true,
   vibrancy: 'fullscreen-ui', // OSX 毛玻璃效果
 };
-
-

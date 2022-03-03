@@ -1,25 +1,24 @@
+import { Spin, Table } from 'antd';
+import * as React from 'react';
+import Loading from '@/components/loading';
 import { useGetProblems } from '@/rendererApi/problems';
 import { useGetAllTags } from '@/rendererApi/tags';
-import { Table } from 'antd';
-import * as React from 'react';
 import {
-} from "react-query";
+} from 'react-query';
 
-import ProblemTable from '../login/components/problemTable';
+import ProblemTable from '../../components/problemTable';
 
-const { useRef, useState, useEffect, useMemo } = React;
-
-
+const {
+  useRef, useState, useEffect, useMemo,
+} = React;
 
 interface AllProblemsProp {
 }
 
 const defaultProps: AllProblemsProp = {};
 
-const problemColumns = [];
 
 const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = defaultProps) => {
-
   const {
     isLoading: isGetProblemsLoading,
     isSuccess: isGetProblemsSuccess,
@@ -29,19 +28,20 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
   } = useGetProblems({});
 
   console.log('%c getProblemsData.questions >>>', 'background: yellow; color: blue', getProblemsData?.questions);
-  debugger;
-
 
   return (
-    <><ProblemTable tableConst={{
-      dataSource: getProblemsData?.questions || [],
-    }} tableStatus={{
-      isLoading: isGetProblemsLoading,
-      pagination: {
-        pageSize: 50,
-        total: getProblemsData?.total || 0,
-      }
-    }}></ProblemTable></>
+    <ProblemTable
+      tableConst={{
+        dataSource: getProblemsData?.questions || [],
+      }}
+      tableStatus={{
+        isLoading: { indicator: Loading, spinning: isGetProblemsLoading },
+        pagination: {
+          pageSize: 50,
+          total: getProblemsData?.total || 0,
+        },
+      }}
+    />
   );
 };
 

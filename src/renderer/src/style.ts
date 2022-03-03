@@ -3,14 +3,13 @@ import { css } from '@emotion/react';
 import { COLOR_PALETTE } from 'src/const/theme/color';
 
 const globalStyles = css`
-
   .ant-layout {
     background-color: ${COLOR_PALETTE.LEETECHO_WHITE};
   }
 
   .ant-layout-header {
-    height: 48px!important;
-    line-height: 48px!important;
+    height: 48px !important;
+    line-height: 48px !important;
   }
 
   .ant-input {
@@ -68,12 +67,10 @@ const globalStyles = css`
 `;
 
 /** fix Semi icon align style */
-export const withSemiIconStyle: (style?: React.CSSProperties | undefined) => React.CSSProperties = (style) => {
-  return {
-    position: 'relative',
-    top: 3,
-    ...style,
-  };
-};
+export const withSemiIconStyle: (style?: React.CSSProperties | undefined) => React.CSSProperties = (style) => ({
+  position: 'relative',
+  top: 3,
+  ...style,
+});
 
 export default globalStyles;

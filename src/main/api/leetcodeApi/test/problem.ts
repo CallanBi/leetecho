@@ -27,20 +27,12 @@ describe('# Problem', async function () {
     expect(problem.id).to.be.a('number');
     expect(problem.title).to.be.a('string');
     expect(problem.content).to.be.a('string');
-    expect(problem.difficulty).to.be.oneOf([
-      ProblemDifficulty['Easy'],
-      ProblemDifficulty['Medium'],
-      ProblemDifficulty['Hard'],
-    ]);
+    expect(problem.difficulty).to.be.oneOf([ProblemDifficulty.Easy, ProblemDifficulty.Medium, ProblemDifficulty.Hard]);
     expect(problem.starred).to.be.a('boolean');
     expect(problem.locked).to.be.a('boolean');
     expect(problem.likes).to.be.a('number');
     expect(problem.dislikes).to.be.a('number');
-    expect(problem.status).to.be.oneOf([
-      ProblemStatus['Accept'],
-      ProblemStatus['Not Accept'],
-      ProblemStatus['Not Start'],
-    ]);
+    expect(problem.status).to.be.oneOf([ProblemStatus.Accept, ProblemStatus['Not Accept'], ProblemStatus['Not Start']]);
     expect(problem.tag).to.be.an('array');
     expect(problem.totalAccepted).to.be.a('number');
     expect(problem.totalSubmission).to.be.a('number');

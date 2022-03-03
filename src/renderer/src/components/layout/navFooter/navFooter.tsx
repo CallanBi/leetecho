@@ -41,31 +41,27 @@ const publishButtonIconStyle: React.CSSProperties = {
   top: 4,
 };
 
+interface NavFooterProps {}
 
-
-interface NavFooterProps {
-}
-
-const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
-  return (
-    <Footer>
-      <PublishButtonSection>
-        <Button type="primary" shape="round" style={publishButtonStyle} icon={<IconUpload style={withSemiIconStyle(publishButtonIconStyle)} />}>
-          发布
-        </Button>
-      </PublishButtonSection>
-      <FooterToolSection>
-        <Button type="link" icon={<IconSetting />}>
-        </Button>
-        <Button type="link" icon={<IconGlobeStroke />}>
-        </Button>
-        <Button type="link" icon={<IconGithubLogo />}>
-        </Button>
-        <Button type="link" icon={<IconLanguage />}>
-        </Button>
-      </FooterToolSection>
-    </Footer>
-  );
-};
+const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => (
+  <Footer>
+    <PublishButtonSection>
+      <Button
+        type="primary"
+        shape="round"
+        style={publishButtonStyle}
+        icon={<IconUpload style={withSemiIconStyle(publishButtonIconStyle)} />}
+      >
+        发布
+      </Button>
+    </PublishButtonSection>
+    <FooterToolSection>
+      <Button type="link" icon={<IconSetting />} />
+      <Button type="link" icon={<IconGlobeStroke />} />
+      <Button type="link" icon={<IconGithubLogo />} />
+      <Button type="link" icon={<IconLanguage />} />
+    </FooterToolSection>
+  </Footer>
+);
 
 export default NavFooter;

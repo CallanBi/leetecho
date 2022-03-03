@@ -1,16 +1,20 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
-import { Button, Form, Input, message } from 'antd';
-import { withSemiIconStyle } from '@/style';
+import {
+  Button, Form, Input, message,
+} from 'antd';
 import { IconArrowRight } from '@douyinfe/semi-icons';
-import { useLogin } from '@/rendererApi/user';
 import { useQuery } from 'react-query';
+import { app } from 'electron';
+import { withSemiIconStyle } from '@/style';
+import { useLogin } from '@/rendererApi/user';
 import { getErrorCodeFromMessage } from '@/rendererApi';
 import { AppStoreContext } from '@/store/appStore/appStore';
-import { app } from 'electron';
 
-const { useRef, useState, useEffect, useMemo, useContext } = React;
+const {
+  useRef, useState, useEffect, useMemo, useContext,
+} = React;
 
 const LoginInputSection = styled.section`
   -webkit-app-region: no-drag;
@@ -45,13 +49,13 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     isSuccess,
     isError,
     data,
-    error
+    error,
   } = useLogin(
     {
       usrName: loginInfo.submittedVal.username,
-      pwd: loginInfo.submittedVal.password
+      pwd: loginInfo.submittedVal.password,
     },
-    loginInfo.isSubmitted
+    loginInfo.isSubmitted,
   );
 
   const onSubmit = (val: { username: string; password: string; }) => {
@@ -60,7 +64,7 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
       submittedVal: {
         username: val.username,
         password: val.password,
-      }
+      },
     });
   };
 
@@ -71,7 +75,7 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
         appActionType: 'change-user-status',
         payload: {
           isLogin: true,
-        }
+        },
       });
       message.success('登录成功');
     }
@@ -87,7 +91,6 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
       }
     }
   }
-
 
   return (
     <LoginInputSection>
@@ -125,11 +128,10 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
             icon={<IconArrowRight style={withSemiIconStyle()} />}
             style={{ borderRadius: 36, marginTop: 24 }}
             loading={isLoading}
-          >
-          </Button>
+          />
         </Form.Item>
       </Form>
-    </LoginInputSection >
+    </LoginInputSection>
   );
 };
 

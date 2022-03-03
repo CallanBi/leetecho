@@ -15,9 +15,20 @@ const enum ERROR_CODE {
 
 type ErrorCodeType = 200 | 302 | 304 | 400 | 403 | 404 | 500 | 502 | 503 | 1 | 2;
 
-type ErrorCodeMessageType = 'OK' | 'REDIRECT' | 'NOT_MODIFIED' | 'BAD_REQUEST' | 'FORBIDDEN' | 'NOT_FOUND' | 'INTERNAL_SERVER_ERROR' | 'BAD_GATEWAY' | 'SERVICE_UNAVAILABLE' | 'UNKNOWN_ERROR' | 'NOT_LOGIN';
+type ErrorCodeMessageType =
+  | 'OK'
+  | 'REDIRECT'
+  | 'NOT_MODIFIED'
+  | 'BAD_REQUEST'
+  | 'FORBIDDEN'
+  | 'NOT_FOUND'
+  | 'INTERNAL_SERVER_ERROR'
+  | 'BAD_GATEWAY'
+  | 'SERVICE_UNAVAILABLE'
+  | 'UNKNOWN_ERROR'
+  | 'NOT_LOGIN';
 
-const ErrorCodeMessageMap: { [key in ErrorCodeType]: ErrorCodeMessageType; } = {
+const ErrorCodeMessageMap: { [key in ErrorCodeType]: ErrorCodeMessageType } = {
   200: 'OK',
   302: 'REDIRECT',
   304: 'NOT_MODIFIED',
@@ -34,9 +45,10 @@ const ErrorCodeMessageMap: { [key in ErrorCodeType]: ErrorCodeMessageType; } = {
 
 type ErrorCode = keyof typeof ErrorCodeMessageMap;
 
-type ErrorMessage = (typeof ErrorCodeMessageMap)[ErrorCode];
+type ErrorMessage = typeof ErrorCodeMessageMap[ErrorCode];
 
-const getErrorCodeMessage: (code?: ErrorCode | number) => ErrorMessage | string = (code) => ErrorCodeMessageMap[code as ErrorCodeType] ?? 'UNKNOWN ERROR';
+const getErrorCodeMessage: (code?: ErrorCode | number) => ErrorMessage | string = (code) =>
+  ErrorCodeMessageMap[code as ErrorCodeType] ?? 'UNKNOWN ERROR';
 
 export default ERROR_CODE;
 

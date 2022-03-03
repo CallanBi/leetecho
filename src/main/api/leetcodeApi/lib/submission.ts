@@ -8,7 +8,7 @@ class Submission {
     Submission.uris = uris;
   }
 
-  constructor (
+  constructor(
     public id: number,
     public isPending?: string,
     public lang?: string,
@@ -17,7 +17,7 @@ class Submission {
     public status?: SubmissionStatus,
     public timestamp?: number,
     public code?: string,
-  ) { }
+  ) {}
 
   async detail(): Promise<Submission> {
     const response = await Helper.HttpRequest({

@@ -3,24 +3,27 @@ import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import { COLOR_PALETTE } from 'src/const/theme/color';
 import { Button } from 'antd';
-import { BorderOutlined, CloseOutlined, CloudSyncOutlined, DownloadOutlined, MinusOutlined } from '@ant-design/icons';
-import Icon from '@ant-design/icons';
+import Icon, {
+  BorderOutlined,
+  CloseOutlined,
+  CloudSyncOutlined,
+  DownloadOutlined,
+  MinusOutlined,
+} from '@ant-design/icons';
 import { MEASUREMENT } from 'src/const/theme/measurement';
 import { ReactComponent as RestoreIcon } from '@/assets/trafficLightIcons/restore.svg';
-
 
 const { useRef, useState, useEffect, useMemo } = React;
 
 const isWinPlatform = window.bridge.platform === 'win32';
 
-const { bridge: { ipcRenderer } } = window;
+const {
+  bridge: { ipcRenderer },
+} = window;
 
 const winStatus = ipcRenderer.sendSync('get-win-status') as GetWinStatusResp;
 
-
-
-interface TrafficLightProps {
-}
+interface TrafficLightProps {}
 
 const TrafficLightBtnSection = styled.section`
   -webkit-app-region: no-drag;
@@ -56,7 +59,7 @@ const CloseWindowTrafficLightSection = styled(TrafficLightBtnSection)`
 `;
 
 const TrafficLight: React.FC<TrafficLightProps> = (props: TrafficLightProps) => {
-  const { } = props;
+  const {} = props;
 
   const initMaximizedVal = winStatus === 'maximized';
   const [isMaximized, setIsMaximized] = useState<boolean>(initMaximizedVal);
@@ -104,33 +107,56 @@ const TrafficLight: React.FC<TrafficLightProps> = (props: TrafficLightProps) => 
   };
 
   return (
-    <>{isWinPlatform && <TrafficLightSection>
-      {/* <DivideLine>|</DivideLine> */}
-      <TrafficLightBtnSection>
-        <Button type="link" shape="round" onClick={() => {
-          minimizeWin();
-        }} icon={<MinusOutlined size={MEASUREMENT.LEETECHO_TRAFFIC_LIGHT_ICO_SIZE as number} />}>
-        </Button>
-      </TrafficLightBtnSection>
-      {!isMaximized && < TrafficLightBtnSection onClick={() => {
-        maximizeWin();
-      }}>
-        <Button type="link" shape="round" icon={<BorderOutlined size={MEASUREMENT.LEETECHO_TRAFFIC_LIGHT_ICO_SIZE as number} />}>
-        </Button>
-      </TrafficLightBtnSection>}
-      {isMaximized && <TrafficLightBtnSection onClick={() => {
-        unmaximizeWin();
-      }}>
-        <Button type="link" shape="round" icon={<Icon component={RestoreIcon} />}>
-        </Button>
-      </TrafficLightBtnSection>}
-      <CloseWindowTrafficLightSection onClick={() => {
-        closeWin();
-      }}>
-        <Button type="link" shape="round" icon={<CloseOutlined size={MEASUREMENT.LEETECHO_TRAFFIC_LIGHT_ICO_SIZE as number} />}>
-        </Button>
-      </CloseWindowTrafficLightSection>
-    </TrafficLightSection>}</>
+    <>
+      {isWinPlatform && (
+        <TrafficLightSection>
+          {/* <DivideLine>|</DivideLine> */}
+          <TrafficLightBtnSection>
+            <Button
+              type="link"
+              shape="round"
+              onClick={() => {
+                minimizeWin();
+              }}
+              icon={<MinusOutlined size={MEASUREMENT.LEETECHO_TRAFFIC_LIGHT_ICO_SIZE as number} />}
+            />
+          </TrafficLightBtnSection>
+          {!isMaximized && (
+            <TrafficLightBtnSection
+              onClick={() => {
+                maximizeWin();
+              }}
+            >
+              <Button
+                type="link"
+                shape="round"
+                icon={<BorderOutlined size={MEASUREMENT.LEETECHO_TRAFFIC_LIGHT_ICO_SIZE as number} />}
+              />
+            </TrafficLightBtnSection>
+          )}
+          {isMaximized && (
+            <TrafficLightBtnSection
+              onClick={() => {
+                unmaximizeWin();
+              }}
+            >
+              <Button type="link" shape="round" icon={<Icon component={RestoreIcon} />} />
+            </TrafficLightBtnSection>
+          )}
+          <CloseWindowTrafficLightSection
+            onClick={() => {
+              closeWin();
+            }}
+          >
+            <Button
+              type="link"
+              shape="round"
+              icon={<CloseOutlined size={MEASUREMENT.LEETECHO_TRAFFIC_LIGHT_ICO_SIZE as number} />}
+            />
+          </CloseWindowTrafficLightSection>
+        </TrafficLightSection>
+      )}
+    </>
   );
 };
 

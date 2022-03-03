@@ -1,7 +1,7 @@
 import to from 'await-to-js';
 import { ipcMain } from 'electron';
 import AppApi from './appApi';
-import baseHandler, { ErrorResp, SuccessResp } from './appApi/base';
+import baseHandler, { ErrorResp } from './appApi/base';
 import { GetAllProblemsResponse, GetProblemsRequest, GetProblemsResponse } from './appApi/idl/problems';
 import { GetAllTagsResponse } from './appApi/idl/tags';
 import { LoginReq, LoginResp } from './appApi/idl/user';

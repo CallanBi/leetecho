@@ -1,10 +1,5 @@
 import { useMemo } from 'react';
-import {
-  useParams,
-  useLocation,
-  useHistory,
-  useRouteMatch,
-} from 'react-router-dom';
+import { useParams, useLocation, useHistory, useRouteMatch } from 'react-router-dom';
 import queryString from 'query-string';
 
 // Hook
@@ -15,8 +10,8 @@ export function useRouter() {
   const match = useRouteMatch();
   // Return our custom router object
   // Memoize so that a new object is only returned if something changes
-  return useMemo(() => {
-    return {
+  return useMemo(
+    () => ({
       // For convenience add push(), replace(), pathname at top level
       push: history.push,
       replace: history.replace,
@@ -33,6 +28,7 @@ export function useRouter() {
       match,
       location,
       history,
-    };
-  }, [params, match, location, history]);
+    }),
+    [params, match, location, history],
+  );
 }

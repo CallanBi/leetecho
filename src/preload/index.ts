@@ -8,7 +8,7 @@ const isDev = process.env.NODE_ENV === 'development';
 const isDebug = process.env.NODE_ENV === 'debug';
 const isNotProduction = isDev || isDebug;
 
-const platform = process.platform;
+const { platform } = process;
 
 const { appendLoading, removeLoading } = useLoading();
 

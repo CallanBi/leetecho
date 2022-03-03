@@ -1,4 +1,4 @@
-export { };
+export {};
 declare global {
   type PromiseFunctionType<T> = (args: any[]) => Promise<T>;
 

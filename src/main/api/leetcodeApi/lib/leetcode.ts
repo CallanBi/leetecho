@@ -9,11 +9,12 @@ import { Credit, EndPoint, GetProblemsFromGraphQLResponse, TagGroupItem, Uris } 
 import Problem from './problem';
 
 class Leetcode {
-
   session?: string;
+
   csrfToken: string;
 
   static uris: Uris;
+
   static setUris(uris: Uris): void {
     Leetcode.uris = uris;
   }
@@ -32,7 +33,7 @@ class Leetcode {
 
   static async build(username: string, password: string, endpoint: EndPoint): Promise<Leetcode> {
     Helper.switchEndPoint(endpoint);
-    const [err, credit] = await to(this.login(username, password)) as any as [Error, Credit];
+    const [err, credit] = (await to(this.login(username, password))) as any as [Error, Credit];
     if (err) {
       throw new ErrorResp({
         code: (err as ErrorResp).code ?? ERROR_CODE.UNKNOWN_ERROR,
@@ -46,10 +47,12 @@ class Leetcode {
 
   static async login(username: string, password: string): Promise<Credit> {
     // got login token first
-    const [err, response] = await to(Helper.HttpRequest({
-      url: Leetcode.uris.login,
-      resolveWithFullResponse: true,
-    }));
+    const [err, response] = await to(
+      Helper.HttpRequest({
+        url: Leetcode.uris.login,
+        resolveWithFullResponse: true,
+      }),
+    );
     if (err) {
       throw new ErrorResp({
         code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
@@ -59,47 +62,54 @@ class Leetcode {
     const token: string = Helper.parseCookie(response.headers['set-cookie'], 'csrftoken');
     // Leetcode CN returns null here, but it does not matter
     let credit: Credit = {
-      csrfToken: token
+      csrfToken: token,
     };
     Helper.setCredit(credit);
 
     // then login
-    const [e, _response] = await to(Helper.HttpRequest({
-      method: 'POST',
-      url: Leetcode.uris.login,
-      form: {
-        csrfmiddlewaretoken: token,
-        login: username,
-        password: password,
-      },
-      resolveWithFullResponse: true,
-    }));
+    const [e, _response] = await to(
+      Helper.HttpRequest({
+        method: 'POST',
+        url: Leetcode.uris.login,
+        form: {
+          csrfmiddlewaretoken: token,
+          login: username,
+          password,
+        },
+        resolveWithFullResponse: true,
+      }),
+    );
     if (e) {
       throw new ErrorResp({
         code: (e as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
-        message: (e as StatusCodeError).statusCode === 400 ? 'Invalid username or password' : e.message || getErrorCodeMessage(),
+        message:
+          (e as StatusCodeError).statusCode === 400
+            ? 'Invalid username or password'
+            : e.message || getErrorCodeMessage(),
       });
     }
     const session = Helper.parseCookie(_response.headers['set-cookie'], 'LEETCODE_SESSION');
     const csrfToken = Helper.parseCookie(_response.headers['set-cookie'], 'csrftoken');
     credit = {
-      session: session,
-      csrfToken: csrfToken,
+      session,
+      csrfToken,
     };
     return credit;
   }
 
   async getProfile(): Promise<any> {
     // ? TODO : fetch more user profile.
-    const [err, response]: any = await to(Helper.GraphQLRequest({
-      query: `
+    const [err, response]: any = await to(
+      Helper.GraphQLRequest({
+        query: `
             {
                 user {
                     username
                 }
             }
-            `
-    }));
+            `,
+      }),
+    );
     if (err) {
       throw new ErrorResp({
         code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
@@ -110,17 +120,19 @@ class Leetcode {
   }
 
   async getAllProblems(): Promise<Array<Problem>> {
-    let [err, response] = await to(Helper.HttpRequest({
-      url: Leetcode.uris.problemsAll,
-    }));
+    const [err, response] = await to(
+      Helper.HttpRequest({
+        url: Leetcode.uris.problemsAll,
+      }),
+    );
     if (err) {
       throw new ErrorResp({
         code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
         message: (err as StatusCodeError).message ?? getErrorCodeMessage(),
       });
     }
-    response = JSON.parse(response);
-    const problems: Array<Problem> = response.stat_status_pairs.map((p: any) => {
+    const res = JSON.parse(response);
+    const problems: Array<Problem> = res.stat_status_pairs.map((p: any) => {
       console.log('%c p >>>', 'background: yellow; color: blue', p);
 
       return new Problem(
@@ -138,15 +150,16 @@ class Leetcode {
         p.stat.total_submitted,
         undefined,
         undefined,
-        undefined
+        undefined,
       );
     });
     return problems;
   }
 
   async getProblems(conditions: GetProblemsRequest): Promise<GetProblemsFromGraphQLResponse['problemsetQuestionList']> {
-    const [err, response] = await to(Helper.GraphQLRequest({
-      query: `
+    const [err, response] = await to(
+      Helper.GraphQLRequest({
+        query: `
       query problemsetQuestionList($categorySlug: String, $limit: Int, $skip: Int, $filters: QuestionListFilterInput) {
         problemsetQuestionList(
           categorySlug: $categorySlug
@@ -186,14 +199,15 @@ class Leetcode {
         }
       }
       `,
-      variables: deleteNilVal({
-        categorySlug: '',
-        filters: {},
-        limit: 50,
-        skip: 0,
-        ...conditions,
+        variables: deleteNilVal({
+          categorySlug: '',
+          filters: {},
+          limit: 50,
+          skip: 0,
+          ...conditions,
+        }),
       }),
-    }));
+    );
     if (err) {
       throw new ErrorResp({
         code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
@@ -228,8 +242,9 @@ class Leetcode {
   }
 
   async getProblemsByTag(tag: string): Promise<Array<Problem>> {
-    const [err, response] = await to(Helper.GraphQLRequest({
-      query: `
+    const [err, response] = await to(
+      Helper.GraphQLRequest({
+        query: `
         query getTopicTag($slug: String!) {
             topicTag(slug: $slug) {
                 questions {
@@ -247,10 +262,11 @@ class Leetcode {
             }
         }
       `,
-      variables: {
-        slug: tag,
-      }
-    }));
+        variables: {
+          slug: tag,
+        },
+      }),
+    );
     if (err) {
       throw new ErrorResp({
         code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
@@ -274,15 +290,16 @@ class Leetcode {
         stat.totalSubmissionRaw,
         undefined,
         undefined,
-        undefined
+        undefined,
       );
     });
     return problems;
-  };
+  }
 
   async getAllTags(): Promise<any> {
-    const [err, response] = await to(Helper.GraphQLRequest({
-      query: `
+    const [err, response] = await to(
+      Helper.GraphQLRequest({
+        query: `
         query questionTagTypeWithTags {
           questionTagTypeWithTags {
             name
@@ -299,7 +316,8 @@ class Leetcode {
           }
         }
       `,
-    }));
+      }),
+    );
     if (err) {
       throw new ErrorResp({
         code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,

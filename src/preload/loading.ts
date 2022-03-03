@@ -1,5 +1,3 @@
-
-
 /**
  * https://tobiasahlin.com/spinkit
  * https://connoratherton.com/loaders
@@ -7,6 +5,8 @@
  * https://matejkustec.github.io/SpinThatShit
  */
 import { COLOR_PALETTE } from 'src/const/theme/color';
+import { MEASUREMENT } from 'src/const/theme/measurement';
+
 export function useLoading() {
   const className = 'loaders-css__square-spin';
   const styleContent = `
@@ -20,6 +20,7 @@ export function useLoading() {
       animation-fill-mode: both;
       width: 50px;
       height: 50px;
+      border-radius: ${MEASUREMENT.LEETECHO_BORDER_RADIUS_BASE};
       background: ${COLOR_PALETTE.LEETECHO_BLUE};
       animation: square-spin 3s 0s cubic-bezier(0.09, 0.57, 0.49, 0.9) infinite;
     }

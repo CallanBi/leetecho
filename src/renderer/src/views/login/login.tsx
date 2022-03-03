@@ -2,16 +2,17 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
+import { Button } from 'antd';
+import { CSSTransition } from 'react-transition-group';
 import { ReactComponent as Logo } from '@/assets/logo-vertical.svg';
 import { COLOR_PALETTE } from '../../../../const/theme/color';
-import { Button } from 'antd';
 
-import { CSSTransition } from 'react-transition-group';
 import LoginForm from './components/loginForm';
 import TrafficLight from '@/components/trafficLight';
 
-
-const { useRef, useState, useEffect, useMemo } = React;
+const {
+  useRef, useState, useEffect, useMemo,
+} = React;
 
 const LoginSection = styled.section`
   -webkit-app-region: drag;
@@ -49,7 +50,6 @@ const LoginTrafficLightSection = styled.section`
 `;
 
 const Login: React.FC<{}> = () => {
-
   const [isFormShow, setIsFormShow] = useState(false);
 
   const LogoSection = React.useMemo(() => styled.section`
@@ -67,37 +67,47 @@ const Login: React.FC<{}> = () => {
       <LoginSection>
         <CSSTransition
           in={isFormShow}
-          classNames={'LoginLogoTransition'}
+          classNames="LoginLogoTransition"
           timeout={300}
         >
           <LogoSection>
-            <Logo height={400} width={400} style={{
-              marginLeft: 28,
-            }} id="Logo" />
+            <Logo
+              height={400}
+              width={400}
+              style={{
+                marginLeft: 28,
+              }}
+              id="Logo"
+            />
           </LogoSection>
         </CSSTransition>
         <LoginFormSection>
-          {!isFormShow &&
-            <section css={css`
+          {!isFormShow
+            && (
+              <section css={css`
             display: flex;
             justify-content: center;
             align-items: center;
-          `}>
-              <Button style={{
-                WebkitAppRegion: 'no-drag',
-                top: 80,
-              } as React.CSSProperties} type='link' onClick={() => {
-                setIsFormShow(true);
-              }}>
-                {`登录 >`}
-              </Button>
-            </section>
-          }
-          {isFormShow &&
-            <LoginForm></LoginForm>
-          }
+          `}
+              >
+                <Button
+                  style={{
+                    WebkitAppRegion: 'no-drag',
+                    top: 80,
+                  } as React.CSSProperties}
+                  type="link"
+                  onClick={() => {
+                    setIsFormShow(true);
+                  }}
+                >
+                  {'登录 >'}
+                </Button>
+              </section>
+            )}
+          {isFormShow
+            && <LoginForm />}
         </LoginFormSection>
-      </LoginSection >
+      </LoginSection>
     </>
   );
 };

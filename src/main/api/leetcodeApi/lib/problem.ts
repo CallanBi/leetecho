@@ -3,15 +3,14 @@ import { ProblemDifficulty, ProblemStatus, TopicTag, Uris } from '../utils/inter
 import Submission from './submission';
 
 class Problem {
-
   static uris: Uris;
 
   static setUris(uris: Uris): void {
     Problem.uris = uris;
   }
 
-  constructor (
-    /**slug: A string that distinctly identifies a problem */
+  constructor(
+    /** slug: A string that distinctly identifies a problem */
     readonly slug: string,
     public id?: number,
     public title?: string,
@@ -29,7 +28,6 @@ class Problem {
     public content?: string,
     public codeSnippets?: Array<any>,
 
-
     public titleCN?: string,
     public acRate?: number,
     public difficultyString?: string,
@@ -37,7 +35,7 @@ class Problem {
     public freqBar?: number,
     public frontendQuestionId?: number,
     public topicTags?: TopicTag[],
-  ) { }
+  ) {}
 
   async detail(): Promise<Problem> {
     const response = await Helper.GraphQLRequest({
@@ -60,9 +58,9 @@ class Problem {
       `,
       variables: {
         titleSlug: this.slug,
-      }
+      },
     });
-    const question = response.question;
+    const { question } = response;
     this.id = Number(question.questionId);
     this.title = question.title;
     this.difficulty = Helper.difficultyMap(question.difficulty);
@@ -71,9 +69,7 @@ class Problem {
     this.likes = question.likes;
     this.dislikes = question.dislikes;
     this.status = Helper.statusMap(question.status);
-    this.tag = question.topicTags.map(function (t: any) {
-      return t.name;
-    });
+    this.tag = question.topicTags.map((t: any) => t.name);
     const stats: any = JSON.parse(question.stats);
     this.totalAccepted = stats.totalAcceptedRaw;
     this.totalSubmission = stats.totalSubmissionRaw;
@@ -112,24 +108,26 @@ class Problem {
         `,
         variables: {
           offset: offet,
-          limit: limit,
+          limit,
           questionSlug: this.slug,
-        }
+        },
       });
 
       hasNext = response.submissionList.hasNext;
       const submission: Array<any> = response.submissionList.submissions;
       offet += submission.length;
-      submission.map(s => {
-        submissions.push(new Submission(
-          Number(s.id),
-          s.isPending,
-          s.lang,
-          s.memory,
-          s.runtime,
-          Helper.submissionStatusMap(s.statusDisplay),
-          Number(s.timestamp),
-        ));
+      submission.map((s) => {
+        submissions.push(
+          new Submission(
+            Number(s.id),
+            s.isPending,
+            s.lang,
+            s.memory,
+            s.runtime,
+            Helper.submissionStatusMap(s.statusDisplay),
+            Number(s.timestamp),
+          ),
+        );
       });
     }
     return submissions;
@@ -140,10 +138,10 @@ class Problem {
       url: Problem.uris.submit.replace('$slug', this.slug),
       method: 'POST',
       body: {
-        lang: lang,
-        'question_id': this.id,
-        'typed_code': code,
-      }
+        lang,
+        question_id: this.id,
+        typed_code: code,
+      },
     });
     return new Submission(JSON.parse(response).submission_id);
   }

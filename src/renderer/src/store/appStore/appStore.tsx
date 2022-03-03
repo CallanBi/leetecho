@@ -19,7 +19,7 @@ export const initState: AppState = {
   },
   userState: {
     isLogin: false,
-  }
+  },
 };
 
 export type AppActionType = 'change-ui-status';
@@ -39,8 +39,7 @@ export type AppAction = {
 export const AppStoreContext = React.createContext<{
   state: AppState;
   dispatch: React.Dispatch<AppAction>;
-}>({ state: initState, dispatch: _ => { /** noop */ } });
-
+}>({ state: initState, dispatch: (_) => { /** noop */ } });
 
 export const reducer: React.Reducer<AppState, AppAction> = (state, appAction) => {
   const { appActionType } = appAction;
@@ -49,15 +48,15 @@ export const reducer: React.Reducer<AppState, AppAction> = (state, appAction) =>
     case 'change-ui-status':
       if (appAction.isReplacement) {
         return { ...state, uiStatus: appAction.payload };
-      } else {
-        return { ...state, uiStatus: { ...state.uiStatus, ...appAction.payload } };
       }
+      return { ...state, uiStatus: { ...state.uiStatus, ...appAction.payload } };
+
     case 'change-user-status':
-    if (appAction.isReplacement) {
-      return { ...state, uiStatus: appAction.payload };
-    } else {
+      if (appAction.isReplacement) {
+        return { ...state, uiStatus: appAction.payload };
+      }
       return { ...state, userState: { ...state.userState, ...appAction.payload } };
-    }
+
     default:
       return state;
   }

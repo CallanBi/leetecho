@@ -4,12 +4,20 @@ import Config from '../lib/config';
 import Leetcode from '../lib/leetcode';
 import Problem from '../lib/problem';
 import Submission from '../lib/submission';
-import { Credit, EndPoint, GraphQLRequestOptions, HttpRequestOptions, ProblemDifficulty, ProblemStatus, SubmissionStatus, Uris } from './interfaces';
-
+import {
+  Credit,
+  EndPoint,
+  GraphQLRequestOptions,
+  HttpRequestOptions,
+  ProblemDifficulty,
+  ProblemStatus,
+  SubmissionStatus,
+  Uris,
+} from './interfaces';
 
 class Helper {
-
   static credit: Credit;
+
   static uris: Uris;
 
   static setCredit(credit: Credit): void {
@@ -35,42 +43,62 @@ class Helper {
 
   static levelToName(level: number): string {
     switch (level) {
-      case 1: return 'Easy';
-      case 2: return 'Medium';
-      case 3: return 'Hard';
-      default: return '';
+      case 1:
+        return 'Easy';
+      case 2:
+        return 'Medium';
+      case 3:
+        return 'Hard';
+      default:
+        return '';
     }
   }
 
   static statusMap(status: string | null): ProblemStatus {
     switch (status) {
-      case 'ac': return ProblemStatus['Accept'];
-      case 'notac': return ProblemStatus['Not Accept'];
-      case null: return ProblemStatus['Not Start'];
-      default: return ProblemStatus['Not Start'];
+      case 'ac':
+        return ProblemStatus.Accept;
+      case 'notac':
+        return ProblemStatus['Not Accept'];
+      case null:
+        return ProblemStatus['Not Start'];
+      default:
+        return ProblemStatus['Not Start'];
     }
   }
 
   static difficultyMap(difficulty: number): ProblemDifficulty {
     switch (difficulty) {
-      case 1: return ProblemDifficulty.Easy;
-      case 2: return ProblemDifficulty.Medium;
-      case 3: return ProblemDifficulty.Hard;
-      default: return ProblemDifficulty.Easy;
+      case 1:
+        return ProblemDifficulty.Easy;
+      case 2:
+        return ProblemDifficulty.Medium;
+      case 3:
+        return ProblemDifficulty.Hard;
+      default:
+        return ProblemDifficulty.Easy;
     }
   }
 
   static submissionStatusMap(submission: string): SubmissionStatus {
     switch (submission) {
-      case 'Accepted': return SubmissionStatus['Accepted'];
-      case 'Compile Error': return SubmissionStatus['Compile Error'];
-      case 'Time Limit Exceeded': return SubmissionStatus['Time Limit Exceeded'];
-      case 'Wrong Answer': return SubmissionStatus['Wrong Answer'];
+      case 'Accepted':
+        return SubmissionStatus.Accepted;
+      case 'Compile Error':
+        return SubmissionStatus['Compile Error'];
+      case 'Time Limit Exceeded':
+        return SubmissionStatus['Time Limit Exceeded'];
+      case 'Wrong Answer':
+        return SubmissionStatus['Wrong Answer'];
 
-      case '10': return SubmissionStatus['Accepted'];
-      case '11': return SubmissionStatus['Wrong Answer'];
-      case '14': return SubmissionStatus['Time Limit Exceeded'];
-      case '20': return SubmissionStatus['Compile Error'];
+      case '10':
+        return SubmissionStatus.Accepted;
+      case '11':
+        return SubmissionStatus['Wrong Answer'];
+      case '14':
+        return SubmissionStatus['Time Limit Exceeded'];
+      case '20':
+        return SubmissionStatus['Compile Error'];
       // TODO : find out what this numbers mean
       // 12 => MLE
       // 13 => OLE
@@ -79,7 +107,8 @@ class Helper {
       // 21 => UE
       // 30 => TO
       // default => UE
-      default: return SubmissionStatus['Wrong Answer'];
+      default:
+        return SubmissionStatus['Wrong Answer'];
     }
   }
 
@@ -89,7 +118,9 @@ class Helper {
       uri: options.url,
       followRedirect: false,
       headers: {
-        Cookie: Helper.credit ? `LEETCODE_SESSION=${Helper.credit.session || ''};csrftoken=${Helper.credit.csrfToken || ''}` : '',
+        Cookie: Helper.credit
+          ? `LEETCODE_SESSION=${Helper.credit.session || ''};csrftoken=${Helper.credit.csrfToken || ''}`
+          : '',
         'X-Requested-With': 'XMLHttpRequest',
         'X-CSRFToken': Helper.credit ? Helper.credit.csrfToken : '',
         Referer: options.referer || Helper.uris.base,
@@ -102,22 +133,16 @@ class Helper {
   }
 
   static async GraphQLRequest(options: GraphQLRequestOptions): Promise<any> {
-    const client = new GraphQLClient(
-      Helper.uris.graphql,
-      {
-        headers: {
-          Origin: options.origin || Helper.uris.base,
-          Referer: options.referer || Helper.uris.base,
-          Cookie: `LEETCODE_SESSION=${Helper.credit.session};csrftoken=${Helper.credit.csrfToken};`,
-          'X-Requested-With': 'XMLHttpRequest',
-          'X-CSRFToken': Helper.credit.csrfToken,
-        }
-      }
-    );
-    return await client.request(
-      options.query,
-      options.variables || {},
-    );
+    const client = new GraphQLClient(Helper.uris.graphql, {
+      headers: {
+        Origin: options.origin || Helper.uris.base,
+        Referer: options.referer || Helper.uris.base,
+        Cookie: `LEETCODE_SESSION=${Helper.credit.session};csrftoken=${Helper.credit.csrfToken};`,
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': Helper.credit.csrfToken,
+      },
+    });
+    return await client.request(options.query, options.variables || {});
   }
 
   static switchEndPoint(endPoint: EndPoint): void {

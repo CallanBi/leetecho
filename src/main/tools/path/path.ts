@@ -18,7 +18,9 @@ export const LOGS_PATH: string =
 
 /** 资源文件夹 */
 export const ASSETS_PATH: string =
-  process.env.NODE_ENV === 'development' ? join(__dirname, '../renderer/assets') : path.join(APP_PATH, '../renderer/assets');
+  process.env.NODE_ENV === 'development'
+    ? join(__dirname, '../renderer/assets')
+    : path.join(APP_PATH, '../renderer/assets');
 
 /**
  * 转换资源路径

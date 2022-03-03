@@ -17,6 +17,6 @@ export default {
       problem: 'https://leetcode-cn.com/problems/$slug',
       submit: 'https://leetcode-cn.com/problems/$slug/submit/',
       submission: 'https://leetcode-cn.com/submissions/detail/$id/',
-    }
-  }
+    },
+  },
 };

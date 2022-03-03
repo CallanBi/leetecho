@@ -2,14 +2,12 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 // import { css } from '@emotion/react';
 import { Input } from 'antd';
-import SearchEnterBtn from '../searchEnterBtn';
 import { COLOR_PALETTE } from 'src/const/theme/color';
-
+import SearchEnterBtn from '../searchEnterBtn';
 
 const { Search } = Input;
 
 // const { useRef, useState, useEffect, useMemo } = React;
-
 
 const HeaderSearchSection = styled.section`
   -webkit-app-region: no-drag;
@@ -59,8 +57,13 @@ const HeaderLeftContent: React.FC<HeaderLeftContentProps> = (props: HeaderLeftCo
 
   return (
     <HeaderSearchSection>
-      <Search size="small" style={searchStyle} placeholder="搜索题目" onSearch={(val, event) => console.log('%c onSearch >>>', 'background: yellow; color: blue', { val, event })
-      } enterButton={<SearchEnterBtn></SearchEnterBtn>} />
+      <Search
+        size="small"
+        style={searchStyle}
+        placeholder="搜索题目"
+        onSearch={(val, event) => console.log('%c onSearch >>>', 'background: yellow; color: blue', { val, event })}
+        enterButton={<SearchEnterBtn />}
+      />
     </HeaderSearchSection>
   );
 };

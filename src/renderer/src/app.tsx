@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ReactComponent as NavLogo } from '@/assets/logo-vertical.svg';
 import './index.less';
 import type { ProSettings } from '@ant-design/pro-layout';
-import ProLayout, { SettingDrawer } from '@ant-design/pro-layout';
+import ProLayout from '@ant-design/pro-layout';
 import { navConfig } from './routes/index';
 import { layoutSettings } from './const/layout';
 import { Redirect, Route, Switch } from 'react-router-dom';
@@ -11,92 +11,104 @@ import { useRouter } from './hooks/router/useRouter';
 import { AppStoreContext } from './store/appStore/appStore';
 import NavFooter from './components/layout/navFooter';
 import Header from './components/layout/header';
-import { ReactQueryDevtools } from "react-query/devtools";
+import { ReactQueryDevtools } from 'react-query/devtools';
 import Login from './views/login';
 import { useQueryClient } from 'react-query';
 import { css } from '@emotion/react';
 
-const { useState, useContext, useMemo } = React;
-const { bridge: { isNotProduction } } = window;
+const { useState, useContext } = React;
+const {
+  bridge: { isNotProduction },
+} = window;
 
 const navLogoStyle: React.CSSProperties = {
   marginTop: 100,
-  marginBottom: 20
+  marginBottom: 20,
 };
 
-const renderLogo: () => React.ReactNode = () => {
-  return <section style={navLogoStyle}><NavLogo /></section>;
-};
+const renderLogo: () => React.ReactNode = () => (
+  <section style={navLogoStyle}>
+    <NavLogo />
+  </section>
+);
 
-const renderNavFooter: () => React.ReactNode = () => <><NavFooter></NavFooter></>;
+const renderNavFooter: () => React.ReactNode = () => <NavFooter />;
 
 const App: React.FC<Record<string, never>> = () => {
-  const [settings, setSetting] = useState<Partial<ProSettings> | undefined>(layoutSettings);
+  const [settings, _] = useState<Partial<ProSettings> | undefined>(layoutSettings);
   const [path, setPath] = useState<typeof ROUTE[number]['path']>('/settledProblems');
 
-  const { state: appState, dispatch: appDispatch } = useContext(AppStoreContext);
+  const { state: appState } = useContext(AppStoreContext);
 
-  const { userState: { isLogin } } = appState;
-
-  const queryClient = useQueryClient();
+  const {
+    userState: { isLogin },
+  } = appState;
 
   const router = useRouter();
 
   return (
-    <section css={css`
-      -webkit-app-region: no-drag;
-    `}>
+    <section
+      css={css`
+        -webkit-app-region: no-drag;
+      `}
+    >
       {isNotProduction && <ReactQueryDevtools initialIsOpen={false} />}
-      {isLogin && <div
-        id="main"
-        style={{
-          height: '100vh',
-        }}
-      >
-        <ProLayout
-          title={false}
-          logo={renderLogo()}
-          // onCollapse={isCollapsed => {
-          //   dispatch({
-          //     appActionType: 'change-ui-status',
-          //     payload: {
-          //       isNavCollapsed: isCollapsed,
-          //     },
-          //   });
-          // }}
-          collapsed={false}
-          hasSiderMenu={false}
-          defaultCollapsed={false}
-          menuFooterRender={renderNavFooter}
-          collapsedButtonRender={false}
-          menuItemRender={(item, dom) => (
-            <a
-              onClick={() => {
-                const { path = 'settledProblems' } = item;
-                setPath(path);
-                if (router.pathname !== path) {
-                  router.history.push(path);
-                }
-              }}
-            >
-              {dom}
-            </a>
-          )}
-          headerRender={() => <Header></Header>}
-          {...navConfig}
-          {...settings}
-          location={{
-            pathname: path,
+      {isLogin && (
+        <div
+          id="main"
+          style={{
+            height: '100vh',
           }}
         >
-          <Switch>
-            <Route path='/' exact render={() => (
-              <Redirect to='/settledProblems' />
-            )} />
-            {ROUTE.map(route => <Route key={route.name ?? '/settledProblems'} exact path={route.path ?? '/settledProblems'} component={route.component} />)}
-          </Switch>
-        </ProLayout>
-        {/* {isNotProduction && <SettingDrawer
+          <ProLayout
+            title={false}
+            logo={renderLogo()}
+            // onCollapse={isCollapsed => {
+            //   dispatch({
+            //     appActionType: 'change-ui-status',
+            //     payload: {
+            //       isNavCollapsed: isCollapsed,
+            //     },
+            //   });
+            // }}
+            collapsed={false}
+            hasSiderMenu={false}
+            defaultCollapsed={false}
+            menuFooterRender={renderNavFooter}
+            collapsedButtonRender={false}
+            menuItemRender={(item, dom) => (
+              <a
+                onClick={() => {
+                  const { path = 'settledProblems' } = item;
+                  setPath(path);
+                  if (router.pathname !== path) {
+                    router.history.push(path);
+                  }
+                }}
+              >
+                {dom}
+              </a>
+            )}
+            headerRender={() => <Header />}
+            {...navConfig}
+            {...settings}
+            location={{
+              pathname: path,
+            }}
+          >
+            <Switch>
+              <Route path="/" exact render={() => <Redirect to="/settledProblems" />} />
+              {ROUTE.map((route) => (
+                <Route
+                  key={route.name ?? '/settledProblems'}
+                  exact
+                  path={route.path ?? '/settledProblems'}
+                  component={route.component}
+                />
+              ))}
+            </Switch>
+          </ProLayout>
+          {/* {isNotProduction && <SettingDrawer
         pathname={path}
         getContainer={() => document.getElementById('main')}
         settings={settings}
@@ -106,7 +118,8 @@ const App: React.FC<Record<string, never>> = () => {
         }}
         disableUrlParams
       />} */}
-      </div>}
+        </div>
+      )}
       {!isLogin && <Login />}
     </section>
   );

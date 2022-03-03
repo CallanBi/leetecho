@@ -35,18 +35,19 @@ const filter: (val: unknown) => boolean = (val) => {
  * @param obj T extends Record<string, unknown>
  * @returns Partial<T>
  */
-export const deleteNilVal: DeleteNilValFunction = (obj) => Object.entries(obj).reduce((acc, [k, v]) => {
-  if (typeof v === 'object') {
-    if (Array.isArray(v)) {
-      return { ...acc, [k]: v.filter(e => !isNil(e) && e !== '') };
-    } else if (JSON.stringify(v) === '{}') {
-      return acc;
-    } else if ((v instanceof Object)) {
-      return { ...acc, [k]: deleteNilVal(v as Record<string, unknown>) };
-    } else {
+export const deleteNilVal: DeleteNilValFunction = (obj) =>
+  Object.entries(obj).reduce((acc, [k, v]) => {
+    if (typeof v === 'object') {
+      if (Array.isArray(v)) {
+        return { ...acc, [k]: v.filter((e) => !isNil(e) && e !== '') };
+      }
+      if (JSON.stringify(v) === '{}') {
+        return acc;
+      }
+      if (v instanceof Object) {
+        return { ...acc, [k]: deleteNilVal(v as Record<string, unknown>) };
+      }
       return filter(v) ? { ...acc, [k]: v } : acc;
     }
-  } else {
     return filter(v) ? { ...acc, [k]: v } : acc;
-  }
-}, {});
+  }, {});

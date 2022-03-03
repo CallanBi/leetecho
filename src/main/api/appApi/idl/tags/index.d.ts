@@ -1,5 +1,6 @@
 import { GetAllTagsResponse } from './index';
-export { };
+
+export {};
 
 declare global {
   type GetAllTagsResp = GetAllTagsResponse;

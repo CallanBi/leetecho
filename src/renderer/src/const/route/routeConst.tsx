@@ -1,6 +1,8 @@
 /* eslint-disable indent */
 import { MenuDataItem } from '@ant-design/pro-layout/lib/typings';
-import { IconCheckList, IconList, IconTemplate, IconServer } from '@douyinfe/semi-icons';
+import {
+ IconCheckList, IconList, IconTemplate, IconServer,
+} from '@douyinfe/semi-icons';
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
@@ -15,7 +17,6 @@ const navIconStyle: React.CSSProperties = {
   marginLeft: 16,
   marginRight: 8,
 };
-
 
 const ROUTE: Array<
   MenuDataItem & {

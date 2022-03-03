@@ -1,4 +1,3 @@
-import App from '@/app';
 import to from 'await-to-js';
 import Leetcode from '../leetcodeApi';
 import { EndPoint } from '../leetcodeApi/utils/interfaces';
@@ -7,14 +6,13 @@ import { GetProblemsRequest } from './idl/problems';
 interface UsrInfo {
   usrName: string;
   pwd: string;
-
 }
 
 class AppApi {
   leetcode: Leetcode;
   // static leetcode: Leetcode;
 
-  constructor (leetcode: Leetcode) {
+  constructor(leetcode: Leetcode) {
     this.leetcode = leetcode;
   }
 

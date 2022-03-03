@@ -7,6 +7,4 @@ export type LoginReq = {
   pwd: string;
 };
 
-export type LoginResp = SuccessResp<{
-}>;
-
+export type LoginResp = SuccessResp<{}>;
