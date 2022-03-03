@@ -14,6 +14,7 @@ import Header from './components/layout/header';
 import { ReactQueryDevtools } from "react-query/devtools";
 import Login from './views/login';
 import { useQueryClient } from 'react-query';
+import { css } from '@emotion/react';
 
 const { useState, useContext, useMemo } = React;
 const { bridge: { isNotProduction } } = window;
@@ -42,8 +43,10 @@ const App: React.FC<Record<string, never>> = () => {
   const router = useRouter();
 
   return (
-    <>
-      {isNotProduction && <ReactQueryDevtools initialIsOpen />}
+    <section css={css`
+      -webkit-app-region: no-drag;
+    `}>
+      {isNotProduction && <ReactQueryDevtools initialIsOpen={false} />}
       {isLogin && <div
         id="main"
         style={{
@@ -105,7 +108,7 @@ const App: React.FC<Record<string, never>> = () => {
       />} */}
       </div>}
       {!isLogin && <Login />}
-    </>
+    </section>
   );
 };
 

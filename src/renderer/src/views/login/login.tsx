@@ -38,6 +38,7 @@ const LoginSection = styled.section`
 `;
 
 const LoginFormSection = styled.section`
+  -webkit-app-region: no-drag;
   width: 400px;
 `;
 
@@ -83,9 +84,9 @@ const Login: React.FC<{}> = () => {
             align-items: center;
           `}>
               <Button style={{
+                WebkitAppRegion: 'no-drag',
                 top: 80,
-                // color: COLOR_PALETTE.LEETECHO_LIGHT_BLUE,
-              }} type='link' onClick={() => {
+              } as React.CSSProperties} type='link' onClick={() => {
                 setIsFormShow(true);
               }}>
                 {`登录 >`}
