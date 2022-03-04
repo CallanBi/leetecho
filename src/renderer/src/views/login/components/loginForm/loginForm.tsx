@@ -9,6 +9,7 @@ import { withSemiIconStyle } from '@/style';
 import { useLogin } from '@/rendererApi/user';
 import { getErrorCodeFromMessage } from '@/rendererApi';
 import { AppStoreContext } from '@/store/appStore/appStore';
+import { COLOR_PALETTE } from 'src/const/theme/color';
 
 const { useRef, useState, useEffect, useMemo, useContext } = React;
 

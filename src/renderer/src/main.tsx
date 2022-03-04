@@ -10,8 +10,13 @@ import globalStyles from './style';
 import AppStoreProvider from './store/appStore';
 import App from './app';
 import { defaultOptions } from './const/reactQuery/reactQuerySettings';
+import { ConfigProvider } from 'antd';
 
-const { bridge: { removeLoading, ipcRenderer } } = window;
+import Empty from './components/illustration/empty';
+
+const {
+  bridge: { removeLoading, ipcRenderer },
+} = window;
 
 const queryClient = new QueryClient({
   defaultOptions,
@@ -22,9 +27,10 @@ ReactDOM.render(
     <AppStoreProvider>
       <Global styles={globalStyles} />
       <HashRouter>
-        <App />
+        <ConfigProvider renderEmpty={() => <Empty />}>
+          <App />
+        </ConfigProvider>
       </HashRouter>
-      ,
     </AppStoreProvider>
     ,
   </QueryClientProvider>,

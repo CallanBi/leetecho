@@ -28,7 +28,9 @@ type WithProviderProps<State, Action> = {
 function withStoreProvider<State, Action>(props: React.PropsWithChildren<WithProviderProps<State, Action>>) {
   const { reducer, initState, StoreContext } = props;
 
-  const StoreProvider: React.FC<React.PropsWithChildren<WithProviderProps<State, Action>>> = (props: React.PropsWithChildren<Record<string, unknown>>) => {
+  const StoreProvider: React.FC<React.PropsWithChildren<WithProviderProps<State, Action>>> = (
+    props: React.PropsWithChildren<Record<string, unknown>>,
+  ) => {
     const [state, dispatch] = useReducer(reducer, initState);
     const { children } = props;
     return <StoreContext.Provider value={{ state, dispatch }}>{children}</StoreContext.Provider>;

@@ -13,7 +13,6 @@ import NavFooter from './components/layout/navFooter';
 import Header from './components/layout/header';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import Login from './views/login';
-import { useQueryClient } from 'react-query';
 import { css } from '@emotion/react';
 
 const { useState, useContext } = React;
@@ -36,7 +35,7 @@ const renderNavFooter: () => React.ReactNode = () => <NavFooter />;
 
 const App: React.FC<Record<string, never>> = () => {
   const [settings, _] = useState<Partial<ProSettings> | undefined>(layoutSettings);
-  const [path, setPath] = useState<typeof ROUTE[number]['path']>('/settledProblems');
+  const [path, setPath] = useState<typeof ROUTE[number]['path']>('/allProblems');
 
   const { state: appState } = useContext(AppStoreContext);
 
@@ -45,6 +44,10 @@ const App: React.FC<Record<string, never>> = () => {
   } = appState;
 
   const router = useRouter();
+
+  if (router.pathname !== path) {
+    setPath(router.pathname);
+  }
 
   return (
     <section
@@ -79,7 +82,7 @@ const App: React.FC<Record<string, never>> = () => {
             menuItemRender={(item, dom) => (
               <a
                 onClick={() => {
-                  const { path = 'settledProblems' } = item;
+                  const { path = 'allProblems' } = item;
                   setPath(path);
                   if (router.pathname !== path) {
                     router.history.push(path);
@@ -97,12 +100,12 @@ const App: React.FC<Record<string, never>> = () => {
             }}
           >
             <Switch>
-              <Route path="/" exact render={() => <Redirect to="/settledProblems" />} />
+              <Route path="/" exact render={() => <Redirect to="/allProblems" />} />
               {ROUTE.map((route) => (
                 <Route
-                  key={route.name ?? '/settledProblems'}
+                  key={route.name ?? '/allProblems'}
                   exact
-                  path={route.path ?? '/settledProblems'}
+                  path={route.path ?? '/allProblems'}
                   component={route.component}
                 />
               ))}

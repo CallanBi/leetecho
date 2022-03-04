@@ -5,6 +5,7 @@ import { LightFilter, ProFormText, ProFormSelect } from '@ant-design/pro-form';
 import { DIFFICULTY_WORD, LEETCODE_PROBLEM_LIST, STATUS_WORD, LeetCodeProblemListType } from '@/const/problemConst';
 import { IconSearch } from '@douyinfe/semi-icons';
 import { withSemiIconStyle } from '@/style';
+import { COLOR_PALETTE } from 'src/const/theme/color';
 
 const { useRef, useState, useEffect, useMemo } = React;
 
@@ -17,15 +18,24 @@ export type ProblemsFilterObj = {
 
 interface ProblemFilterProps {
   onFilterChange: (val: ProblemsFilterObj) => unknown;
+  hasRouterQuery?: boolean;
 }
 
 const ProblemFilterSection = styled.section`
   padding-bottom: 8px;
   padding-left: 8px;
+  .ant-pro-core-field-label {
+    background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND};
+    padding-left: 12px;
+    padding-right: 12px;
+    :hover {
+      background-color: ${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG};
+    }
+  }
 `;
 
 const ProblemFilter: React.FC<ProblemFilterProps> = (props: ProblemFilterProps) => {
-  const { onFilterChange } = props;
+  const { onFilterChange, hasRouterQuery = false } = props;
 
   return (
     <ProblemFilterSection>
@@ -47,12 +57,17 @@ const ProblemFilter: React.FC<ProblemFilterProps> = (props: ProblemFilterProps) 
         />
         <ProFormSelect name="difficulty" label="难度" allowClear={true} fieldProps={{}} valueEnum={DIFFICULTY_WORD} />
         <ProFormSelect name="status" label="状态" fieldProps={{}} allowClear={true} valueEnum={STATUS_WORD} />
-        <ProFormText
-          name="search"
-          label="搜索题目，编号或内容"
-          width="lg"
-          fieldProps={{ prefix: <IconSearch style={withSemiIconStyle({ top: 0 })}></IconSearch>, placeholder: '搜索' }}
-        />
+        {!hasRouterQuery && (
+          <ProFormText
+            name="search"
+            label="搜索题目，编号或内容"
+            width="lg"
+            fieldProps={{
+              prefix: <IconSearch style={withSemiIconStyle({ top: 0 })}></IconSearch>,
+              placeholder: '搜索',
+            }}
+          />
+        )}
       </LightFilter>
     </ProblemFilterSection>
   );

@@ -1,4 +1,4 @@
-import { Spin, Table, TablePaginationConfig, TableProps } from 'antd';
+import { Button, PageHeader, Spin, Table, TablePaginationConfig, TableProps } from 'antd';
 import * as React from 'react';
 import Loading from '@/components/loading';
 import { useGetProblems } from '@/rendererApi/problems';
@@ -11,6 +11,8 @@ import { ProblemsFilterObj } from '@/components/problemFilter/problemFilter';
 import { FilterValue, SorterResult, TableCurrentDataSource } from 'antd/lib/table/interface';
 import { ProblemItemFromGraphQL } from 'src/main/api/leetcodeApi/utils/interfaces';
 import { COLUMN_KEY_SORTER_KEY_MAP, TABLE_SORTER_ORDER_MAP } from './const';
+import { useRouter } from '@/hooks/router/useRouter';
+import { COLOR_PALETTE } from 'src/const/theme/color';
 
 const { useRef, useState, useEffect, useMemo } = React;
 
@@ -41,6 +43,28 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
     sorterStatus: {},
     enableRequest: true,
   });
+
+  const router = useRouter();
+
+  const { query } = router;
+
+  const { search: routerSearchString = '' } = query as { search?: string };
+
+  const hasRouterSearchQuery = Boolean(routerSearchString);
+
+  if (hasRouterSearchQuery) {
+    if (requestParams.filterStatus.search !== routerSearchString) {
+      setRequestParams({
+        pageStatus: {
+          pageSize: 10,
+          current: 1,
+        },
+        filterStatus: { list: '', difficulty: '', status: '', search: routerSearchString },
+        sorterStatus: {},
+        enableRequest: true,
+      });
+    }
+  }
 
   const onRequestSuccess = () => {
     if (requestParams.enableRequest) {
@@ -84,9 +108,6 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
     onError: onRequestError,
   };
 
-  console.log('%c  queryArgs>>>', 'background: yellow; color: blue', queryArgs);
-  console.log('%c  queryOptions>>>', 'background: yellow; color: blue', queryOptions);
-
   const {
     isLoading: isGetProblemsLoading,
     isSuccess: isGetProblemsSuccess,
@@ -95,10 +116,7 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
     error: getProblemsError,
   } = useGetProblems(queryArgs, queryOptions);
 
-  console.log('%c getProblemsData >>>', 'background: yellow; color: blue', getProblemsData);
-
   const onFilterChange = (val: ProblemsFilterObj) => {
-    console.log('%c FormVal >>>', 'background: yellow; color: blue', val);
     const { list, difficulty, status, search } = val;
     setRequestParams({
       ...requestParams,
@@ -123,18 +141,15 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
     sorter,
     extra,
   ) => {
-    console.log('%c  onTableSorterChange>>>', 'background: yellow; color: blue', {
-      pagination,
-      filters,
-      sorter,
-      extra,
-    });
     const { current, pageSize } = pagination;
     setRequestParams({
       ...requestParams,
       pageStatus: {
         ...requestParams.pageStatus,
-        current: pageSize !== requestParams.pageStatus.pageSize ? 1 : current,
+        current:
+          pageSize !== requestParams.pageStatus.pageSize || requestParams.sorterStatus.order !== sorter.order
+            ? 1
+            : current,
         pageSize,
       },
       sorterStatus: {
@@ -145,17 +160,70 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
     });
   };
 
-  console.log('%c requestParams >>>', 'background: yellow; color: blue', requestParams);
-
   return (
     <>
-      <ProblemFilter onFilterChange={onFilterChange}></ProblemFilter>
+      {!hasRouterSearchQuery && <ProblemFilter onFilterChange={onFilterChange}></ProblemFilter>}
+      {hasRouterSearchQuery && (
+        // <Button
+        //   type="link"
+        //   style={{ color: COLOR_PALETTE.LEETECHO_LIGHT_BLUE }}
+        //   onClick={() => {
+        //     router.push('/allProblems');
+        //     setRequestParams({
+        //       pageStatus: {
+        //         pageSize: 10,
+        //         current: 1,
+        //       },
+        //       filterStatus: {
+        //         list: '',
+        //         difficulty: '',
+        //         status: '',
+        //         search: '',
+        //       },
+        //       sorterStatus: {},
+        //       enableRequest: true,
+        //     });
+        //   }}
+        // >
+        //   {'< 返回'}
+        // </Button>
+        <PageHeader
+          style={{ paddingTop: 0, paddingBottom: 0, paddingLeft: 8 }}
+          className="site-page-header"
+          onBack={() => {
+            router.push('/allProblems');
+            setRequestParams({
+              pageStatus: {
+                pageSize: 10,
+                current: 1,
+              },
+              filterStatus: {
+                list: '',
+                difficulty: '',
+                status: '',
+                search: '',
+              },
+              sorterStatus: {},
+              enableRequest: true,
+            });
+          }}
+          title="所有习题"
+          subTitle={`「${routerSearchString}」的搜索结果`}
+        />
+      )}
       <ProblemTable
         tableConst={{
           dataSource: getProblemsData?.questions || [],
         }}
         tableStatus={{
-          isLoading: { indicator: Loading, spinning: isGetProblemsLoading },
+          isLoading: {
+            indicator: (
+              <section style={{ display: 'flex', justifyContent: 'center' }}>
+                <Loading></Loading>
+              </section>
+            ),
+            spinning: isGetProblemsLoading,
+          },
           pagination: {
             pageSize: requestParams?.pageStatus?.pageSize || 10,
             total: getProblemsData?.total || 0,

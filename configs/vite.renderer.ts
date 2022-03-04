@@ -77,7 +77,7 @@ export default defineConfig({
           /** Table */
           'table-bg': `${COLOR_PALETTE.LEETECHO_WHITE}`,
           'table-header-bg': `${COLOR_PALETTE.LEETECHO_WHITE}`,
-          'table-row-hover-bg': `${COLOR_PALETTE.LEETECHO_GREY}`,
+          'table-row-hover-bg': `${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG}`,
           'table-border-color': `${COLOR_PALETTE.LEETECHO_WHITE}`,
           'table-header-cell-split-color': `${COLOR_PALETTE.LEETECHO_WHITE}`,
         }

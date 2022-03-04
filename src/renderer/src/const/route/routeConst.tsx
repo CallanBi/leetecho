@@ -9,7 +9,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import AllProblems from '@/views/allProblems';
 import DefaultTemplate from '@/views/defaultTemplate';
 import RemoteSettings from '@/views/remoteSettings';
-import SettledProblems from '@/views/settledProblems';
+// import SettledProblems from '@/views/settledProblems';
 import Login from '@/views/login';
 import { withSemiIconStyle } from '@/style';
 
@@ -23,12 +23,12 @@ const ROUTE: Array<
     component: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any> | undefined;
   }
 > = [
-    {
-      path: '/settledProblems',
-      name: '已刷习题',
-      icon: <IconCheckList style={withSemiIconStyle(navIconStyle)} />,
-      component: SettledProblems,
-    },
+    // {
+    //   path: '/settledProblems',
+    //   name: '已刷习题',
+    //   icon: <IconCheckList style={withSemiIconStyle(navIconStyle)} />,
+    //   component: SettledProblems,
+    // },
     {
       path: '/allProblems',
       name: '所有习题',

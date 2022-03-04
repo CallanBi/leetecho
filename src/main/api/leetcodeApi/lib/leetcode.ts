@@ -19,7 +19,7 @@ class Leetcode {
     Leetcode.uris = uris;
   }
 
-  constructor (credit: Credit) {
+  constructor(credit: Credit) {
     this.session = credit.session;
     this.csrfToken = credit.csrfToken;
   }
@@ -133,8 +133,6 @@ class Leetcode {
     }
     const res = JSON.parse(response);
     const problems: Array<Problem> = res.stat_status_pairs.map((p: any) => {
-      console.log('%c p >>>', 'background: yellow; color: blue', p);
-
       return new Problem(
         p.stat.question__title_slug,
         p.stat.question_id,
@@ -214,31 +212,9 @@ class Leetcode {
         message: err.message || getErrorCodeMessage(),
       });
     }
-    // console.log('%c getProblemsResponse >>>', 'background: yellow; color: blue', response);
+
     const { problemsetQuestionList } = response;
     return problemsetQuestionList as GetProblemsFromGraphQLResponse['problemsetQuestionList'];
-
-    // const problems: Array<Problem> = response.topicTag.questions.map((p: any) => {
-    //   const stat: any = JSON.parse(p.stats);
-    //   return new Problem(
-    //     p.titleSlug,
-    //     p.questionId,
-    //     p.title,
-    //     stat.title,
-    //     undefined,
-    //     p.isPaidOnly,
-    //     undefined,
-    //     undefined,
-    //     Helper.statusMap(p.status),
-    //     p.topicTags.map((t: any) => t.slug),
-    //     stat.totalAcceptedRaw,
-    //     stat.totalSubmissionRaw,
-    //     undefined,
-    //     undefined,
-    //     undefined
-    //   );
-    // });
-    // return problems;
   }
 
   async getProblemsByTag(tag: string): Promise<Array<Problem>> {
@@ -325,9 +301,7 @@ class Leetcode {
       });
     }
 
-    console.log('%c response >>>', 'background: yellow; color: blue', response);
-
-    const { questionTagTypeWithTags: tagGroups } = response as { questionTagTypeWithTags: TagGroupItem[]; };
+    const { questionTagTypeWithTags: tagGroups } = response as { questionTagTypeWithTags: TagGroupItem[] };
     return tagGroups;
   }
 }

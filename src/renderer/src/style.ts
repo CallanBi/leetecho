@@ -64,6 +64,48 @@ const globalStyles = css`
       padding: 24px;
     }
   }
+
+  .ant-input-password {
+    :hover {
+      background-color: ${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG}!important;
+      input {
+        background-color: ${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG}!important;
+      }
+    }
+    :focus {
+      border-color: ${COLOR_PALETTE.LEETECHO_BLUE};
+      box-shadow: none;
+    }
+    :active {
+      border-color: ${COLOR_PALETTE.LEETECHO_BLUE};
+      box-shadow: none;
+    }
+  }
+  .ant-input-affix-wrapper-focused {
+    border-color: ${COLOR_PALETTE.LEETECHO_BLUE}!important;
+    box-shadow: none !important;
+  }
+
+  .ant-input-affix-wrapper {
+    :hover {
+      background-color: ${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG}!important;
+      input {
+        background-color: ${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG}!important;
+      }
+    }
+    :focus {
+      border-color: ${COLOR_PALETTE.LEETECHO_BLUE};
+      box-shadow: none;
+    }
+    :active {
+      border-color: ${COLOR_PALETTE.LEETECHO_BLUE};
+      box-shadow: none;
+    }
+  }
+
+  .ant-popover-inner-content {
+    padding: 0;
+  }
 `;
 
 /** fix Semi icon align style */
