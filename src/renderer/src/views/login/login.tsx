@@ -10,9 +10,7 @@ import { COLOR_PALETTE } from '../../../../const/theme/color';
 import LoginForm from './components/loginForm';
 import TrafficLight from '@/components/trafficLight';
 
-const {
-  useRef, useState, useEffect, useMemo,
-} = React;
+const { useRef, useState, useEffect, useMemo } = React;
 
 const LoginSection = styled.section`
   -webkit-app-region: drag;
@@ -52,24 +50,25 @@ const LoginTrafficLightSection = styled.section`
 const Login: React.FC<{}> = () => {
   const [isFormShow, setIsFormShow] = useState(false);
 
-  const LogoSection = React.useMemo(() => styled.section`
-    width: 400px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transform: ${!isFormShow ? 'translate(2%, 35%) scale(1.6)' : 'translate(2%, 10%) scale(1)'};
-    transition: all 300ms;
-  `, []);
+  const LogoSection = React.useMemo(
+    () => styled.section`
+      width: 400px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transform: ${!isFormShow ? 'translate(2%, 35%) scale(1.6)' : 'translate(2%, 10%) scale(1)'};
+      transition: all 300ms;
+    `,
+    [],
+  );
 
   return (
     <>
-      <LoginTrafficLightSection><TrafficLight /></LoginTrafficLightSection>
+      <LoginTrafficLightSection>
+        <TrafficLight />
+      </LoginTrafficLightSection>
       <LoginSection>
-        <CSSTransition
-          in={isFormShow}
-          classNames="LoginLogoTransition"
-          timeout={300}
-        >
+        <CSSTransition in={isFormShow} classNames="LoginLogoTransition" timeout={300}>
           <LogoSection>
             <Logo
               height={400}
@@ -82,30 +81,31 @@ const Login: React.FC<{}> = () => {
           </LogoSection>
         </CSSTransition>
         <LoginFormSection>
-          {!isFormShow
-            && (
-              <section css={css`
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          `}
-              >
-                <Button
-                  style={{
+          {!isFormShow && (
+            <section
+              css={css`
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              `}
+            >
+              <Button
+                style={
+                  {
                     WebkitAppRegion: 'no-drag',
                     top: 80,
-                  } as React.CSSProperties}
-                  type="link"
-                  onClick={() => {
-                    setIsFormShow(true);
-                  }}
-                >
-                  {'登录 >'}
-                </Button>
-              </section>
-            )}
-          {isFormShow
-            && <LoginForm />}
+                  } as React.CSSProperties
+                }
+                type="link"
+                onClick={() => {
+                  setIsFormShow(true);
+                }}
+              >
+                {'登录 >'}
+              </Button>
+            </section>
+          )}
+          {isFormShow && <LoginForm />}
         </LoginFormSection>
       </LoginSection>
     </>

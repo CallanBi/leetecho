@@ -17,10 +17,8 @@ const useLogin = (
     async () => {
       const [err, res] = (await to(ipcRenderer.invoke('login', params))) as [Error | null, LoginResp['data']];
       if (err) {
-        console.log('%c err >>>', 'background: yellow; color: blue', err);
         throw err;
       }
-      console.log('%c res >>>', 'background: yellow; color: blue', res);
       return res;
     },
     {

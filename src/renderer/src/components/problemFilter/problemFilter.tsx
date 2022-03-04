@@ -20,7 +20,7 @@ interface ProblemFilterProps {
 }
 
 const ProblemFilterSection = styled.section`
-  padding: 24px 0;
+  padding-bottom: 8px;
   padding-left: 8px;
 `;
 

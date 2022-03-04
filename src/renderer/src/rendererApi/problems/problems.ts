@@ -1,5 +1,5 @@
 import to from 'await-to-js';
-import { useQuery } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 
 const {
   bridge: { ipcRenderer },
@@ -21,11 +21,14 @@ const useGetAllProblems = () =>
     return problems;
   });
 
-const useGetProblems = (params: GetProblemsReq) =>
+const useGetProblems = (
+  params: GetProblemsReq,
+  options: Omit<UseQueryOptions<GetProblemsResp['data'], Error>, 'queryKey' | 'queryFn'>,
+) =>
   useQuery<GetProblemsResp['data'], Error>(
     ['getProblems', params],
     async () => {
-      const [err, res] = (await to(ipcRenderer.invoke('getProblems'))) as [Error | null, GetProblemsResp];
+      const [err, res] = (await to(ipcRenderer.invoke('getProblems', params))) as [Error | null, GetProblemsResp];
       if (err) {
         throw err;
       }
@@ -37,6 +40,7 @@ const useGetProblems = (params: GetProblemsReq) =>
     {
       retry: 2,
       cacheTime: 1000 * 60 /** 1 min */,
+      ...options,
     },
   );
 
