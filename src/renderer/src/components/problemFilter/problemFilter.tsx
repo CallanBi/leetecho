@@ -6,6 +6,9 @@ import { DIFFICULTY_WORD, LEETCODE_PROBLEM_LIST, STATUS_WORD, LeetCodeProblemLis
 import { IconSearch } from '@douyinfe/semi-icons';
 import { withSemiIconStyle } from '@/style';
 import { COLOR_PALETTE } from 'src/const/theme/color';
+import TagSelector from '../tagSelector';
+import { Form, Select, Tag } from 'antd';
+import { FormattedTagItem, labelsTypeIsFormattedTags, labelTypeIsFormattedTag } from '../tagSelector/tagSelector';
 
 const { useRef, useState, useEffect, useMemo } = React;
 
@@ -14,6 +17,7 @@ export type ProblemsFilterObj = {
   difficulty: Difficulty | '';
   status: Status | '';
   search: string | '';
+  tags?: string[];
 };
 
 interface ProblemFilterProps {
@@ -34,8 +38,31 @@ const ProblemFilterSection = styled.section`
   }
 `;
 
+const SelectedTagsDisplaySection = styled.section`
+  padding-top: 12px;
+`;
+
 const ProblemFilter: React.FC<ProblemFilterProps> = (props: ProblemFilterProps) => {
   const { onFilterChange, hasRouterQuery = false } = props;
+
+  const [selectedTagsValue, setSelectedTagsValue] = useState<FormattedTagItem[]>([]);
+  const [filterVal, setFilterVal] = useState<ProblemsFilterObj>({
+    list: '',
+    difficulty: '',
+    status: '',
+    search: '',
+  });
+
+  const onTagsValueChange = (val: FormattedTagItem[] | string[]) => {
+    setSelectedTagsValue(val as FormattedTagItem[]);
+  };
+
+  useEffect(() => {
+    onFilterChange?.({ ...filterVal, tags: selectedTagsValue.map?.((t) => t.value || '') || [] });
+    return () => {
+      /** noop */
+    };
+  }, [selectedTagsValue]);
 
   return (
     <ProblemFilterSection>
@@ -43,20 +70,21 @@ const ProblemFilter: React.FC<ProblemFilterProps> = (props: ProblemFilterProps) 
         initialValues={{}}
         size={'middle'}
         onFinish={async (val: ProblemsFilterObj) => {
-          onFilterChange?.(val);
+          setFilterVal(val);
+          onFilterChange?.({ ...val, tags: selectedTagsValue.map?.((t) => t.value || '') || [] });
         }}
       >
         <ProFormSelect
           name="list"
           label="题单"
           allowClear={true}
-          fieldProps={{}}
           valueEnum={Object.values(LEETCODE_PROBLEM_LIST.CN).reduce((acc, v) => {
             return { ...acc, [v.listId]: v.name };
           }, {})}
         />
-        <ProFormSelect name="difficulty" label="难度" allowClear={true} fieldProps={{}} valueEnum={DIFFICULTY_WORD} />
-        <ProFormSelect name="status" label="状态" fieldProps={{}} allowClear={true} valueEnum={STATUS_WORD} />
+        <ProFormSelect name="difficulty" label="难度" allowClear={true} valueEnum={DIFFICULTY_WORD} />
+        <ProFormSelect name="status" label="状态" allowClear={true} valueEnum={STATUS_WORD} />
+        <TagSelector labelInValue value={selectedTagsValue} onChange={onTagsValueChange}></TagSelector>
         {!hasRouterQuery && (
           <ProFormText
             name="search"
@@ -69,6 +97,21 @@ const ProblemFilter: React.FC<ProblemFilterProps> = (props: ProblemFilterProps) 
           />
         )}
       </LightFilter>
+      <SelectedTagsDisplaySection>
+        {selectedTagsValue?.map((tag) => (
+          <Tag
+            key={tag.value}
+            closable={true}
+            onClose={(e) => {
+              e.preventDefault(); // disable default closing tag movement
+              const filteredTags = selectedTagsValue.filter((t) => t.value !== tag.value);
+              setSelectedTagsValue(filteredTags);
+            }}
+          >
+            {tag.label}
+          </Tag>
+        ))}
+      </SelectedTagsDisplaySection>
     </ProblemFilterSection>
   );
 };

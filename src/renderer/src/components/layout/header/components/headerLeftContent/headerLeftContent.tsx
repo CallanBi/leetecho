@@ -18,7 +18,7 @@ const { Search } = Input;
 
 // const { useRef, useState, useEffect, useMemo } = React;
 
-const SEARCH_POPOVER_WIDTH = 240;
+const SEARCH_POPOVER_WIDTH = 260;
 const SEARCH_WIDTH = 260;
 
 const HeaderSearchSection = styled.section`

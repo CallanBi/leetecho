@@ -63,7 +63,7 @@ interface TagItem {
 
 interface TagRelationItem {
   questionNum: number;
-  tag: TagItem[];
+  tag: TagItem;
 }
 
 interface TagGroupItem {

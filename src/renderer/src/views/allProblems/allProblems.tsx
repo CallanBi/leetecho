@@ -2,7 +2,6 @@ import { Button, PageHeader, Spin, Table, TablePaginationConfig, TableProps } fr
 import * as React from 'react';
 import Loading from '@/components/loading';
 import { useGetProblems } from '@/rendererApi/problems';
-import { useGetAllTags } from '@/rendererApi/tags';
 import { UseQueryOptions } from 'react-query';
 
 import ProblemTable from '../../components/problemTable';
@@ -12,7 +11,6 @@ import { FilterValue, SorterResult, TableCurrentDataSource } from 'antd/lib/tabl
 import { ProblemItemFromGraphQL } from 'src/main/api/leetcodeApi/utils/interfaces';
 import { COLUMN_KEY_SORTER_KEY_MAP, TABLE_SORTER_ORDER_MAP } from './const';
 import { useRouter } from '@/hooks/router/useRouter';
-import { COLOR_PALETTE } from 'src/const/theme/color';
 
 const { useRef, useState, useEffect, useMemo } = React;
 
@@ -90,7 +88,7 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
       /** searchKeywords: problem title, frontend id or content */
       searchKeywords: requestParams?.filterStatus?.search || '',
       /** tags: tags that a problem belongs to, defined as tagSlug */
-      tags: [],
+      tags: requestParams?.filterStatus?.tags || [],
       /** listId: problem list that a problem belongs to */
       listId: requestParams?.filterStatus?.list || '',
       orderBy: COLUMN_KEY_SORTER_KEY_MAP[
@@ -101,10 +99,6 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
       ] as 'DESCENDING' | 'ASCENDING' | '',
     },
   };
-
-  console.log('%c  queryArgs>>>', 'background: yellow; color: blue', queryArgs);
-
-  debugger;
 
   const queryOptions: Omit<UseQueryOptions<GetProblemsResp['data'], Error>, 'queryKey' | 'queryFn'> = {
     enabled: requestParams.enableRequest,
@@ -120,11 +114,8 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
     error: getProblemsError,
   } = useGetProblems(queryArgs, queryOptions);
 
-  debugger;
-
   const onFilterChange = (val: ProblemsFilterObj) => {
-    debugger;
-    const { list = '', difficulty = '', status = '', search = '' } = val;
+    const { list = '', difficulty = '', status = '', search = '', tags = [] } = val;
     setRequestParams({
       ...requestParams,
       filterStatus: {
@@ -133,6 +124,7 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
         difficulty,
         status,
         search,
+        tags,
       },
       pageStatus: {
         ...requestParams.pageStatus,

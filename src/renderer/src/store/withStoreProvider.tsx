@@ -13,7 +13,7 @@ type WithProviderProps<State, Action> = {
 };
 
 /**
- * 生产包裹需要共享 store 的子组件的高阶组件
+ * produces HOC that wrap child components who need the store
  * @param props {
  *    reducer: React.Reducer<State, Action>;
  *    initState: State;

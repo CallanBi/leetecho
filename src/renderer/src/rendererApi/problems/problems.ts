@@ -27,10 +27,7 @@ const useGetProblems = (
 ) =>
   useQuery<GetProblemsResp['data'], Error>(
     ['getProblems', params],
-
     async () => {
-      console.log('%c  params>>>', 'background: yellow; color: blue', params);
-
       const [err, res] = (await to(ipcRenderer.invoke('getProblems', params))) as [Error | null, GetProblemsResp];
       if (err) {
         throw err;
