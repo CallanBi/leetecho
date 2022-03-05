@@ -50,9 +50,9 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
 
   const { search: routerSearchString = '' } = query as { search?: string };
 
-  const hasRouterSearchQuery = Boolean(routerSearchString);
+  const hasRouterSearchQuery = Boolean(routerSearchString) || routerSearchString === '';
 
-  if (hasRouterSearchQuery) {
+  if (hasRouterSearchQuery && routerSearchString !== '') {
     if (requestParams.filterStatus.search !== routerSearchString) {
       setRequestParams({
         pageStatus: {
@@ -85,10 +85,10 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
     /** limit: for pagination, default value is 10 */
     limit: requestParams?.pageStatus?.pageSize || 10,
     filters: {
-      difficulty: requestParams.filterStatus.difficulty,
-      status: requestParams.filterStatus.status,
+      difficulty: requestParams?.filterStatus?.difficulty || '',
+      status: requestParams?.filterStatus?.status || '',
       /** searchKeywords: problem title, frontend id or content */
-      searchKeywords: requestParams.filterStatus.search,
+      searchKeywords: requestParams?.filterStatus?.search || '',
       /** tags: tags that a problem belongs to, defined as tagSlug */
       tags: [],
       /** listId: problem list that a problem belongs to */
@@ -101,6 +101,10 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
       ] as 'DESCENDING' | 'ASCENDING' | '',
     },
   };
+
+  console.log('%c  queryArgs>>>', 'background: yellow; color: blue', queryArgs);
+
+  debugger;
 
   const queryOptions: Omit<UseQueryOptions<GetProblemsResp['data'], Error>, 'queryKey' | 'queryFn'> = {
     enabled: requestParams.enableRequest,
@@ -116,8 +120,11 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
     error: getProblemsError,
   } = useGetProblems(queryArgs, queryOptions);
 
+  debugger;
+
   const onFilterChange = (val: ProblemsFilterObj) => {
-    const { list, difficulty, status, search } = val;
+    debugger;
+    const { list = '', difficulty = '', status = '', search = '' } = val;
     setRequestParams({
       ...requestParams,
       filterStatus: {
@@ -162,8 +169,10 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
 
   return (
     <>
-      {!hasRouterSearchQuery && <ProblemFilter onFilterChange={onFilterChange}></ProblemFilter>}
-      {hasRouterSearchQuery && (
+      {(!hasRouterSearchQuery || routerSearchString === '') && (
+        <ProblemFilter onFilterChange={onFilterChange}></ProblemFilter>
+      )}
+      {hasRouterSearchQuery && routerSearchString !== '' && (
         // <Button
         //   type="link"
         //   style={{ color: COLOR_PALETTE.LEETECHO_LIGHT_BLUE }}
@@ -208,7 +217,11 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
             });
           }}
           title="所有习题"
-          subTitle={`「${routerSearchString}」的搜索结果`}
+          subTitle={
+            getProblemsData?.total && getProblemsData.total > 0
+              ? `「${routerSearchString}」的搜索结果：${getProblemsData.total} 条`
+              : ''
+          }
         />
       )}
       <ProblemTable
@@ -218,8 +231,10 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
         tableStatus={{
           isLoading: {
             indicator: (
-              <section style={{ display: 'flex', justifyContent: 'center' }}>
-                <Loading></Loading>
+              <section style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <section style={{ display: 'flex' }}>
+                  <Loading style={{ width: 45, height: 45 }}></Loading>
+                </section>
               </section>
             ),
             spinning: isGetProblemsLoading,

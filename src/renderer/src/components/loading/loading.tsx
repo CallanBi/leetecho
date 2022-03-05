@@ -6,6 +6,10 @@ import { MEASUREMENT } from 'src/const/theme/measurement';
 
 const { useRef, useState, useEffect, useMemo } = React;
 
+interface LoadingProps {
+  style?: React.CSSProperties;
+}
+
 const LoadingSection = styled.section`
   @keyframes square-spin {
     25% {
@@ -29,6 +33,10 @@ const LoadingSection = styled.section`
   animation: square-spin 3s 0s cubic-bezier(0.09, 0.57, 0.49, 0.9) infinite;
 `;
 
-const Loading = (props: { style?: React.CSSProperties }) => <LoadingSection style={props.style || {}} />;
+const Loading: React.FC<LoadingProps> = (props: LoadingProps) => {
+  const { style = {} } = props;
+
+  return <LoadingSection style={style || {}} />;
+};
 
 export default Loading;

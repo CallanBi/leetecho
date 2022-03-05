@@ -18,6 +18,9 @@ const { Search } = Input;
 
 // const { useRef, useState, useEffect, useMemo } = React;
 
+const SEARCH_POPOVER_WIDTH = 240;
+const SEARCH_WIDTH = 260;
+
 const HeaderSearchSection = styled.section`
   -webkit-app-region: no-drag;
   display: flex;
@@ -25,7 +28,7 @@ const HeaderSearchSection = styled.section`
   justify-content: center;
   margin-left: 24px;
   margin-right: auto;
-  width: 260px;
+  width: ${SEARCH_WIDTH}px;
   /* .ant-input {
     background-color: ${COLOR_PALETTE.LEETECHO_HEADER_SEARCH_BG};
     border-color: ${COLOR_PALETTE.LEETECHO_HEADER_SEARCH_BG};
@@ -119,7 +122,7 @@ const HeaderSearchSection = styled.section`
 
 const searchStyle: React.CSSProperties = {
   margin: 'auto',
-  width: 240,
+  width: `${SEARCH_WIDTH}`,
 };
 
 interface HeaderLeftContentProps {}
@@ -195,7 +198,13 @@ const HeaderLeftContent: React.FC<HeaderLeftContentProps> = (props: HeaderLeftCo
         content={
           isGetProblemsLoading ? (
             <section
-              style={{ display: 'flex', justifyContent: 'center', width: 260, height: 150, alignItems: 'center' }}
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                width: SEARCH_POPOVER_WIDTH,
+                height: 150,
+                alignItems: 'center',
+              }}
             >
               <Loading style={{ width: 30, height: 30 }} />
             </section>
@@ -204,7 +213,7 @@ const HeaderLeftContent: React.FC<HeaderLeftContentProps> = (props: HeaderLeftCo
               bordered
               style={{
                 padding: 0,
-                width: 260,
+                width: SEARCH_POPOVER_WIDTH,
               }}
               size="small"
               footer={

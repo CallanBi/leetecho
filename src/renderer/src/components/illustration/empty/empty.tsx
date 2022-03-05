@@ -41,7 +41,7 @@ const Empty: React.FC<EmptyProps> = (props: EmptyProps) => {
   return (
     <IllustrationWrapperSection>
       <IllustrationSection>
-        <EmptyIllustration width={390} height={390} />
+        <EmptyIllustration width={380} height={380} />
       </IllustrationSection>
       {title && (
         <TitleSection>
