@@ -81,6 +81,9 @@ const ProblemFilter: React.FC<ProblemFilterProps> = (props: ProblemFilterProps) 
           valueEnum={Object.values(LEETCODE_PROBLEM_LIST.CN).reduce((acc, v) => {
             return { ...acc, [v.listId]: v.name };
           }, {})}
+          fieldProps={{
+            dropdownMatchSelectWidth: 198,
+          }}
         />
         <ProFormSelect name="difficulty" label="难度" allowClear={true} valueEnum={DIFFICULTY_WORD} />
         <ProFormSelect name="status" label="状态" allowClear={true} valueEnum={STATUS_WORD} />

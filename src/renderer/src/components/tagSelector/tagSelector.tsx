@@ -9,6 +9,8 @@ import { COLOR_PALETTE } from 'src/const/theme/color';
 import { DownOutlined } from '@ant-design/icons';
 import Loading from '../loading';
 import { random } from 'lodash';
+import { IconChevronDown, IconSearch } from '@douyinfe/semi-icons';
+import { withSemiIconStyle } from '@/style';
 
 const { Option, OptGroup } = Select;
 
@@ -104,6 +106,8 @@ const TagSelector: React.FC<TagSelectorProps> = (props: TagSelectorProps) => {
     enabled: requestParams.enableRequest,
     onSuccess: onRequestSuccess,
     onError: onRequestError,
+    staleTime: 1000 * 60 * 5,
+    cacheTime: 1000 * 60 * 30,
   };
 
   const { isLoading, isSuccess, isError, data, error } = useGetAllTags(queryOptions);
@@ -119,6 +123,8 @@ const TagSelector: React.FC<TagSelectorProps> = (props: TagSelectorProps) => {
   /** A hacky way to always show placeholder */
   const [fakeItemEnable, setFakeItemEnable] = useState<boolean>(false);
 
+  const [dropDownVisible, setDropDownVisible] = useState(false);
+
   const popoverContent = (
     <PopoverContent>
       {isLoading && <Loading></Loading>}
@@ -131,6 +137,16 @@ const TagSelector: React.FC<TagSelectorProps> = (props: TagSelectorProps) => {
             placeholder="搜索标签"
             labelInValue
             optionFilterProp="label"
+            suffixIcon={
+              dropDownVisible ? (
+                <IconSearch style={withSemiIconStyle({ top: 0 })} />
+              ) : (
+                <IconChevronDown style={withSemiIconStyle({ top: 0 })} />
+              )
+            }
+            onDropdownVisibleChange={(visible) => {
+              setDropDownVisible(visible);
+            }}
             value={fakeItemEnable ? null : undefined}
             onChange={(val: FormattedTagItem) => {
               if (labelsTypeIsFormattedTags(selectedVal.current, labelInValue)) {

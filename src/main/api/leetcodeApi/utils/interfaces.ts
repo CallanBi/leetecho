@@ -54,6 +54,8 @@ interface Uris {
   submission: string;
 }
 
+/** ---- newly added */
+
 interface TagItem {
   id: string;
   name: string;
@@ -86,9 +88,13 @@ export interface TopCompanyTag {
   __typename: string;
 }
 
-type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
-type Status = 'NOT_STARTED' | 'AC' | 'TRIED';
-type CategorySlug = '' | 'algorithms' | 'database' | 'shell';
+export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
+export type Status = 'NOT_STARTED' | 'AC' | 'TRIED';
+export type CategorySlug = '' | 'algorithms' | 'database' | 'shell';
+
+export type QuestionStatus = 'FAILED' | 'ACCEPTED' | 'UNTOUCHED';
+
+export type SortOrder = 'ASCENDING' | 'DESCENDING';
 
 export interface Extra {
   companyTagNum?: number;
@@ -124,6 +130,157 @@ export type ProblemsetQuestionList = {
 
 export interface GetProblemsFromGraphQLResponse {
   problemsetQuestionList: ProblemsetQuestionList;
+}
+
+export interface Question {
+  translatedTitle: string;
+  frontendId: string;
+  titleSlug: string;
+  title: string;
+  difficulty: string;
+  lastSubmittedAt: number;
+  numSubmitted: number;
+  lastSubmissionSrc?: any;
+  __typename: string;
+}
+
+export interface UserProfileQuestions {
+  totalNum: number;
+  questions: Question[];
+}
+
+export interface GetUserProfileQuestionsResponse {
+  userProfileQuestions: UserProfileQuestions;
+}
+
+export interface Submission {
+  id: string;
+  timestamp: string;
+  url: string;
+  lang: string;
+  runtime: string;
+  statusDisplay: SubmissionStatus;
+  __typename: string;
+}
+
+export interface SubmissionList {
+  lastKey: string;
+  hasNext: boolean;
+  submissions: Submission[];
+  __typename: string;
+}
+
+export interface GetSubmissionsByQuestionSlugResponse {
+  submissionList: SubmissionList;
+}
+
+export type QuestionSortField = 'LAST_SUBMITTED_AT';
+
+export interface Question {
+  titleSlug: string;
+  title: string;
+  translatedTitle: string;
+  questionId: string;
+  __typename: string;
+}
+
+export interface OutputDetail {
+  codeOutput: string;
+  expectedOutput: string;
+  input: string;
+  compileError: string;
+  runtimeError: string;
+  lastTestcase: string;
+  __typename: string;
+}
+
+export interface SubmissionDetail {
+  id: string;
+  code: string;
+  runtime: string;
+  memory: string;
+  rawMemory: string;
+  statusDisplay: string;
+  timestamp: number;
+  lang: string;
+  passedTestCaseCnt: number;
+  totalTestCaseCnt: number;
+  sourceUrl: string;
+  question: Question;
+  outputDetail: OutputDetail;
+  __typename: string;
+  submissionComment?: any;
+}
+
+export interface GetSubmissionDetailByIdResponse {
+  submissionDetail: SubmissionDetail;
+}
+
+export interface TopicTag {
+  name: string;
+  slug: string;
+  translatedName: string;
+  __typename: string;
+}
+
+export interface CodeSnippet {
+  lang: string;
+  langSlug: string;
+  code: string;
+  __typename: string;
+}
+
+export interface Solution {
+  id: string;
+  canSeeDetail: boolean;
+  __typename: string;
+}
+
+export interface Question {
+  questionId: string;
+  questionFrontendId: string;
+  categoryTitle: string;
+  boundTopicId: number;
+  title: string;
+  titleSlug: string;
+  content: string;
+  translatedTitle: string;
+  translatedContent: string;
+  isPaidOnly: boolean;
+  difficulty: string;
+  likes: number;
+  dislikes: number;
+  isLiked?: any;
+  similarQuestions: string;
+  contributors: any[];
+  langToValidPlayground: string;
+  topicTags: TopicTag[];
+  companyTagStats?: any;
+  codeSnippets: CodeSnippet[];
+  stats: string;
+  hints: string[];
+  solution: Solution;
+  status: string;
+  sampleTestCase: string;
+  metaData: string;
+  judgerAvailable: boolean;
+  judgeType: string;
+  mysqlSchemas: any[];
+  enableRunCode: boolean;
+  envInfo: string;
+  book?: any;
+  isSubscribed: boolean;
+  isDailyQuestion: boolean;
+  dailyRecordStatus: string;
+  editorType: string;
+  ugcQuestionId?: any;
+  style: string;
+  exampleTestcases: string;
+  __typename: string;
+}
+
+export interface GetQuestionDetailByTitleSlugResponse {
+  question: Question;
 }
 
 export {

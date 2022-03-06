@@ -5,7 +5,22 @@ import { ErrorResp } from '../../appApi/base';
 import { GetProblemsRequest } from '../../appApi/idl/problems';
 import ERROR_CODE, { getErrorCodeMessage } from '../../errorCode';
 import Helper from '../utils/helper';
-import { Credit, EndPoint, GetProblemsFromGraphQLResponse, TagGroupItem, Uris } from '../utils/interfaces';
+import {
+  Credit,
+  Difficulty,
+  EndPoint,
+  GetProblemsFromGraphQLResponse,
+  GetQuestionDetailByTitleSlugResponse,
+  GetSubmissionDetailByIdResponse,
+  GetSubmissionsByQuestionSlugResponse,
+  GetUserProfileQuestionsResponse,
+  QuestionSortField,
+  QuestionStatus,
+  SortOrder,
+  TagGroupItem,
+  Uris,
+  UserProfileQuestions,
+} from '../utils/interfaces';
 import Problem from './problem';
 
 class Leetcode {
@@ -272,7 +287,7 @@ class Leetcode {
     return problems;
   }
 
-  async getAllTags(): Promise<any> {
+  async getAllTags(): Promise<TagGroupItem[]> {
     const [err, response] = await to(
       Helper.GraphQLRequest({
         query: `
@@ -303,6 +318,276 @@ class Leetcode {
 
     const { questionTagTypeWithTags: tagGroups } = response as { questionTagTypeWithTags: TagGroupItem[] };
     return tagGroups;
+  }
+
+  async getUserProfileQuestions(params: {
+    difficulty?: Difficulty[];
+    first?: number;
+    skip?: number;
+    sortField?: QuestionSortField;
+    sortOrder?: SortOrder;
+    status?: QuestionStatus;
+  }): Promise<UserProfileQuestions> {
+    const {
+      difficulty = [],
+      first = 0,
+      skip = 0,
+      sortField = 'LAST_SUBMITTED_AT',
+      sortOrder = 'DESCENDING',
+      status = 'ACCEPTED',
+    } = params;
+    const [err, response] = await to(
+      Helper.GraphQLRequest({
+        query: `
+        query userProfileQuestions($status: StatusFilterEnum!, $skip: Int!, $first: Int!, $sortField: SortFieldEnum!, $sortOrder: SortingOrderEnum!, $keyword: String, $difficulty: [DifficultyEnum!]) {
+          userProfileQuestions(status: $status, skip: $skip, first: $first, sortField: $sortField, sortOrder: $sortOrder, keyword: $keyword, difficulty: $difficulty) {
+            totalNum
+            questions {
+              translatedTitle
+              frontendId
+              titleSlug
+              title
+              difficulty
+              lastSubmittedAt
+              numSubmitted
+              lastSubmissionSrc {
+                sourceType
+                ... on SubmissionSrcLeetbookNode {
+                  slug
+                  title
+                  pageId
+                  __typename
+                }
+                __typename
+              }
+              __typename
+            }
+            __typename
+          }
+        }
+      `,
+        variables: {
+          difficulty,
+          first,
+          skip,
+          sortField,
+          sortOrder,
+          status,
+        },
+      }),
+    );
+    if (err) {
+      throw new ErrorResp({
+        code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: err.message || getErrorCodeMessage(),
+      });
+    }
+
+    const { userProfileQuestions } = response as GetUserProfileQuestionsResponse;
+    return userProfileQuestions;
+  }
+
+  async getSubmissionsByQuestionSlug(params: {
+    limit?: number;
+    offset?: number;
+  }): Promise<GetSubmissionsByQuestionSlugResponse['submissionList']> {
+    const { limit = 0, offset = 0 } = params;
+    const [err, response] = await to(
+      Helper.GraphQLRequest({
+        query: `
+        query progressSubmissions($offset: Int, $limit: Int, $lastKey: String, $questionSlug: String) {
+          submissionList(offset: $offset, limit: $limit, lastKey: $lastKey, questionSlug: $questionSlug) {
+            lastKey
+            hasNext
+            submissions {
+              id
+              timestamp
+              url
+              lang
+              runtime
+              statusDisplay
+              __typename
+            }
+            __typename
+          }
+        }
+      `,
+        variables: {
+          limit,
+          offset,
+        },
+      }),
+    );
+    if (err) {
+      throw new ErrorResp({
+        code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: err.message || getErrorCodeMessage(),
+      });
+    }
+
+    const { submissionList } = response as GetSubmissionsByQuestionSlugResponse;
+    return submissionList;
+  }
+
+  async getSubmissionDetailById(params: { id: string }): Promise<GetSubmissionDetailByIdResponse['submissionDetail']> {
+    const { id } = params;
+    const [err, response] = await to(
+      Helper.GraphQLRequest({
+        query: `
+        query mySubmissionDetail($id: ID!) {
+          submissionDetail(submissionId: $id) {
+            id
+            code
+            runtime
+            memory
+            rawMemory
+            statusDisplay
+            timestamp
+            lang
+            passedTestCaseCnt
+            totalTestCaseCnt
+            sourceUrl
+            question {
+              titleSlug
+              title
+              translatedTitle
+              questionId
+              __typename
+            }
+            ... on GeneralSubmissionNode {
+              outputDetail {
+                codeOutput
+                expectedOutput
+                input
+                compileError
+                runtimeError
+                lastTestcase
+                __typename
+              }
+              __typename
+            }
+            submissionComment {
+              comment
+              flagType
+              __typename
+            }
+            __typename
+          }
+        }
+
+      `,
+        variables: {
+          id,
+        },
+      }),
+    );
+    if (err) {
+      throw new ErrorResp({
+        code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: err.message || getErrorCodeMessage(),
+      });
+    }
+
+    const { submissionDetail } = response as GetSubmissionDetailByIdResponse;
+    return submissionDetail;
+  }
+
+  async getQuestionDetailByTitleSlug(params: {
+    titleSlug: string;
+  }): Promise<GetQuestionDetailByTitleSlugResponse['question']> {
+    const { titleSlug } = params;
+    const [err, response] = await to(
+      Helper.GraphQLRequest({
+        query: `
+        query questionData($titleSlug: String!) {
+          question(titleSlug: $titleSlug) {
+            questionId
+            questionFrontendId
+            categoryTitle
+            boundTopicId
+            title
+            titleSlug
+            content
+            translatedTitle
+            translatedContent
+            isPaidOnly
+            difficulty
+            likes
+            dislikes
+            isLiked
+            similarQuestions
+            contributors {
+              username
+              profileUrl
+              avatarUrl
+              __typename
+            }
+            langToValidPlayground
+            topicTags {
+              name
+              slug
+              translatedName
+              __typename
+            }
+            companyTagStats
+            codeSnippets {
+              lang
+              langSlug
+              code
+              __typename
+            }
+            stats
+            hints
+            solution {
+              id
+              canSeeDetail
+              __typename
+            }
+            status
+            sampleTestCase
+            metaData
+            judgerAvailable
+            judgeType
+            mysqlSchemas
+            enableRunCode
+            envInfo
+            book {
+              id
+              bookName
+              pressName
+              source
+              shortDescription
+              fullDescription
+              bookImgUrl
+              pressImgUrl
+              productUrl
+              __typename
+            }
+            isSubscribed
+            isDailyQuestion
+            dailyRecordStatus
+            editorType
+            ugcQuestionId
+            style
+            exampleTestcases
+            __typename
+          }
+        }
+      `,
+        variables: {
+          titleSlug,
+        },
+      }),
+    );
+    if (err) {
+      throw new ErrorResp({
+        code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: err.message || getErrorCodeMessage(),
+      });
+    }
+
+    const { question } = response as GetQuestionDetailByTitleSlugResponse;
+    return question;
   }
 }
 

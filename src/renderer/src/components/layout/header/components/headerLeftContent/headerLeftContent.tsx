@@ -4,14 +4,11 @@ import styled from '@emotion/styled';
 import { Button, Dropdown, Input, List, Menu, Popover, SelectProps, Typography } from 'antd';
 import { COLOR_PALETTE } from 'src/const/theme/color';
 import SearchEnterBtn from '../searchEnterBtn';
-import { AutoComplete } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
 import { useDebounce } from 'ahooks';
 import { UseQueryOptions } from 'react-query';
 import { useGetProblems } from '@/rendererApi';
 import Loading from '@/components/loading';
 import { useRouter } from '@/hooks/router/useRouter';
-import { isError, random } from 'lodash';
 import { css } from '@emotion/react';
 
 const { Search } = Input;
