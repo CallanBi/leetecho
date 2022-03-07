@@ -1,6 +1,7 @@
 {
   "extends": "./paths.json",
   "compilerOptions": {
+    "experimentalDecorators": true, // enable decorator
     "target": "ESNext",
     "module": "ESNext",
     "allowJs": true,

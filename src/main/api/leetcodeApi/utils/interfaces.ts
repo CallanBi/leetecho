@@ -132,18 +132,6 @@ export interface GetProblemsFromGraphQLResponse {
   problemsetQuestionList: ProblemsetQuestionList;
 }
 
-export interface Question {
-  translatedTitle: string;
-  frontendId: string;
-  titleSlug: string;
-  title: string;
-  difficulty: string;
-  lastSubmittedAt: number;
-  numSubmitted: number;
-  lastSubmissionSrc?: any;
-  __typename: string;
-}
-
 export interface UserProfileQuestions {
   totalNum: number;
   questions: Question[];
@@ -158,6 +146,7 @@ export interface Submission {
   timestamp: string;
   url: string;
   lang: string;
+  memory: string;
   runtime: string;
   statusDisplay: SubmissionStatus;
   __typename: string;
@@ -175,14 +164,6 @@ export interface GetSubmissionsByQuestionSlugResponse {
 }
 
 export type QuestionSortField = 'LAST_SUBMITTED_AT';
-
-export interface Question {
-  titleSlug: string;
-  title: string;
-  translatedTitle: string;
-  questionId: string;
-  __typename: string;
-}
 
 export interface OutputDetail {
   codeOutput: string;
@@ -238,49 +219,128 @@ export interface Solution {
 
 export interface Question {
   questionId: string;
-  questionFrontendId: string;
-  categoryTitle: string;
-  boundTopicId: number;
+  questionFrontendId?: string;
+  categoryTitle?: string;
+  boundTopicId?: number;
   title: string;
   titleSlug: string;
-  content: string;
+  content?: string;
   translatedTitle: string;
-  translatedContent: string;
-  isPaidOnly: boolean;
-  difficulty: string;
-  likes: number;
-  dislikes: number;
+  translatedContent?: string;
+  isPaidOnly?: boolean;
+  difficulty?: string;
+  likes?: number;
+  dislikes?: number;
   isLiked?: any;
-  similarQuestions: string;
-  contributors: any[];
-  langToValidPlayground: string;
-  topicTags: TopicTag[];
+  similarQuestions?: string;
+  contributors?: any[];
+  langToValidPlayground?: string;
+  topicTags?: TopicTag[];
   companyTagStats?: any;
-  codeSnippets: CodeSnippet[];
-  stats: string;
-  hints: string[];
-  solution: Solution;
-  status: string;
-  sampleTestCase: string;
-  metaData: string;
-  judgerAvailable: boolean;
-  judgeType: string;
-  mysqlSchemas: any[];
-  enableRunCode: boolean;
-  envInfo: string;
+  codeSnippets?: CodeSnippet[];
+  stats?: string;
+  hints?: string[];
+  solution?: Solution;
+  status?: string;
+  sampleTestCase?: string;
+  metaData?: string;
+  judgerAvailable?: boolean;
+  judgeType?: string;
+  mysqlSchemas?: any[];
+  enableRunCode?: boolean;
+  envInfo?: string;
   book?: any;
-  isSubscribed: boolean;
-  isDailyQuestion: boolean;
-  dailyRecordStatus: string;
-  editorType: string;
+  isSubscribed?: boolean;
+  isDailyQuestion?: boolean;
+  dailyRecordStatus?: string;
+  editorType?: string;
   ugcQuestionId?: any;
-  style: string;
-  exampleTestcases: string;
+  style?: string;
+  exampleTestcases?: string;
   __typename: string;
+}
+
+export interface UserNote {
+  config: string;
+  content: string;
+  id: string;
+  noteType: string;
+  status: string;
+  summary: string;
+  targetId: string;
+  updatedAt: Date;
+  noteQuestion?: NoteQuestion;
+  __typename: string;
+}
+
+export interface NoteOneTargetCommonNote {
+  count: number;
+  userNotes: UserNote[];
+  __typename: string;
+}
+
+export interface GetNotesByQuestionIdResponse {
+  noteOneTargetCommonNote: NoteOneTargetCommonNote;
 }
 
 export interface GetQuestionDetailByTitleSlugResponse {
   question: Question;
+}
+
+export interface NoteQuestion {
+  linkTemplate: string;
+  questionFrontendId: string;
+  questionId: string;
+  title: string;
+  translatedTitle: string;
+  __typename: string;
+}
+
+export interface NoteAggregateNote {
+  count: number;
+  userNotes: UserNote[];
+  __typename: string;
+}
+
+export interface GetNotesResponse {
+  noteAggregateNote: NoteAggregateNote;
+}
+
+export interface AccountStatus {
+  isFrozen: boolean;
+  inactiveAfter?: any;
+  __typename: string;
+}
+
+export interface UserStatus {
+  isSignedIn: boolean;
+  isAdmin: boolean;
+  isStaff: boolean;
+  isSuperuser: boolean;
+  isTranslator: boolean;
+  isVerified: boolean;
+  isPhoneVerified: boolean;
+  isWechatVerified: boolean;
+  checkedInToday: boolean;
+  username: string;
+  realName: string;
+  userSlug: string;
+  groups: string[];
+  avatar: string;
+  optedIn: boolean;
+  requestRegion: string;
+  region: string;
+  socketToken: string;
+  activeSessionId: number;
+  permissions: string[];
+  completedFeatureGuides: string[];
+  useTranslation: boolean;
+  accountStatus: AccountStatus;
+  __typename: string;
+}
+
+export interface GetUserStatusResponse {
+  userStatus: UserStatus;
 }
 
 export {

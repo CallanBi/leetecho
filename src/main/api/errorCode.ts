@@ -10,10 +10,12 @@ const enum ERROR_CODE {
   SERVICE_UNAVAILABLE = 503,
 
   UNKNOWN_ERROR = 1,
-  NOT_LOGIN = 2,
+
+  NOT_LOGIN = 4000001,
+  REQUEST_PARAMS_ERROR = 4000002,
 }
 
-type ErrorCodeType = 200 | 302 | 304 | 400 | 403 | 404 | 500 | 502 | 503 | 1 | 2;
+type ErrorCodeType = 200 | 302 | 304 | 400 | 403 | 404 | 500 | 502 | 503 | 1 | 4000001 | 4000002;
 
 type ErrorCodeMessageType =
   | 'OK'
@@ -26,7 +28,8 @@ type ErrorCodeMessageType =
   | 'BAD_GATEWAY'
   | 'SERVICE_UNAVAILABLE'
   | 'UNKNOWN_ERROR'
-  | 'NOT_LOGIN';
+  | 'NOT_LOGIN'
+  | 'REQUEST_PARAMS_ERROR';
 
 const ErrorCodeMessageMap: { [key in ErrorCodeType]: ErrorCodeMessageType } = {
   200: 'OK',
@@ -40,7 +43,9 @@ const ErrorCodeMessageMap: { [key in ErrorCodeType]: ErrorCodeMessageType } = {
   503: 'SERVICE_UNAVAILABLE',
 
   1: 'UNKNOWN_ERROR',
-  2: 'NOT_LOGIN',
+
+  4000001: 'NOT_LOGIN',
+  4000002: 'REQUEST_PARAMS_ERROR',
 };
 
 type ErrorCode = keyof typeof ErrorCodeMessageMap;

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import to from 'await-to-js';
 import { StatusCodeError } from 'request-promise-native/errors';
 import { deleteNilVal } from '../../../tools';
@@ -9,11 +10,14 @@ import {
   Credit,
   Difficulty,
   EndPoint,
+  GetNotesByQuestionIdResponse,
+  GetNotesResponse,
   GetProblemsFromGraphQLResponse,
   GetQuestionDetailByTitleSlugResponse,
   GetSubmissionDetailByIdResponse,
   GetSubmissionsByQuestionSlugResponse,
   GetUserProfileQuestionsResponse,
+  GetUserStatusResponse,
   QuestionSortField,
   QuestionStatus,
   SortOrder,
@@ -22,6 +26,38 @@ import {
   UserProfileQuestions,
 } from '../utils/interfaces';
 import Problem from './problem';
+
+/**
+ * validate: a decorator factory that validates API parameters
+ * @param validator (params: Record<string, unknown>) => boolean
+ * @returns MethodDecorator
+ */
+function validate(validator: (params: any) => boolean) {
+  return function (
+    target: unknown,
+    propertyName: string,
+    descriptor: TypedPropertyDescriptor<(params: Record<string, unknown>) => Promise<unknown>>,
+  ) {
+    const requestFunc = descriptor.value;
+    descriptor.value = async function () {
+      if (typeof requestFunc === 'function') {
+        const params = requestFunc.arguments;
+        if (validator(params)) {
+          return requestFunc.apply(this, params);
+        } else {
+          throw new ErrorResp({
+            code: ERROR_CODE.REQUEST_PARAMS_ERROR,
+            message: getErrorCodeMessage(ERROR_CODE.REQUEST_PARAMS_ERROR),
+          });
+        }
+      }
+    };
+  } as MethodDecorator;
+}
+
+function auth(params: Record<string, unknown>): {
+  /** TODO: get whether user login status is valid */
+};
 
 class Leetcode {
   session?: string;
@@ -232,6 +268,7 @@ class Leetcode {
     return problemsetQuestionList as GetProblemsFromGraphQLResponse['problemsetQuestionList'];
   }
 
+  @validate((params: { tag: string }) => typeof params?.tag === 'string' && params.tag !== '')
   async getProblemsByTag(tag: string): Promise<Array<Problem>> {
     const [err, response] = await to(
       Helper.GraphQLRequest({
@@ -404,6 +441,7 @@ class Leetcode {
               timestamp
               url
               lang
+              memory
               runtime
               statusDisplay
               __typename
@@ -429,6 +467,7 @@ class Leetcode {
     return submissionList;
   }
 
+  @validate((params: { id: string }) => typeof params?.id === 'string' && params.id !== '')
   async getSubmissionDetailById(params: { id: string }): Promise<GetSubmissionDetailByIdResponse['submissionDetail']> {
     const { id } = params;
     const [err, response] = await to(
@@ -492,6 +531,7 @@ class Leetcode {
     return submissionDetail;
   }
 
+  @validate((params: { titleSlug: string }) => typeof params?.titleSlug === 'string' && params.titleSlug !== '')
   async getQuestionDetailByTitleSlug(params: {
     titleSlug: string;
   }): Promise<GetQuestionDetailByTitleSlugResponse['question']> {
@@ -588,6 +628,178 @@ class Leetcode {
 
     const { question } = response as GetQuestionDetailByTitleSlugResponse;
     return question;
+  }
+
+  @validate(
+    (params: { limit: number; noteType: 'COMMON_QUESTION'; skip: number; targetId: string }) =>
+      typeof params?.targetId === 'string' && params.targetId !== '',
+  )
+  async getNotesByQuestionId(params: {
+    limit: number;
+    noteType: 'COMMON_QUESTION';
+    skip: number;
+    targetId: string;
+  }): Promise<GetNotesByQuestionIdResponse['noteOneTargetCommonNote']> {
+    const { limit = 0, noteType = 'COMMON_QUESTION', skip = 0, targetId = '' } = params;
+    const [err, response] = await to(
+      Helper.GraphQLRequest({
+        query: `
+        query noteOneTargetCommonNote($noteType: NoteCommonTypeEnum!, $targetId: String!, $limit: Int = 10, $skip: Int = 0) {
+          noteOneTargetCommonNote(noteType: $noteType, targetId: $targetId, limit: $limit, skip: $skip) {
+            count
+            userNotes {
+              config
+              content
+              id
+              noteType
+              status
+              summary
+              targetId
+              updatedAt
+              __typename
+            }
+            __typename
+          }
+        }
+      `,
+        variables: {
+          limit,
+          noteType,
+          skip,
+          targetId,
+        },
+      }),
+    );
+    if (err) {
+      throw new ErrorResp({
+        code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: err.message || getErrorCodeMessage(),
+      });
+    }
+
+    const { noteOneTargetCommonNote } = response as GetNotesByQuestionIdResponse;
+    return noteOneTargetCommonNote;
+  }
+
+  async getNotes(params: {
+    aggregateType: 'QUESTION_NOTE';
+    limit: number;
+    orderBy: SortOrder;
+    skip: number;
+  }): Promise<GetNotesResponse['noteAggregateNote']> {
+    const { limit = 0, aggregateType = 'QUESTION_NOTE', skip = 0, orderBy = 'DESCENDING' } = params;
+    const [err, response] = await to(
+      Helper.GraphQLRequest({
+        query: `
+        query noteAggregateNote($aggregateType: AggregateNoteEnum!, $keyword: String, $orderBy: AggregateNoteSortingOrderEnum, $limit: Int = 100, $skip: Int = 0) {
+          noteAggregateNote(aggregateType: $aggregateType, keyword: $keyword, orderBy: $orderBy, limit: $limit, skip: $skip) {
+            count
+            userNotes {
+              config
+              content
+              id
+              noteType
+              status
+              summary
+              targetId
+              updatedAt
+              ... on NoteAggregateLeetbookNoteNode {
+                notePage {
+                  bookTitle
+                  coverImg
+                  linkTemplate
+                  parentTitle
+                  title
+                  __typename
+                }
+                __typename
+              }
+              ... on NoteAggregateQuestionNoteNode {
+                noteQuestion {
+                  linkTemplate
+                  questionFrontendId
+                  questionId
+                  title
+                  translatedTitle
+                  __typename
+                }
+                __typename
+              }
+              __typename
+            }
+            __typename
+          }
+        }
+      `,
+        variables: {
+          limit,
+          aggregateType,
+          skip,
+          orderBy,
+        },
+      }),
+    );
+    if (err) {
+      throw new ErrorResp({
+        code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: err.message || getErrorCodeMessage(),
+      });
+    }
+
+    const { noteAggregateNote } = response as GetNotesResponse;
+    return noteAggregateNote;
+  }
+
+  async getUserStatus(): Promise<GetUserStatusResponse['userStatus']> {
+    const [err, response] = await to(
+      Helper.GraphQLRequest({
+        query: `
+        query userStatusGlobal {
+          userStatus {
+            isSignedIn
+            isAdmin
+            isStaff
+            isSuperuser
+            isTranslator
+            isVerified
+            isPhoneVerified
+            isWechatVerified
+            checkedInToday
+            username
+            realName
+            userSlug
+            groups
+            avatar
+            optedIn
+            requestRegion
+            region
+            socketToken
+            activeSessionId
+            permissions
+            completedFeatureGuides
+            useTranslation
+            accountStatus {
+              isFrozen
+              inactiveAfter
+              __typename
+            }
+            __typename
+          }
+        }
+
+      `,
+        variables: {},
+      }),
+    );
+    if (err) {
+      throw new ErrorResp({
+        code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: err.message || getErrorCodeMessage(),
+      });
+    }
+
+    const { userStatus } = response as GetUserStatusResponse;
+    return userStatus;
   }
 }
 
