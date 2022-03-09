@@ -1,5 +1,8 @@
 import Problem from 'src/main/api/leetcodeApi/lib/problem';
-import { GetProblemsFromGraphQLResponse } from 'src/main/api/leetcodeApi/utils/interfaces';
+import {
+  GetProblemsFromGraphQLResponse,
+  GetQuestionDetailByTitleSlugResponse,
+} from 'src/main/api/leetcodeApi/utils/interfaces';
 
 import { SuccessResp } from '../../base';
 
@@ -28,4 +31,10 @@ export type GetProblemsRequest = {
   };
 };
 
+export type GetQuestionDetailByTitleSlugRequest = {
+  titleSlug: string;
+};
+
 export type GetProblemsResponse = SuccessResp<GetProblemsFromGraphQLResponse['problemsetQuestionList']>;
+
+export type GetProblemResponse = SuccessResp<GetQuestionDetailByTitleSlugResponse>;

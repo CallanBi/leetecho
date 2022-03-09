@@ -238,6 +238,13 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
           },
         }}
         onChange={onTableSorterAndPageChange}
+        onRow={(record, index) => {
+          return {
+            onClick: (_) => {
+              router.push(`/problemDetail?titleSlug=${record.titleSlug || ''}`);
+            },
+          };
+        }}
         isError={isGetProblemsError}
         listId={requestParams?.filterStatus?.list || ''}
       />

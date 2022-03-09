@@ -7,4 +7,6 @@ export type LoginReq = {
   pwd: string;
 };
 
-export type LoginResp = SuccessResp<{}>;
+export type LoginResp = SuccessResp<Record<string, never>>;
+
+export type LogoutResp = SuccessResp<Record<string, never>>;

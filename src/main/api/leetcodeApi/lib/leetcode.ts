@@ -39,11 +39,11 @@ function validate(validator: (params: any) => boolean) {
     descriptor: TypedPropertyDescriptor<(params: Record<string, unknown>) => Promise<unknown>>,
   ) {
     const requestFunc = descriptor.value;
-    descriptor.value = async function () {
+    descriptor.value = async function (...args) {
       if (typeof requestFunc === 'function') {
-        const params = requestFunc.arguments;
-        if (validator(params)) {
-          return requestFunc.apply(this, params);
+        // const params = requestFunc.arguments;
+        if (validator(args)) {
+          return requestFunc.apply(this, args);
         } else {
           throw new ErrorResp({
             code: ERROR_CODE.REQUEST_PARAMS_ERROR,
@@ -268,7 +268,7 @@ class Leetcode {
     return problemsetQuestionList as GetProblemsFromGraphQLResponse['problemsetQuestionList'];
   }
 
-  @validate((params: { tag: string }) => typeof params?.tag === 'string' && params.tag !== '')
+  @validate((params: [{ tag: string }]) => typeof params[0]?.tag === 'string' && params[0].tag !== '')
   async getProblemsByTag(tag: string): Promise<Array<Problem>> {
     const [err, response] = await to(
       Helper.GraphQLRequest({
@@ -467,7 +467,7 @@ class Leetcode {
     return submissionList;
   }
 
-  @validate((params: { id: string }) => typeof params?.id === 'string' && params.id !== '')
+  @validate((params: [{ id: string }]) => typeof params[0]?.id === 'string' && params[0]?.id !== '')
   async getSubmissionDetailById(params: { id: string }): Promise<GetSubmissionDetailByIdResponse['submissionDetail']> {
     const { id } = params;
     const [err, response] = await to(
@@ -531,7 +531,9 @@ class Leetcode {
     return submissionDetail;
   }
 
-  @validate((params: { titleSlug: string }) => typeof params?.titleSlug === 'string' && params.titleSlug !== '')
+  @validate((params: [{ titleSlug: string }]) => {
+    return typeof params[0]?.titleSlug === 'string' && params[0]?.titleSlug !== '';
+  })
   async getQuestionDetailByTitleSlug(params: {
     titleSlug: string;
   }): Promise<GetQuestionDetailByTitleSlugResponse['question']> {
@@ -631,8 +633,8 @@ class Leetcode {
   }
 
   @validate(
-    (params: { limit: number; noteType: 'COMMON_QUESTION'; skip: number; targetId: string }) =>
-      typeof params?.targetId === 'string' && params.targetId !== '',
+    (params: [{ limit: number; noteType: 'COMMON_QUESTION'; skip: number; targetId: string }]) =>
+      typeof params[0]?.targetId === 'string' && params[0].targetId !== '',
   )
   async getNotesByQuestionId(params: {
     limit: number;

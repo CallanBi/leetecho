@@ -1,7 +1,7 @@
 import to from 'await-to-js';
 import Leetcode from '../leetcodeApi';
 import { EndPoint } from '../leetcodeApi/utils/interfaces';
-import { GetProblemsRequest } from './idl/problems';
+import { GetProblemsRequest, GetQuestionDetailByTitleSlugRequest } from './idl/problems';
 
 interface UsrInfo {
   usrName: string;
@@ -50,6 +50,14 @@ class AppApi {
       throw err;
     }
     return res as UnPromisifyFunction<typeof this.leetcode.getProblems>;
+  }
+
+  async getProblem(params: GetQuestionDetailByTitleSlugRequest) {
+    const [err, res] = await to(this.leetcode.getQuestionDetailByTitleSlug(params));
+    if (err) {
+      throw err;
+    }
+    return res as UnPromisifyFunction<typeof this.leetcode.getQuestionDetailByTitleSlug>;
   }
 }
 

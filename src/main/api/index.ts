@@ -2,10 +2,17 @@ import to from 'await-to-js';
 import { ipcMain } from 'electron';
 import AppApi from './appApi';
 import baseHandler, { ErrorResp } from './appApi/base';
-import { GetAllProblemsResponse, GetProblemsRequest, GetProblemsResponse } from './appApi/idl/problems';
+import {
+  GetAllProblemsResponse,
+  GetProblemResponse,
+  GetProblemsRequest,
+  GetProblemsResponse,
+  GetQuestionDetailByTitleSlugRequest,
+} from './appApi/idl/problems';
 import { GetAllTagsResponse } from './appApi/idl/tags';
-import { LoginReq, LoginResp } from './appApi/idl/user';
+import { LoginReq, LoginResp, LogoutResp } from './appApi/idl/user';
 import ERROR_CODE, { getErrorCodeMessage } from './errorCode';
+import { GetQuestionDetailByTitleSlugResponse } from './leetcodeApi/utils/interfaces';
 
 let appApi: AppApi | null = null;
 
@@ -25,6 +32,22 @@ ipcMain.handle('login', async (_, params: LoginReq) => {
     code: res?.code ?? ERROR_CODE.OK,
     data: {},
   } as LoginResp;
+});
+
+ipcMain.handle('logout', async () => {
+  if (!appApi) {
+    return {
+      code: ERROR_CODE.OK,
+      data: {},
+    };
+  }
+
+  appApi = null;
+
+  return {
+    code: ERROR_CODE.OK,
+    data: {},
+  } as LogoutResp;
 });
 
 ipcMain.handle('getAllProblems', async () => {
@@ -74,4 +97,19 @@ ipcMain.handle('getProblems', async (_, params: GetProblemsRequest) => {
     code: res?.code ?? ERROR_CODE.OK,
     data: res?.data ?? {},
   } as GetProblemsResponse;
+});
+
+ipcMain.handle('getProblem', async (_, params: GetQuestionDetailByTitleSlugRequest) => {
+  if (!appApi) {
+    throw new ErrorResp({ code: ERROR_CODE.NOT_LOGIN });
+  }
+  const [err, res] = await to(baseHandler(appApi.getProblem(params)));
+
+  if (err) {
+    throw new Error(transformCustomErrorToMsg(err));
+  }
+  return {
+    code: res?.code ?? ERROR_CODE.OK,
+    data: res?.data ?? {},
+  } as GetProblemResponse;
 });

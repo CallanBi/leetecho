@@ -1,4 +1,10 @@
-import { GetAllProblemsResponse, GetProblemsRequest, GetProblemsResponse } from './index';
+import { GetQuestionDetailByTitleSlugResponse } from 'src/main/api/leetcodeApi/utils/interfaces';
+import {
+  GetAllProblemsResponse,
+  GetProblemsRequest,
+  GetProblemsResponse,
+  GetQuestionDetailByTitleSlugRequest,
+} from './index';
 
 export {};
 
@@ -12,4 +18,7 @@ declare global {
 
   type GetProblemsReq = GetProblemsRequest;
   type GetProblemsResp = GetProblemsResponse;
+
+  type GetProblemReq = GetQuestionDetailByTitleSlugRequest;
+  type GetProblemResp = SuccessResp<GetQuestionDetailByTitleSlugResponse>;
 }

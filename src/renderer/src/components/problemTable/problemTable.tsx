@@ -7,11 +7,18 @@ import { COLOR_PALETTE } from 'src/const/theme/color';
 import { IconMinus, IconPulse, IconTick } from '@douyinfe/semi-icons';
 import { getI18nWord } from '@/const/i18n';
 import { withSemiIconStyle } from '@/style';
-import { random } from 'lodash';
-import { FilterValue, SorterResult, TableCurrentDataSource } from 'antd/lib/table/interface';
+import { noop, random } from 'lodash';
 import { LeetCodeProblemListType, LEETCODE_PROBLEM_LIST } from '@/const/problemConst';
 
 const { useRef, useState, useEffect, useMemo } = React;
+
+const TableSection = styled.section`
+  tbody {
+    tr {
+      cursor: pointer !important;
+    }
+  }
+`;
 
 interface ProblemTableProps<RecordType extends UnArray<GetProblemsResp['data']['questions']>> {
   tableConst: {
@@ -23,6 +30,7 @@ interface ProblemTableProps<RecordType extends UnArray<GetProblemsResp['data']['
     pagination?: TablePaginationConfig;
   };
   onChange: TableProps<RecordType>['onChange'];
+  onRow: TableProps<RecordType>['onRow'];
   isError?: boolean;
   listId?: LeetCodeProblemListType['CN'] | LeetCodeProblemListType['EN'] | '';
   hasRouterQuery?: boolean;
@@ -123,11 +131,31 @@ function ProblemTable<RecordType extends UnArray<GetProblemsResp['data']['questi
     tableStatus: { isLoading, pagination: problemsPagination = {} },
     tableConst: { dataSource = [], columns = defaultColumns },
     isError = false,
-    onChange,
+    onChange = noop,
+    onRow = (record, index) => {
+      /** noop */
+      return {
+        onClick: (event) => {
+          /** noop */
+        },
+        onDoubleClick: (event) => {
+          /** noop */
+        },
+        onContextMenu: (event) => {
+          /** noop */
+        },
+        onMouseEnter: (event) => {
+          /** noop */
+        },
+        onMouseLeave: (event) => {
+          /** noop */
+        },
+      };
+    },
   } = props;
 
   return (
-    <>
+    <TableSection>
       {/* TODO: Add Error Components */}
       {isError && <div>Something goes wrong</div>}
       <Table
@@ -137,8 +165,9 @@ function ProblemTable<RecordType extends UnArray<GetProblemsResp['data']['questi
         columns={columns as ColumnsType<RecordType>}
         pagination={problemsPagination}
         onChange={onChange}
+        onRow={onRow}
       />
-    </>
+    </TableSection>
   );
 }
 

@@ -7,7 +7,6 @@ import { MEASUREMENT } from '../src/const/theme/measurement';
 
 import pkg from '../package.json';
 
-
 // https://vitejs.dev/config/
 export default defineConfig({
   mode: process.env.NODE_ENV,
@@ -42,7 +41,7 @@ export default defineConfig({
       { find: /^~/, replacement: '' },
       { find: '@', replacement: join(__dirname, '../src/renderer/src') },
       { find: 'src', replacement: join(__dirname, '../src') },
-    ]
+    ],
   },
   server: {
     host: pkg.env.HOST,
@@ -54,19 +53,22 @@ export default defineConfig({
         javascriptEnabled: true,
         modifyVars: {
           /** Ant Design Pro theme Customization
-            * https://ant.design/docs/react/customize-theme
-          */
+           * https://ant.design/docs/react/customize-theme
+           */
           'primary-color': `${COLOR_PALETTE.LEETECHO_BLUE}`,
           'link-color': `${COLOR_PALETTE.LEETECHO_LIGHT_BLACK}`,
           'component-background': `${COLOR_PALETTE.LEETECHO_GREY}`,
           'primary-color-hover': `${COLOR_PALETTE.LEETECHO_LIGHT_BLUE}`,
           'border-radius-base': `${MEASUREMENT.LEETECHO_BORDER_RADIUS_BASE}`,
+          'border-color-base': `${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}`,
+          'border-color-split': `${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}`,
+          'background-color-base': `${COLOR_PALETTE.LEETECHO_WHITE}`,
+          'item-hover-bg': `${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG}`,
 
           /** Tips color */
           'success-color': `${COLOR_PALETTE.LEETECHO_GREEN}`,
           'warning-color': `${COLOR_PALETTE.LEETECHO_YELLOW}`,
           'error-color': `${COLOR_PALETTE.LEETECHO_RED}`,
-
 
           /** Input */
           'input-bg': `${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}`,
@@ -80,9 +82,8 @@ export default defineConfig({
           'table-row-hover-bg': `${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG}`,
           'table-border-color': `${COLOR_PALETTE.LEETECHO_WHITE}`,
           'table-header-cell-split-color': `${COLOR_PALETTE.LEETECHO_WHITE}`,
-        }
+        },
       },
-    }
-  }
+    },
+  },
 });
-
