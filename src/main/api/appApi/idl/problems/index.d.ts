@@ -20,5 +20,5 @@ declare global {
   type GetProblemsResp = GetProblemsResponse;
 
   type GetProblemReq = GetQuestionDetailByTitleSlugRequest;
-  type GetProblemResp = SuccessResp<GetQuestionDetailByTitleSlugResponse>;
+  type GetProblemResp = SuccessResp<GetQuestionDetailByTitleSlugResponse['question']>;
 }

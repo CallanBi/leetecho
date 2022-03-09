@@ -7,7 +7,7 @@ import { UseQueryOptions } from 'react-query';
 import { Badge, Empty, Popover, Select } from 'antd';
 import { COLOR_PALETTE } from 'src/const/theme/color';
 import { DownOutlined } from '@ant-design/icons';
-import Loading from '../loading';
+import Loading from '../illustration/loading';
 import { random } from 'lodash';
 import { IconChevronDown, IconSearch } from '@douyinfe/semi-icons';
 import { withSemiIconStyle } from '@/style';

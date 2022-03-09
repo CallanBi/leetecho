@@ -7,9 +7,10 @@ import SearchEnterBtn from '../searchEnterBtn';
 import { useDebounce } from 'ahooks';
 import { UseQueryOptions } from 'react-query';
 import { useGetProblems } from '@/rendererApi';
-import Loading from '@/components/loading';
+import Loading from '@/components/illustration/loading';
 import { useRouter } from '@/hooks/router/useRouter';
 import { css } from '@emotion/react';
+import { ProblemItemFromGraphQL } from 'src/main/api/leetcodeApi/utils/interfaces';
 
 const { Search } = Input;
 
@@ -239,6 +240,7 @@ const HeaderLeftContent: React.FC<HeaderLeftContentProps> = (props: HeaderLeftCo
                   `}
                   onClick={() => {
                     console.log(item.value);
+                    router.push(`problemDetail?titleSlug=${(item.value as ProblemItemFromGraphQL)?.titleSlug || ''}`);
                     setPopoverVisible(false);
                   }}
                 >

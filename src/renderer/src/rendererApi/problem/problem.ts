@@ -12,7 +12,6 @@ const useGetProblem = (
   useQuery<GetProblemResp['data'], Error>(
     ['getProblem', params],
     async () => {
-      debugger;
       const [err, res] = (await to(ipcRenderer.invoke('getProblem', params))) as [Error | null, GetProblemResp];
       if (err) {
         throw err;

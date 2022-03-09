@@ -1,6 +1,6 @@
 import { Button, PageHeader, Spin, Table, TablePaginationConfig, TableProps } from 'antd';
 import * as React from 'react';
-import Loading from '@/components/loading';
+import Loading from '@/components/illustration/loading';
 import { useGetProblems } from '@/rendererApi/problems';
 import { UseQueryOptions } from 'react-query';
 

@@ -46,6 +46,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.28.0",
+    "html-react-parser": "^1.4.8",
     "less": "^4.1.2",
     "less-loader": "^7.3.0",
     "mocha": "^9.2.1",
@@ -55,6 +56,7 @@
     "react-query": "^3.34.16",
     "react-router-dom": "5.2.0",
     "react-transition-group": "^4.4.2",
+    "react-viewer": "^3.2.2",
     "typescript": "^4.4.4",
     "vite": "^2.6.13",
     "vite-plugin-svgr": "^1.0.1"
