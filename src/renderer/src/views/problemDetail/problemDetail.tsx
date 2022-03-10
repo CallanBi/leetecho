@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { UseQueryOptions } from 'react-query';
 import { useGetProblem, useGetSubmissionsByTitleSlug } from '@/rendererApi/problem';
 import { useRouter } from '@/hooks/router/useRouter';
-import { message, PageHeader} from 'antd';
+import { message, PageHeader } from 'antd';
 import QuestionWrapper from './components/questionWrapper';
 
 const { useRef, useState, useEffect, useMemo } = React;
@@ -96,21 +96,7 @@ const ProblemDetail: React.FC<ProblemDetailProps> = (props: ProblemDetailProps) 
 
   return (
     <>
-      <PageHeader
-        style={{ paddingTop: 0, paddingBottom: 24, paddingLeft: 8 }}
-        onBack={() => {
-          router.history.goBack();
-        }}
-        title="题目详情"
-        subTitle={
-          getProblemQuery?.data
-            ? `${getProblemQuery.data.questionFrontendId}: ${
-              getProblemQuery.data?.translatedTitle || getProblemQuery.data?.title || ''
-            }`
-            : ''
-        }
-      ></PageHeader>
-      <QuestionWrapper getQuestionQuery={getProblemQuery}></QuestionWrapper>
+      <QuestionWrapper getQuestionQuery={getProblemQuery} getSubmissionsQuery={getSubmissionsQuery}></QuestionWrapper>
     </>
   );
 };

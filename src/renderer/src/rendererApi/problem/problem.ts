@@ -34,7 +34,7 @@ const useGetSubmissionsByTitleSlug = (
   options: Omit<UseQueryOptions<GetSubmissionsByQuestionSlugResp['data'], Error>, 'queryKey' | 'queryFn'>,
 ) =>
   useQuery<GetSubmissionsByQuestionSlugResp['data'], Error>(
-    ['getProblem', params],
+    ['getSubmissions', params],
     async () => {
       const [err, res] = (await to(ipcRenderer.invoke('getSubmissionsByTitleSlug', params))) as [
         Error | null,
@@ -55,4 +55,56 @@ const useGetSubmissionsByTitleSlug = (
     },
   );
 
-export { useGetProblem, useGetSubmissionsByTitleSlug };
+const useGetNotesByQuestionId = (
+  params: GetNotesByQuestionIdReq,
+  options: Omit<UseQueryOptions<GetNotesByQuestionIdResp['data'], Error>, 'queryKey' | 'queryFn'>,
+) =>
+  useQuery<GetNotesByQuestionIdResp['data'], Error>(
+    ['getNoteByQuestionId', params],
+    async () => {
+      const [err, res] = (await to(ipcRenderer.invoke('getNotesByQuestionId', params))) as [
+        Error | null,
+        GetNotesByQuestionIdResp,
+      ];
+      if (err) {
+        throw err;
+      }
+
+      const { data } = res || {};
+
+      return data;
+    },
+    {
+      retry: 2,
+      cacheTime: 2000 /** 2s */,
+      ...options,
+    },
+  );
+
+const useGetSubmissionDetailById = (
+  params: GetSubmissionDetailByIdReq,
+  options: Omit<UseQueryOptions<GetSubmissionDetailByIdResp['data'], Error>, 'queryKey' | 'queryFn'>,
+) =>
+  useQuery<GetSubmissionDetailByIdResp['data'], Error>(
+    ['getSubmissionDetailById', params],
+    async () => {
+      const [err, res] = (await to(ipcRenderer.invoke('getSubmissionDetailById', params))) as [
+        Error | null,
+        GetSubmissionDetailByIdResp,
+      ];
+      if (err) {
+        throw err;
+      }
+
+      const { data } = res || {};
+
+      return data;
+    },
+    {
+      retry: 2,
+      cacheTime: 2000 /** 2s */,
+      ...options,
+    },
+  );
+
+export { useGetProblem, useGetSubmissionsByTitleSlug, useGetNotesByQuestionId, useGetSubmissionDetailById };

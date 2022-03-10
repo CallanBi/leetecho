@@ -7,13 +7,14 @@ const { useRef, useState, useEffect, useMemo } = React;
 
 interface ContentSkeletonProps {
   maxWidth?: number;
+  style?: React.CSSProperties;
 }
 
 const ContentSkeleton: React.FC<ContentSkeletonProps> = (props: ContentSkeletonProps) => {
-  const { maxWidth = 800 } = props;
+  const { maxWidth, style = {}, ...args } = props;
 
   return (
-    <section style={{ maxWidth }}>
+    <section style={{ ...style, maxWidth }}>
       <Skeleton active round paragraph={{ rows: 3 }} title></Skeleton>
       <Skeleton.Input active style={{ width: 250, height: 200 }} />
       <Skeleton.Input active style={{ width: maxWidth, height: 64, marginTop: 12 }} />

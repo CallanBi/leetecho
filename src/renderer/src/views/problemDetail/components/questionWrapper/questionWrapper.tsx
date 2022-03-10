@@ -4,17 +4,19 @@ import { css } from '@emotion/react';
 
 const { useRef, useState, useEffect, useMemo } = React;
 import parse, { HTMLReactParserOptions, domToReact, attributesToProps } from 'html-react-parser';
-import { Question } from 'src/main/api/leetcodeApi/utils/interfaces';
+import { Question, SubmissionList } from 'src/main/api/leetcodeApi/utils/interfaces';
 import useResizable from '@/hooks/useResizable';
 import ImageComponent from '@/components/imageComponent';
 import { ImageDecorator } from 'react-viewer/lib/ViewerProps';
 import Viewer from 'react-viewer';
 import { COLOR_PALETTE } from 'src/const/theme/color';
 import { Element } from 'domhandler';
-import { Descriptions, Typography } from 'antd';
+import { Descriptions, PageHeader, Typography } from 'antd';
 import { UseQueryResult } from 'react-query';
 import { DIFFICULTY_COLOR, DIFFICULTY_WORD, statusIconMap, STATUS_WORD } from '@/const/problemConst';
 import ContentSkeleton from '@/components/contentSkeleton';
+import SubmissionsAndNotes from '../submissionsAndNotes';
+import { useRouter } from '@/hooks/router/useRouter';
 
 const { Link } = Typography;
 
@@ -29,7 +31,7 @@ const QuestionWrapperSection = styled.section`
   display: flex;
   flex-direction: col;
   box-sizing: border-box;
-  height: calc(100% - 65px);
+  height: calc(100% - 2px);
 `;
 
 const QuestionViewerSection = styled.section`
@@ -40,10 +42,11 @@ const QuestionViewerSection = styled.section`
 
 interface QuestionWrapperProps {
   getQuestionQuery: UseQueryResult<Question, Error>;
+  getSubmissionsQuery: UseQueryResult<SubmissionList, Error>;
 }
 
 const QuestionWrapper: React.FC<QuestionWrapperProps> = (props: QuestionWrapperProps) => {
-  const { getQuestionQuery } = props;
+  const { getQuestionQuery, getSubmissionsQuery } = props;
 
   const { size, handler } = useResizable({
     size: INIT_LEFT_SIZE,
@@ -107,7 +110,7 @@ const QuestionWrapper: React.FC<QuestionWrapperProps> = (props: QuestionWrapperP
   `;
 
   const SubmissionAndNoteSession = styled.section`
-    width: ${`calc(100% - ${size}px)`};
+    width: ${size > LEFT_HIDDEN_SIZE ? `calc(100% - ${size}px)` : '100%'};
   `;
 
   console.log(
@@ -116,11 +119,27 @@ const QuestionWrapper: React.FC<QuestionWrapperProps> = (props: QuestionWrapperP
     getQuestionQuery?.data?.status,
   );
 
+  const router = useRouter();
+
   return (
     <>
       <QuestionWrapperSection>
         {size > LEFT_HIDDEN_SIZE && (
           <QuestionViewerSection style={{ width: size }}>
+            <PageHeader
+              style={{ paddingTop: 0, paddingBottom: 24, paddingLeft: 8 }}
+              onBack={() => {
+                router.history.goBack();
+              }}
+              title="题目详情"
+              subTitle={
+                getQuestionQuery?.data
+                  ? `${getQuestionQuery.data.questionFrontendId}: ${
+                    getQuestionQuery.data?.translatedTitle || getQuestionQuery.data?.title || ''
+                  }`
+                  : ''
+              }
+            ></PageHeader>
             <Descriptions style={{ borderBottom: `3px solid ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}` }}>
               <Descriptions.Item label="难度">
                 <span style={{ color: DIFFICULTY_COLOR[getQuestionQuery?.data?.difficulty?.toUpperCase()] }}>
@@ -148,7 +167,12 @@ const QuestionWrapper: React.FC<QuestionWrapperProps> = (props: QuestionWrapperP
           </QuestionViewerSection>
         )}
         <ResizerSection onMouseDown={handler} onTouchStart={handler}></ResizerSection>
-        <SubmissionAndNoteSession></SubmissionAndNoteSession>
+        <SubmissionAndNoteSession>
+          <SubmissionsAndNotes
+            getQuestionQuery={getQuestionQuery}
+            getSubmissionsQuery={getSubmissionsQuery}
+          ></SubmissionsAndNotes>
+        </SubmissionAndNoteSession>
       </QuestionWrapperSection>
       <Viewer
         visible={imgInfo.viewVisible}

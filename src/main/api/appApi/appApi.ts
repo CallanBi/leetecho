@@ -2,8 +2,10 @@ import to from 'await-to-js';
 import Leetcode from '../leetcodeApi';
 import { EndPoint } from '../leetcodeApi/utils/interfaces';
 import {
+  GetNotesByQuestionIdRequest,
   GetProblemsRequest,
   GetQuestionDetailByTitleSlugRequest,
+  GetSubmissionDetailByIdRequest,
   GetSubmissionsByQuestionSlugRequest,
 } from './idl/problems';
 
@@ -70,6 +72,26 @@ class AppApi {
       throw err;
     }
     return res as UnPromisifyFunction<typeof this.leetcode.getSubmissionsByQuestionSlug>;
+  }
+
+  async getNotesByQuestionId(params: GetNotesByQuestionIdRequest) {
+    const [err, res] = await to(
+      this.leetcode.getNotesByQuestionId({
+        targetId: String(params.questionId),
+      }),
+    );
+    if (err) {
+      throw err;
+    }
+    return res as UnPromisifyFunction<typeof this.leetcode.getNotesByQuestionId>;
+  }
+
+  async getSubmissionDetailById(params: GetSubmissionDetailByIdRequest) {
+    const [err, res] = await to(this.leetcode.getSubmissionDetailById(params));
+    if (err) {
+      throw err;
+    }
+    return res as UnPromisifyFunction<typeof this.leetcode.getSubmissionDetailById>;
   }
 }
 

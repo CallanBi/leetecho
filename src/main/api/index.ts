@@ -1,20 +1,22 @@
 import to from 'await-to-js';
 import { ipcMain } from 'electron';
 import AppApi from './appApi';
-import baseHandler, { ErrorResp } from './appApi/base';
+import baseHandler, { ErrorResp, SuccessResp } from './appApi/base';
 import {
   GetAllProblemsResponse,
+  GetNotesByQuestionIdRequest,
   GetProblemResponse,
   GetProblemsRequest,
   GetProblemsResponse,
   GetQuestionDetailByTitleSlugRequest,
+  GetSubmissionDetailByIdRequest,
   GetSubmissionsByQuestionSlugRequest,
   GetSubmissionsByQuestionSlugResponse,
 } from './appApi/idl/problems';
 import { GetAllTagsResponse } from './appApi/idl/tags';
 import { LoginReq, LoginResp, LogoutResp } from './appApi/idl/user';
 import ERROR_CODE, { getErrorCodeMessage } from './errorCode';
-import { GetQuestionDetailByTitleSlugResponse } from './leetcodeApi/utils/interfaces';
+import { GetNotesByQuestionIdResponse, GetQuestionDetailByTitleSlugResponse } from './leetcodeApi/utils/interfaces';
 
 let appApi: AppApi | null = null;
 
@@ -129,4 +131,34 @@ ipcMain.handle('getSubmissionsByTitleSlug', async (_, params: GetSubmissionsByQu
     code: res?.code ?? ERROR_CODE.OK,
     data: res?.data ?? {},
   } as GetSubmissionsByQuestionSlugResponse;
+});
+
+ipcMain.handle('getNotesByQuestionId', async (_, params: GetNotesByQuestionIdRequest) => {
+  if (!appApi) {
+    throw new ErrorResp({ code: ERROR_CODE.NOT_LOGIN });
+  }
+  const [err, res] = await to(baseHandler(appApi.getNotesByQuestionId(params)));
+
+  if (err) {
+    throw new Error(transformCustomErrorToMsg(err));
+  }
+  return {
+    code: res?.code ?? ERROR_CODE.OK,
+    data: res?.data ?? {},
+  } as SuccessResp<GetNotesByQuestionIdResponse>;
+});
+
+ipcMain.handle('getSubmissionDetailById', async (_, params: GetSubmissionDetailByIdRequest) => {
+  if (!appApi) {
+    throw new ErrorResp({ code: ERROR_CODE.NOT_LOGIN });
+  }
+  const [err, res] = await to(baseHandler(appApi.getSubmissionDetailById(params)));
+
+  if (err) {
+    throw new Error(transformCustomErrorToMsg(err));
+  }
+  return {
+    code: res?.code ?? ERROR_CODE.OK,
+    data: res?.data ?? {},
+  } as SuccessResp<GetNotesByQuestionIdResponse>;
 });

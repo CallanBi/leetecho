@@ -39,6 +39,8 @@ enum SubmissionStatus {
   'Time Limit Exceeded',
 }
 
+type SubmissionStatusString = 'Accepted' | 'Compile Error' | 'Wrong Answer' | 'Time Limit Exceeded';
+
 enum EndPoint {
   'US',
   'CN',
@@ -148,7 +150,7 @@ export interface Submission {
   lang: string;
   memory: string;
   runtime: string;
-  statusDisplay: SubmissionStatus;
+  statusDisplay: SubmissionStatusString;
   __typename: string;
 }
 
@@ -181,7 +183,7 @@ export interface SubmissionDetail {
   runtime: string;
   memory: string;
   rawMemory: string;
-  statusDisplay: string;
+  statusDisplay: SubmissionStatusString;
   timestamp: number;
   lang: string;
   passedTestCaseCnt: number;

@@ -1,9 +1,15 @@
-import { GetQuestionDetailByTitleSlugResponse } from 'src/main/api/leetcodeApi/utils/interfaces';
+import {
+  GetNotesByQuestionIdResponse,
+  GetQuestionDetailByTitleSlugResponse,
+  GetSubmissionDetailByIdResponse,
+} from 'src/main/api/leetcodeApi/utils/interfaces';
 import {
   GetAllProblemsResponse,
+  GetNotesByQuestionIdRequest,
   GetProblemsRequest,
   GetProblemsResponse,
   GetQuestionDetailByTitleSlugRequest,
+  GetSubmissionDetailByIdRequest,
   GetSubmissionsByQuestionSlugRequest,
   GetSubmissionsByQuestionSlugResponse,
 } from './index';
@@ -26,4 +32,11 @@ declare global {
 
   type GetSubmissionsByQuestionSlugReq = GetSubmissionsByQuestionSlugRequest;
   type GetSubmissionsByQuestionSlugResp = GetSubmissionsByQuestionSlugResponse;
+
+  type GetNotesByQuestionIdReq = GetNotesByQuestionIdRequest;
+
+  type GetNotesByQuestionIdResp = SuccessResp<GetNotesByQuestionIdResponse['noteOneTargetCommonNote']>;
+
+  type GetSubmissionDetailByIdReq = GetSubmissionDetailByIdRequest;
+  type GetSubmissionDetailByIdResp = SuccessResp<GetSubmissionDetailByIdResponse['submissionDetail']>;
 }

@@ -649,9 +649,9 @@ class Leetcode {
       typeof params[0]?.targetId === 'string' && params[0].targetId !== '',
   )
   async getNotesByQuestionId(params: {
-    limit: number;
-    noteType: 'COMMON_QUESTION';
-    skip: number;
+    limit?: number;
+    noteType?: 'COMMON_QUESTION';
+    skip?: number;
     targetId: string;
   }): Promise<GetNotesByQuestionIdResponse['noteOneTargetCommonNote']> {
     const { limit = 0, noteType = 'COMMON_QUESTION', skip = 0, targetId = '' } = params;

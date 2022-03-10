@@ -45,3 +45,11 @@ export type GetSubmissionsByQuestionSlugRequest = {
 };
 
 export type GetSubmissionsByQuestionSlugResponse = SuccessResp<GetSubmissionsByQuestionSlug['submissionList']>;
+
+export type GetNotesByQuestionIdRequest = {
+  questionId: number;
+};
+
+export type GetSubmissionDetailByIdRequest = {
+  id: string;
+};
