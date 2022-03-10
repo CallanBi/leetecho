@@ -10,7 +10,7 @@
     "esModuleInterop": true,
     "moduleResolution": "Node",
     "resolveJsonModule": true,
-    "strict": false,
+    "strict": true,
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react",
     "include": [

@@ -1,5 +1,9 @@
+import { Tooltip } from 'antd';
 import { COLOR_PALETTE } from 'src/const/theme/color';
 import { getI18nWord } from '../i18n';
+import * as React from 'react';
+import { IconMinus, IconPulse, IconTick } from '@douyinfe/semi-icons';
+import { withSemiIconStyle } from '@/style';
 
 export type LeetCodeProblemListType = {
   CN:
@@ -92,4 +96,28 @@ export const STATUS_WORD: { [key in Status]: string } = {
   NOT_STARTED: getI18nWord('NOT_STARTED', 'ZH'),
   AC: getI18nWord('AC', 'ZH'),
   TRIED: getI18nWord('TRIED', 'ZH'),
+};
+
+export const statusIconColorMap: { [key in Status]: string } = {
+  NOT_STARTED: `${COLOR_PALETTE.LEETECHO_LIGHT_BLACK}`,
+  AC: `${COLOR_PALETTE.LEETECHO_GREEN}`,
+  TRIED: `${COLOR_PALETTE.LEETECHO_YELLOW}`,
+};
+
+export const statusIconMap: { [key in Status]: React.ReactNode } = {
+  NOT_STARTED: (
+    <Tooltip title={getI18nWord('NOT_STARTED', 'ZH')} placement="bottomLeft">
+      <IconMinus style={withSemiIconStyle({ color: statusIconColorMap.NOT_STARTED })} />
+    </Tooltip>
+  ),
+  AC: (
+    <Tooltip title={getI18nWord('AC', 'ZH')} placement="bottomLeft">
+      <IconTick style={withSemiIconStyle({ color: statusIconColorMap.AC })} />
+    </Tooltip>
+  ),
+  TRIED: (
+    <Tooltip title={getI18nWord('TRIED', 'ZH')} placement="bottomLeft">
+      <IconPulse style={withSemiIconStyle({ color: statusIconColorMap.TRIED })} />
+    </Tooltip>
+  ),
 };

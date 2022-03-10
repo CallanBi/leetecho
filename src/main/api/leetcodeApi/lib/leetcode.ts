@@ -387,6 +387,16 @@ class Leetcode {
               difficulty
               lastSubmittedAt
               numSubmitted
+              submissions {
+                id
+                timestamp
+                url
+                lang
+                memory
+                runtime
+                statusDisplay
+                __typename
+              }
               lastSubmissionSrc {
                 sourceType
                 ... on SubmissionSrcLeetbookNode {
@@ -427,8 +437,9 @@ class Leetcode {
   async getSubmissionsByQuestionSlug(params: {
     limit?: number;
     offset?: number;
+    questionSlug: string;
   }): Promise<GetSubmissionsByQuestionSlugResponse['submissionList']> {
-    const { limit = 0, offset = 0 } = params;
+    const { limit = 0, offset = 0, questionSlug = '' } = params;
     const [err, response] = await to(
       Helper.GraphQLRequest({
         query: `
@@ -451,6 +462,7 @@ class Leetcode {
         }
       `,
         variables: {
+          questionSlug,
           limit,
           offset,
         },

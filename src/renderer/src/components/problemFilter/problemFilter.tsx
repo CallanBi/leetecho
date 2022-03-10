@@ -7,8 +7,8 @@ import { IconSearch } from '@douyinfe/semi-icons';
 import { withSemiIconStyle } from '@/style';
 import { COLOR_PALETTE } from 'src/const/theme/color';
 import TagSelector from '../tagSelector';
-import { Form, Select, Tag } from 'antd';
-import { FormattedTagItem, labelsTypeIsFormattedTags, labelTypeIsFormattedTag } from '../tagSelector/tagSelector';
+import { Tag } from 'antd';
+import { FormattedTagItem } from '../tagSelector/tagSelector';
 
 const { useRef, useState, useEffect, useMemo } = React;
 
@@ -21,7 +21,7 @@ export type ProblemsFilterObj = {
 };
 
 interface ProblemFilterProps {
-  onFilterChange: (val: ProblemsFilterObj) => unknown;
+  onChange: (val: ProblemsFilterObj) => unknown;
   hasRouterQuery?: boolean;
 }
 
@@ -43,7 +43,7 @@ const SelectedTagsDisplaySection = styled.section`
 `;
 
 const ProblemFilter: React.FC<ProblemFilterProps> = (props: ProblemFilterProps) => {
-  const { onFilterChange, hasRouterQuery = false } = props;
+  const { onChange, hasRouterQuery = false } = props;
 
   const [selectedTagsValue, setSelectedTagsValue] = useState<FormattedTagItem[]>([]);
   const [filterVal, setFilterVal] = useState<ProblemsFilterObj>({
@@ -55,10 +55,15 @@ const ProblemFilter: React.FC<ProblemFilterProps> = (props: ProblemFilterProps) 
 
   const onTagsValueChange = (val: FormattedTagItem[] | string[]) => {
     setSelectedTagsValue(val as FormattedTagItem[]);
+    // const paramsString = location.search;
+    // const searchParams = new URLSearchParams(paramsString);
+    // if (searchParams.has('labels')) {
+    //   searchParams.set
+    // }
   };
 
   useEffect(() => {
-    onFilterChange?.({ ...filterVal, tags: selectedTagsValue.map?.((t) => t.value || '') || [] });
+    onChange?.({ ...filterVal, tags: selectedTagsValue.map?.((t) => t.value || '') || [] });
     return () => {
       /** noop */
     };
@@ -71,7 +76,7 @@ const ProblemFilter: React.FC<ProblemFilterProps> = (props: ProblemFilterProps) 
         size={'middle'}
         onFinish={async (val: ProblemsFilterObj) => {
           setFilterVal(val);
-          onFilterChange?.({ ...val, tags: selectedTagsValue.map?.((t) => t.value || '') || [] });
+          onChange?.({ ...val, tags: selectedTagsValue.map?.((t) => t.value || '') || [] });
         }}
       >
         <ProFormSelect

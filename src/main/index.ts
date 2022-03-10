@@ -1,7 +1,7 @@
 import os from 'os';
 import { join } from 'path';
 import to from 'await-to-js';
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import './electronStore/electronStore';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { DEFAULT_WINDOW_OPTIONS } from './const/electronOptions/window';
@@ -152,4 +152,12 @@ app.on('activate', () => {
   } else {
     createWindow();
   }
+});
+
+// use this to open links externally
+app.on('web-contents-created', (e, webContents) => {
+  webContents.on('new-window', (event, url) => {
+    event.preventDefault();
+    shell.openExternal(url);
+  });
 });

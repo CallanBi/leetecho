@@ -4,6 +4,8 @@ import {
   GetProblemsRequest,
   GetProblemsResponse,
   GetQuestionDetailByTitleSlugRequest,
+  GetSubmissionsByQuestionSlugRequest,
+  GetSubmissionsByQuestionSlugResponse,
 } from './index';
 
 export {};
@@ -21,4 +23,7 @@ declare global {
 
   type GetProblemReq = GetQuestionDetailByTitleSlugRequest;
   type GetProblemResp = SuccessResp<GetQuestionDetailByTitleSlugResponse['question']>;
+
+  type GetSubmissionsByQuestionSlugReq = GetSubmissionsByQuestionSlugRequest;
+  type GetSubmissionsByQuestionSlugResp = GetSubmissionsByQuestionSlugResponse;
 }

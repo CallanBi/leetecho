@@ -8,6 +8,8 @@ import {
   GetProblemsRequest,
   GetProblemsResponse,
   GetQuestionDetailByTitleSlugRequest,
+  GetSubmissionsByQuestionSlugRequest,
+  GetSubmissionsByQuestionSlugResponse,
 } from './appApi/idl/problems';
 import { GetAllTagsResponse } from './appApi/idl/tags';
 import { LoginReq, LoginResp, LogoutResp } from './appApi/idl/user';
@@ -112,4 +114,19 @@ ipcMain.handle('getProblem', async (_, params: GetQuestionDetailByTitleSlugReque
     code: res?.code ?? ERROR_CODE.OK,
     data: res?.data ?? {},
   } as GetProblemResponse;
+});
+
+ipcMain.handle('getSubmissionsByTitleSlug', async (_, params: GetSubmissionsByQuestionSlugRequest) => {
+  if (!appApi) {
+    throw new ErrorResp({ code: ERROR_CODE.NOT_LOGIN });
+  }
+  const [err, res] = await to(baseHandler(appApi.getSubmissionsByTitleSlug(params)));
+
+  if (err) {
+    throw new Error(transformCustomErrorToMsg(err));
+  }
+  return {
+    code: res?.code ?? ERROR_CODE.OK,
+    data: res?.data ?? {},
+  } as GetSubmissionsByQuestionSlugResponse;
 });

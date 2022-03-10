@@ -8,7 +8,9 @@ import { IconMinus, IconPulse, IconTick } from '@douyinfe/semi-icons';
 import { getI18nWord } from '@/const/i18n';
 import { withSemiIconStyle } from '@/style';
 import { noop, random } from 'lodash';
-import { LeetCodeProblemListType, LEETCODE_PROBLEM_LIST } from '@/const/problemConst';
+import { LeetCodeProblemListType, LEETCODE_PROBLEM_LIST, statusIconMap } from '@/const/problemConst';
+import ErrorIllustrator from '../illustration/errorIllustrator';
+// import ProTable, { TableDropdown } from '@ant-design/pro-table';
 
 const { useRef, useState, useEffect, useMemo } = React;
 
@@ -47,28 +49,6 @@ function ProblemTable<RecordType extends UnArray<GetProblemsResp['data']['questi
       dataIndex: 'status',
       key: 'status',
       render: (status: Status) => {
-        const statusIconColorMap: { [key in Status]: string } = {
-          NOT_STARTED: `${COLOR_PALETTE.LEETECHO_LIGHT_BLACK}`,
-          AC: `${COLOR_PALETTE.LEETECHO_GREEN}`,
-          TRIED: `${COLOR_PALETTE.LEETECHO_YELLOW}`,
-        };
-        const statusIconMap: { [key in Status]: React.ReactNode } = {
-          NOT_STARTED: (
-            <Tooltip title={getI18nWord('NOT_STARTED', 'ZH')} placement="bottomLeft">
-              <IconMinus style={withSemiIconStyle({ color: statusIconColorMap.NOT_STARTED })} />
-            </Tooltip>
-          ),
-          AC: (
-            <Tooltip title={getI18nWord('AC', 'ZH')} placement="bottomLeft">
-              <IconTick style={withSemiIconStyle({ color: statusIconColorMap.AC })} />
-            </Tooltip>
-          ),
-          TRIED: (
-            <Tooltip title={getI18nWord('TRIED', 'ZH')} placement="bottomLeft">
-              <IconPulse style={withSemiIconStyle({ color: statusIconColorMap.TRIED })} />
-            </Tooltip>
-          ),
-        };
         return statusIconMap[status];
       },
     },
@@ -156,8 +136,7 @@ function ProblemTable<RecordType extends UnArray<GetProblemsResp['data']['questi
 
   return (
     <TableSection>
-      {/* TODO: Add Error Components */}
-      {isError && <div>Something goes wrong</div>}
+      {isError && <ErrorIllustrator></ErrorIllustrator>}
       <Table
         dataSource={dataSource || []}
         rowKey={(record) => record?.titleSlug || ''}

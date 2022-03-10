@@ -61,7 +61,10 @@ const globalStyles = css`
     .ant-layout-content {
       overflow-y: auto;
       margin: 0;
-      padding: 24px;
+      padding-top: 24px;
+      padding-left: 24px;
+      padding-right: 24px;
+      overflow-x: hidden;
     }
   }
 

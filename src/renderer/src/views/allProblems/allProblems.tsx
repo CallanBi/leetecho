@@ -162,7 +162,7 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
   return (
     <>
       {(!hasRouterSearchQuery || routerSearchString === '') && (
-        <ProblemFilter onFilterChange={onFilterChange}></ProblemFilter>
+        <ProblemFilter onChange={onFilterChange}></ProblemFilter>
       )}
       {hasRouterSearchQuery && routerSearchString !== '' && (
         // <Button

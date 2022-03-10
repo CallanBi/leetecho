@@ -2,6 +2,7 @@ import Problem from 'src/main/api/leetcodeApi/lib/problem';
 import {
   GetProblemsFromGraphQLResponse,
   GetQuestionDetailByTitleSlugResponse,
+  GetSubmissionsByQuestionSlugResponse as GetSubmissionsByQuestionSlug,
 } from 'src/main/api/leetcodeApi/utils/interfaces';
 
 import { SuccessResp } from '../../base';
@@ -38,3 +39,9 @@ export type GetQuestionDetailByTitleSlugRequest = {
 export type GetProblemsResponse = SuccessResp<GetProblemsFromGraphQLResponse['problemsetQuestionList']>;
 
 export type GetProblemResponse = SuccessResp<GetQuestionDetailByTitleSlugResponse>;
+
+export type GetSubmissionsByQuestionSlugRequest = {
+  questionSlug: string;
+};
+
+export type GetSubmissionsByQuestionSlugResponse = SuccessResp<GetSubmissionsByQuestionSlug['submissionList']>;
