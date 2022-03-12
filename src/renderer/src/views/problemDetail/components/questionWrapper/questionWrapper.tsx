@@ -50,8 +50,8 @@ const QuestionWrapper: React.FC<QuestionWrapperProps> = (props: QuestionWrapperP
 
   const { size, handler } = useResizable({
     size: INIT_LEFT_SIZE,
-    minSize: 0,
-    maxSize: 1200,
+    minSize: 100,
+    maxSize: 1600,
     direction: 'right',
   });
 
@@ -98,7 +98,7 @@ const QuestionWrapper: React.FC<QuestionWrapperProps> = (props: QuestionWrapperP
   const ResizerSection = styled.section`
     width: 10px;
     height: 100%;
-    z-index: 1;
+    z-index: 2;
     cursor: col-resize;
     background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND};
     box-sizing: border-box;
@@ -107,10 +107,6 @@ const QuestionWrapper: React.FC<QuestionWrapperProps> = (props: QuestionWrapperP
     :hover {
       background-color: ${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG};
     }
-  `;
-
-  const SubmissionAndNoteSession = styled.section`
-    width: ${size > LEFT_HIDDEN_SIZE ? `calc(100% - ${size}px)` : '100%'};
   `;
 
   console.log(
@@ -167,12 +163,11 @@ const QuestionWrapper: React.FC<QuestionWrapperProps> = (props: QuestionWrapperP
           </QuestionViewerSection>
         )}
         <ResizerSection onMouseDown={handler} onTouchStart={handler}></ResizerSection>
-        <SubmissionAndNoteSession>
-          <SubmissionsAndNotes
-            getQuestionQuery={getQuestionQuery}
-            getSubmissionsQuery={getSubmissionsQuery}
-          ></SubmissionsAndNotes>
-        </SubmissionAndNoteSession>
+        <SubmissionsAndNotes
+          width={size > LEFT_HIDDEN_SIZE ? `calc(100% - ${size}px)` : '100%'}
+          getQuestionQuery={getQuestionQuery}
+          getSubmissionsQuery={getSubmissionsQuery}
+        ></SubmissionsAndNotes>
       </QuestionWrapperSection>
       <Viewer
         visible={imgInfo.viewVisible}

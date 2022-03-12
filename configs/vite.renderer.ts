@@ -4,14 +4,25 @@ import react from '@vitejs/plugin-react';
 import svgrPlugin from 'vite-plugin-svgr';
 import { COLOR_PALETTE } from '../src/const/theme/color';
 import { MEASUREMENT } from '../src/const/theme/measurement';
+import { dataToEsm } from '@rollup/pluginutils';
 
 import pkg from '../package.json';
+// import { markdownPlugin } from 'vite-plugin-markdown';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   mode: process.env.NODE_ENV,
   root: join(__dirname, '../src/renderer'),
   plugins: [
+    {
+      name: 'vite-plugin-markdown',
+      enforce: 'pre',
+      transform(code: string, id: string) {
+        if (!id.endsWith('.md')) return null;
+
+        return dataToEsm(code);
+      },
+    },
     react({
       jsxImportSource: '@emotion/react',
       babel: {

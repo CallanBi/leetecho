@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
 import './storage/electron-store';
 import './index.less';
+import 'material-design-icons-iconfont/dist/material-design-icons.css';
+
 import { HashRouter } from 'react-router-dom';
 import { Global } from '@emotion/react';
 import { QueryClient, QueryClientProvider } from 'react-query';

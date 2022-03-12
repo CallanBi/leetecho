@@ -10,6 +10,7 @@ import { DEFAULT_WINDOW_OPTIONS } from './const/electronOptions/window';
 
 import './api/index';
 
+
 process.setMaxListeners(0);
 
 const isDev = process.env.NODE_ENV === 'development';

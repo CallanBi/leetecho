@@ -3,6 +3,29 @@ import { css } from '@emotion/react';
 import { COLOR_PALETTE } from 'src/const/theme/color';
 
 const globalStyles = css`
+  ::-webkit-scrollbar {
+    background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
+    border-radius: 2px;
+    width: 5px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: ${COLOR_PALETTE.LEETECHO_HEADER_SEARCH_BG_HOVER}!important;
+    border-radius: 2px;
+    width: 5px;
+    height: 5px;
+  }
+
+  /* table {
+    border-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
+  }
+  th {
+    background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
+  }
+  hr {
+    color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
+  } */
+
   .ant-layout {
     background-color: ${COLOR_PALETTE.LEETECHO_WHITE};
   }

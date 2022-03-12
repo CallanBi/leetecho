@@ -8,6 +8,8 @@ import { Question, SubmissionList } from 'src/main/api/leetcodeApi/utils/interfa
 import { Descriptions, Typography } from 'antd';
 import { COLOR_PALETTE } from 'src/const/theme/color';
 import ContentSkeleton from '@/components/contentSkeleton';
+import MarkdownEditor from '@/components/markdownEditor';
+import ErrorIllustrator from '@/components/illustration/errorIllustrator';
 
 const { Title } = Typography;
 
@@ -16,6 +18,7 @@ const { useRef, useState, useEffect, useMemo } = React;
 interface SubmissionsAndNotesProps {
   getQuestionQuery: UseQueryResult<Question, Error>;
   getSubmissionsQuery: UseQueryResult<SubmissionList, Error>;
+  width?: string;
 }
 
 const SubmissionsAndNotesSection = styled.section`
@@ -29,7 +32,7 @@ const SubmissionsSection = styled.section``;
 const NotesSection = styled.section``;
 
 const SubmissionsAndNotes: React.FC<SubmissionsAndNotesProps> = (props: SubmissionsAndNotesProps) => {
-  const { getQuestionQuery, getSubmissionsQuery } = props;
+  const { getQuestionQuery, getSubmissionsQuery, width = '' } = props;
 
   console.log('%c getQuestionQuery?.data >>>', 'background: yellow; color: blue', getQuestionQuery?.data);
 
@@ -108,8 +111,6 @@ const SubmissionsAndNotes: React.FC<SubmissionsAndNotesProps> = (props: Submissi
     getSubmissionDetailByIdQueryOptions,
   );
 
-  console.log('%c getSubmissionDetailByIdQuery >>>', 'background: yellow; color: blue', getSubmissionDetailByIdQuery);
-
   const {
     code = '',
     memory = '',
@@ -124,27 +125,28 @@ const SubmissionsAndNotes: React.FC<SubmissionsAndNotesProps> = (props: Submissi
     if (getNotesByQuestionIdQuery?.data?.userNotes?.length === 0) {
       return <>暂无笔记</>;
     }
-    return getNotesByQuestionIdQuery?.data?.userNotes?.map((e) => (
-      <pre
-        key={e.id}
-        style={{
-          background: COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND,
-          padding: 24,
-          marginTop: 24,
-          marginBottom: 24,
-        }}
-      >
-        {e?.content || ''}
-      </pre>
-    ));
+    return getNotesByQuestionIdQuery?.data?.userNotes?.map((e) => {
+      // <pre
+      //   key={e.id}
+      //   style={{
+      //     background: COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND,
+      //     padding: 24,
+      //     marginTop: 24,
+      //     marginBottom: 24,
+      //   }}
+      // >
+      //   {e?.content || ''}
+      // </pre>
+      return <MarkdownEditor key={e.id} value={e?.content} isReadOnly={false}></MarkdownEditor>;
+    });
   };
 
   return (
-    <SubmissionsAndNotesSection>
+    <SubmissionsAndNotesSection style={{ width: width }}>
       {getSubmissionDetailByIdQuery.isLoading && <ContentSkeleton style={{ padding: 12 }}></ContentSkeleton>}
       {getQuestionQuery?.data?.status === 'ac' && getSubmissionDetailByIdQuery.isSuccess && (
         <SubmissionsSection>
-          <Title level={4}>最近一次 AC 的代码</Title>
+          <Title level={1}>最近一次 AC 的代码</Title>
           <Descriptions bordered column={2}>
             <Descriptions.Item label="执行用时">{runtime}</Descriptions.Item>
             <Descriptions.Item label="语言">{lang}</Descriptions.Item>
@@ -153,8 +155,7 @@ const SubmissionsAndNotes: React.FC<SubmissionsAndNotesProps> = (props: Submissi
             <Descriptions.Item label="总测试用例">{totalTestCaseCnt}</Descriptions.Item>
             <Descriptions.Item label="通过的测试用例">{passedTestCaseCnt}</Descriptions.Item>
           </Descriptions>
-          {/**TODO: support syntax highlight */}
-          <pre
+          {/* <pre
             style={{
               background: COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND,
               padding: 24,
@@ -163,11 +164,18 @@ const SubmissionsAndNotes: React.FC<SubmissionsAndNotesProps> = (props: Submissi
             }}
           >
             {code}
-          </pre>
+          </pre> */}
+          <MarkdownEditor value={`\`\`\`${lang}\n\n${code}\n\n\`\`\``} isReadOnly={true}></MarkdownEditor>
         </SubmissionsSection>
       )}
-      <Title level={4}>我的笔记</Title>
-      {getNotesByQuestionIdQuery.isSuccess && <NotesSection>{renderNotes()}</NotesSection>}
+      <Title level={1}>我的笔记</Title>
+      {(getNotesByQuestionIdQuery.isSuccess || getNotesByQuestionIdQuery.isFetched) && (
+        <NotesSection>{renderNotes()}</NotesSection>
+      )}
+      {getNotesByQuestionIdQuery.isLoading && <ContentSkeleton style={{ padding: 12 }}></ContentSkeleton>}
+      {getNotesByQuestionIdQuery.isError && <ErrorIllustrator></ErrorIllustrator>}
+      {/* TODO: solve idle bug */}
+      {getNotesByQuestionIdQuery.isIdle && <ErrorIllustrator></ErrorIllustrator>}
     </SubmissionsAndNotesSection>
   );
 };

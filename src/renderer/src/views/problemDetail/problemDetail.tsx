@@ -92,7 +92,6 @@ const ProblemDetail: React.FC<ProblemDetailProps> = (props: ProblemDetailProps) 
 
   const getSubmissionsQuery = useGetSubmissionsByTitleSlug(submissionsQueryArgs, submissionsQueryOptions);
 
-  console.log('%c  getSubmissionsQuery  >>>', 'background: yellow; color: blue', getSubmissionsQuery);
 
   return (
     <>

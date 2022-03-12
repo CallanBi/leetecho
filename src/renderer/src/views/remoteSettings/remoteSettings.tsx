@@ -1,20 +1,15 @@
 import * as React from 'react';
+import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 
-const {
-  useRef, useState, useEffect, useMemo,
-} = React;
+const { useRef, useState, useEffect, useMemo } = React;
 
-interface RemoteSettingsProps {
-}
+interface RemoteSettingsProps {}
 
-const defaultProps: RemoteSettingsProps = {};
+const RemoteSettings: React.FC<RemoteSettingsProps> = (props: RemoteSettingsProps) => {
+  const {} = props;
 
-const RemoteSettings: React.FC<RemoteSettingsProps> = (props: RemoteSettingsProps = defaultProps) => (
-  <>
-    {' '}
-    RemoteSettingsProps:
-    {JSON.stringify(props)}
-  </>
-);
+  return <>RemoteSettings</>;
+};
 
 export default RemoteSettings;

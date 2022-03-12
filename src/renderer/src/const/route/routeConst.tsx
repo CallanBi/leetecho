@@ -5,7 +5,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
 import AllProblems from '@/views/allProblems';
-import DefaultTemplate from '@/views/defaultTemplate';
+import TemplateManagement from '@/views/templateManagement';
 import RemoteSettings from '@/views/remoteSettings';
 // import SettledProblems from '@/views/settledProblems';
 import Login from '@/views/login';
@@ -35,10 +35,10 @@ const ROUTE: Array<
     component: AllProblems,
   },
   {
-    name: '默认模板',
+    name: '模板管理',
     icon: <IconTemplate style={withSemiIconStyle(navIconStyle)} />,
-    path: '/defaultTemplate',
-    component: DefaultTemplate,
+    path: '/templateManagement',
+    component: TemplateManagement,
   },
   {
     path: '/remoteSettings',
