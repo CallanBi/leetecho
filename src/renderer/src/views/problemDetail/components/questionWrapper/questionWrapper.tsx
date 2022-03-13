@@ -109,12 +109,6 @@ const QuestionWrapper: React.FC<QuestionWrapperProps> = (props: QuestionWrapperP
     }
   `;
 
-  console.log(
-    '%c getQuestionQuery?.data?.status >>>',
-    'background: yellow; color: blue',
-    getQuestionQuery?.data?.status,
-  );
-
   const router = useRouter();
 
   return (

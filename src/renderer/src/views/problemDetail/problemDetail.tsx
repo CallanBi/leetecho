@@ -92,10 +92,22 @@ const ProblemDetail: React.FC<ProblemDetailProps> = (props: ProblemDetailProps) 
 
   const getSubmissionsQuery = useGetSubmissionsByTitleSlug(submissionsQueryArgs, submissionsQueryOptions);
 
-
   return (
     <>
-      <QuestionWrapper getQuestionQuery={getProblemQuery} getSubmissionsQuery={getSubmissionsQuery}></QuestionWrapper>
+      {useMemo(
+        () => (
+          <QuestionWrapper
+            getQuestionQuery={getProblemQuery}
+            getSubmissionsQuery={getSubmissionsQuery}
+          ></QuestionWrapper>
+        ),
+        [
+          getProblemQuery,
+          getSubmissionsQuery,
+          getProblemQuery.status,
+          getSubmissionsQuery.status,
+        ],
+      )}
     </>
   );
 };

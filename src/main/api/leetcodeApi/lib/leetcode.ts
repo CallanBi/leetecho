@@ -439,35 +439,66 @@ class Leetcode {
     offset?: number;
     questionSlug: string;
   }): Promise<GetSubmissionsByQuestionSlugResponse['submissionList']> {
-    const { limit = 0, offset = 0, questionSlug = '' } = params;
-    const [err, response] = await to(
-      Helper.GraphQLRequest({
-        query: `
-        query progressSubmissions($offset: Int, $limit: Int, $lastKey: String, $questionSlug: String) {
-          submissionList(offset: $offset, limit: $limit, lastKey: $lastKey, questionSlug: $questionSlug) {
-            lastKey
-            hasNext
-            submissions {
-              id
-              timestamp
-              url
-              lang
-              memory
-              runtime
-              statusDisplay
+    const { limit = 20, offset = 0, questionSlug = '' } = params;
+
+    const requestOnce = async ({
+      realOffset,
+    }: {
+      realOffset: number;
+    }): Promise<GetSubmissionsByQuestionSlugResponse> => {
+      const [err, response] = await to(
+        Helper.GraphQLRequest({
+          query: `
+          query submissions($offset: Int!, $limit: Int!, $lastKey: String, $questionSlug: String!, $markedOnly: Boolean, $lang: String) {
+            submissionList(offset: $offset, limit: $limit, lastKey: $lastKey, questionSlug: $questionSlug, markedOnly: $markedOnly, lang: $lang) {
+              lastKey
+              hasNext
+              submissions {
+                id
+                statusDisplay
+                lang
+                runtime
+                timestamp
+                url
+                isPending
+                memory
+                submissionComment {
+                  comment
+                  flagType
+                  __typename
+                }
+                __typename
+              }
               __typename
             }
-            __typename
           }
-        }
       `,
-        variables: {
-          questionSlug,
-          limit,
-          offset,
-        },
-      }),
-    );
+          variables: {
+            questionSlug,
+            limit,
+            offset: realOffset,
+          },
+        }),
+      );
+
+      if (err) {
+        throw new ErrorResp({
+          code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+          message: err.message || getErrorCodeMessage(),
+        });
+      }
+
+      return response;
+    };
+
+    const submissions: GetSubmissionsByQuestionSlugResponse['submissionList']['submissions'] = [];
+
+    let curOffset = Number(offset);
+
+    // const { submissionList } = response as GetSubmissionsByQuestionSlugResponse;
+
+    let [err, res] = await to(requestOnce({ realOffset: curOffset }));
+
     if (err) {
       throw new ErrorResp({
         code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
@@ -475,8 +506,27 @@ class Leetcode {
       });
     }
 
-    const { submissionList } = response as GetSubmissionsByQuestionSlugResponse;
-    return submissionList;
+    while (res?.submissionList.hasNext) {
+      const { submissionList: curSubmissionList } = res;
+      submissions.push(...curSubmissionList.submissions);
+      curOffset += limit;
+      [err, res] = await to(requestOnce({ realOffset: curOffset }));
+      if (err) {
+        throw new ErrorResp({
+          code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+          message: err.message || getErrorCodeMessage(),
+        });
+      }
+    }
+
+    submissions.push(...(res?.submissionList?.submissions ?? []));
+
+    return {
+      lastKey: res?.submissionList.lastKey ?? '',
+      hasNext: res?.submissionList.hasNext ?? false,
+      submissions,
+      __typename: res?.submissionList.__typename ?? '',
+    };
   }
 
   @validate((params: [{ id: string }]) => typeof params[0]?.id === 'string' && params[0]?.id !== '')

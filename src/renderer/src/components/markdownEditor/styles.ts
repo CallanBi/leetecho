@@ -41,7 +41,7 @@ const markdownEditorStyle = css`
   }
 
   .code {
-    background: palette(surface);
+    background: ${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG}!important;
     transition: all 0.4s ease-in-out, height 0s, padding 0s;
     border: none;
     width: 0;
@@ -92,7 +92,7 @@ const markdownEditorStyle = css`
 
   .cm-scroller {
     @mixin scrollbar row;
-    font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace!important;
+    font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace !important;
   }
 
   .cm-focused {
@@ -345,12 +345,14 @@ const markdownEditorStyle = css`
         color: ${COLOR_PALETTE.LEETECHO_BLUE}!important;
       }
     }
+    background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
+    border-top: 1px solid ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
   }
 
   .milkdown-menu {
-    border: ${`1px solid ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}`}!important;
-    border-left: ${`1px solid ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}`}!important;
-    background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
+    border: ${`1px solid ${COLOR_PALETTE.LEETECHO_GREY}`}!important;
+    border-left: ${`1px solid ${COLOR_PALETTE.LEETECHO_GREY}`}!important;
+    background-color: ${COLOR_PALETTE.LEETECHO_GREY}!important;
     .icon {
       color: ${COLOR_PALETTE.LEETECHO_LIGHT_BLACK}!important;
       :hover {
@@ -359,10 +361,10 @@ const markdownEditorStyle = css`
       transition: all 0.3s ease-in-out;
     }
     .button {
-      background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
+      background-color: ${COLOR_PALETTE.LEETECHO_GREY}!important;
     }
     ::-webkit-scrollbar {
-      background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
+      background-color: ${COLOR_PALETTE.LEETECHO_GREY}!important;
     }
     ::-webkit-scrollbar-thumb {
       background-color: ${COLOR_PALETTE.LEETECHO_HEADER_SEARCH_BG_HOVER}!important;
@@ -387,17 +389,20 @@ const markdownEditorStyle = css`
       border-left-color: ${COLOR_PALETTE.LEETECHO_BLUE}!important;
     }
     code {
-      background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
+      background-color: ${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG}!important;
       color: ${COLOR_PALETTE.LEETECHO_LIGHT_BLACK}!important;
     }
   }
+
   .milkdown .editor {
     border-bottom-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
     border-left-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
     border-right-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
     border-top-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
-
     padding: 0px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    padding-bottom: 12px !important;
     max-width: unset !important;
     .icon {
       color: ${COLOR_PALETTE.LEETECHO_BLUE}!important;
@@ -409,15 +414,21 @@ const markdownEditorStyle = css`
       border-left-color: ${COLOR_PALETTE.LEETECHO_BLUE}!important;
     }
     code {
-      background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
+      background-color: ${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG}!important;
       color: ${COLOR_PALETTE.LEETECHO_LIGHT_BLACK}!important;
     }
     .strong {
       color: ${COLOR_PALETTE.LEETECHO_BLACK}!important;
     }
     .code-fence {
-      background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
+      background-color: ${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG}!important;
       margin: 0px !important;
+      font-size: 14px !important;
+      pre {
+        ::-webkit-scrollbar {
+          background-color: ${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG}!important;
+        }
+      }
     }
     table {
       border-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;

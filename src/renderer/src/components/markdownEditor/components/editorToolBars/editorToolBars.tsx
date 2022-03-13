@@ -24,7 +24,7 @@ const buttonStyle: React.CSSProperties = {
   border: 'none',
   outline: 'none',
   padding: 0,
-  background: COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND,
+  background: COLOR_PALETTE.LEETECHO_GREY,
   position: 'relative',
   zIndex: 2,
   bottom: 0,
@@ -44,7 +44,7 @@ const EditorToolBars: React.FC<EditorToolBarsProps> = (props: EditorToolBarsProp
         zIndex: 2,
         bottom: -4,
         height: 36,
-        background: COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND,
+        background: COLOR_PALETTE.LEETECHO_GREY,
       }}
     >
       <Button

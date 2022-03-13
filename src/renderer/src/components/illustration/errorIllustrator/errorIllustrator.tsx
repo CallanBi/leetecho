@@ -33,6 +33,7 @@ const TitleSection = styled.section`
 const DescSection = styled.section`
   display: flex;
   justify-content: center;
+  margin-bottom: 24px;
 `;
 
 const ErrorIllustrator: React.FC<EmptyProps> = (props: EmptyProps) => {
