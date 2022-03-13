@@ -137,7 +137,7 @@ const SubmissionsAndNotes: React.FC<SubmissionsAndNotesProps> = (props: Submissi
       // >
       //   {e?.content || ''}
       // </pre>
-      return <MarkdownEditor key={e.id} value={e?.content} isReadOnly={false}></MarkdownEditor>;
+      return <MarkdownEditor key={e.id} value={e?.content} isReadOnly={true}></MarkdownEditor>;
     });
   };
 

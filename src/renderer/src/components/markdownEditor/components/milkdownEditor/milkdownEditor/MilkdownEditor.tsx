@@ -6,7 +6,6 @@ import React, { forwardRef } from 'react';
 
 import { createEditor } from './editor';
 import { Loading } from './Loading';
-import className from './style.module.css';
 import { Content, useLazy } from './useLazy';
 
 type Props = {

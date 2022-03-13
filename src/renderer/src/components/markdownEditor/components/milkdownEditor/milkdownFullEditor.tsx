@@ -26,10 +26,10 @@ const MilkDownFullEditor = ({
   isReadOnly = false,
 }: MilkDownFullEditorProps) => {
   const ref = React.useRef<HTMLDivElement>(null);
-  const lockCode = React.useRef(false);
+  const lockCode = React.useRef(isReadOnly);
   const milkdownRef = React.useRef<MilkdownRef>(null);
   const codeMirrorRef = React.useRef<CodeMirrorRef>(null);
-  const [md, setMd] = React.useState('');
+  // const [md, setMd] = React.useState('');
 
   // React.useEffect(() => {
   //   import('./content/index.zh-hans.md')
@@ -68,10 +68,10 @@ const MilkDownFullEditor = ({
         />
       </div>
       <div style={{ display: mode === Mode.TwoSide ? 'block' : 'none' }}>
-        <CodeMirror ref={codeMirrorRef} value={value} onChange={onCodeChange} lock={lockCode} />
+        <CodeMirror ref={codeMirrorRef} value={value} onChange={onCodeChange} lock={lockCode} isReadOnly={isReadOnly} />
       </div>
     </div>
   );
 };
 
-export const MilkDownFullEditorMemo =MilkDownFullEditor;
+export { MilkDownFullEditor };

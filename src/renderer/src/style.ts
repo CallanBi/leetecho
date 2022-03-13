@@ -3,6 +3,9 @@ import { css } from '@emotion/react';
 import { COLOR_PALETTE } from 'src/const/theme/color';
 
 const globalStyles = css`
+  html {
+    font-size: 14px;
+  }
   ::-webkit-scrollbar {
     background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
     border-radius: 2px;
@@ -14,6 +17,10 @@ const globalStyles = css`
     border-radius: 2px;
     width: 5px;
     height: 5px;
+  }
+
+  [ant-click-animating-without-extra-node='true']::after {
+    animation: none !important;
   }
 
   /* table {

@@ -80,33 +80,44 @@ const markdownEditorStyle = css`
   }
 
   .ͼ2 .cm-activeLine {
-    background-color: rgba(var(--background), 1);
+    background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND} !important;
   }
 
   .cm-editor {
     & * {
-      font-size: 12px;
+      font-size: 14px;
       font-variant-ligatures: contextual;
     }
   }
 
   .cm-scroller {
     @mixin scrollbar row;
+    font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace!important;
   }
 
   .cm-focused {
     outline: none !important;
   }
 
+  .cm-gutter {
+    background: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
+    backdrop-filter: blur(5px);
+  }
+
+  .cm-gutter .cm-foldGutter {
+  }
+
+  .cm-gutterElement {
+  }
+
   .cm-gutters {
-    background: palette(background, 0.5) !important;
-    transition: background 0.4s ease-in-out;
+    background: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
     backdrop-filter: blur(5px);
   }
 
   .cm-activeLineGutter {
-    background: palette(background, 0.5) !important;
-    transition: background 0.4s ease-in-out;
+    background: ${COLOR_PALETTE.LEETECHO_BLUE}!important;
+    color: ${COLOR_PALETTE.LEETECHO_WHITE}!important;
   }
 
   .cm-content {
@@ -220,7 +231,7 @@ const markdownEditorStyle = css`
   }
 
   .token.comment {
-    color: #aabfc9;
+    color: #006a00;
   }
 
   .token.constant {
@@ -342,6 +353,10 @@ const markdownEditorStyle = css`
     background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
     .icon {
       color: ${COLOR_PALETTE.LEETECHO_LIGHT_BLACK}!important;
+      :hover {
+        color: ${COLOR_PALETTE.LEETECHO_BLUE}!important;
+      }
+      transition: all 0.3s ease-in-out;
     }
     .button {
       background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
@@ -358,7 +373,12 @@ const markdownEditorStyle = css`
       'Droid Sans', 'Helvetica Neue', sans-serif !important;
     outline: ${`3px solid ${COLOR_PALETTE.LEETECHO_WHITE}`}!important;
     .icon {
-      color: ${COLOR_PALETTE.LEETECHO_BLUE}!important;
+      color: ${COLOR_PALETTE.LEETECHO_LIGHT_BLACK}!important;
+      :hover {
+        background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
+        color: ${COLOR_PALETTE.LEETECHO_BLUE}!important;
+      }
+      transition: all 0.3s ease-in-out;
     }
     a {
       color: ${COLOR_PALETTE.LEETECHO_LIGHT_BLUE}!important;
@@ -410,6 +430,10 @@ const markdownEditorStyle = css`
     }
     .heading {
       font-weight: bold;
+    }
+    .code-inline {
+      padding-left: 6px;
+      padding-right: 6px;
     }
   }
 `;
