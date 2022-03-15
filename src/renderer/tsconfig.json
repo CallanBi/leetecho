@@ -21,6 +21,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react",
+    "noErrorTruncation": true,
     "types": [
       "vite/client",
       "vite-plugin-svgr/client",

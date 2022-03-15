@@ -13,6 +13,7 @@
     "strict": true,
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react",
+    "noErrorTruncation": true,
     "include": [
       "types/**/*.d.ts",
       "src/main/api/**/*.d.ts"

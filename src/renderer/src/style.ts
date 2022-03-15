@@ -23,6 +23,18 @@ const globalStyles = css`
     animation: none !important;
   }
 
+  .ant-checkbox {
+    .ant-checkbox-inner {
+      background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
+    }
+  }
+
+  .ant-checkbox-checked {
+    .ant-checkbox-inner {
+      background-color: ${COLOR_PALETTE.LEETECHO_BLUE}!important;
+    }
+  }
+
   /* table {
     border-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
   }

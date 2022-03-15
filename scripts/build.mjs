@@ -1,12 +1,11 @@
-import { build as viteBuild, createServer } from "vite";
-import chalk from "chalk";
+import { build as viteBuild, createServer } from 'vite';
 
-const TAG = chalk.bgBlue("[build.mjs]");
+const TAG = '[build.mjs]';
 
 const viteConfigs = {
-  main: "configs/vite.main.ts",
-  preload: "configs/vite.preload.ts",
-  renderer: "configs/vite.renderer.ts",
+  main: 'configs/vite.main.ts',
+  preload: 'configs/vite.preload.ts',
+  renderer: 'configs/vite.renderer.ts',
 };
 
 async function buildElectron() {

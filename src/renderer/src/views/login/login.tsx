@@ -93,7 +93,7 @@ const Login: React.FC<{}> = () => {
                 style={
                   {
                     WebkitAppRegion: 'no-drag',
-                    top: 80,
+                    top: 70,
                   } as React.CSSProperties
                 }
                 type="link"

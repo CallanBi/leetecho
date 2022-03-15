@@ -23,7 +23,15 @@
     "prettier"
   ],
   "rules": {
-    "indent": [
+    // "indent": [
+    //   "error",
+    //   2,
+    //   {
+    //     "SwitchCase": 1
+    //   }
+    // ],
+    "indent": "off",
+    "@typescript-eslint/indent": [
       "error",
       2,
       {

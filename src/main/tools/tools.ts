@@ -51,3 +51,104 @@ export const deleteNilVal: DeleteNilValFunction = (obj) =>
     }
     return filter(v) ? { ...acc, [k]: v } : acc;
   }, {});
+
+export const safeJSONParse = (str: string) => {
+  try {
+    return JSON.parse(str);
+  } catch (e) {
+    return null;
+  }
+};
+
+/**
+ * parse jsonOrObj string to object recursively
+ */
+export const parseJsonRecursively = (jsonOrObj: string | Record<string, unknown>): any => {
+  if (typeof jsonOrObj === 'string') {
+    try {
+      const objWithInnerJSON = JSON.parse(jsonOrObj);
+      if (!Array.isArray(objWithInnerJSON)) {
+        return Object.entries(objWithInnerJSON).reduce((acc, [k, v]) => {
+          if (typeof v === 'object') {
+            if (Array.isArray(v)) {
+              return {
+                ...acc,
+                [k]: v.map((e) => {
+                  const ele = safeJSONParse(e);
+                  return ele !== null && (typeof ele === 'object' || Array.isArray(ele)) ? parseJsonRecursively(e) : e;
+                }),
+              };
+            }
+            if (JSON.stringify(v) === '{}') {
+              return { ...acc, [k]: v };
+            }
+            if (typeof v === 'string') {
+              const o = safeJSONParse(v);
+              return {
+                ...acc,
+                [k]: o !== null && (typeof o === 'object' || Array.isArray(o)) ? parseJsonRecursively(v) : v,
+              };
+            }
+            if (v instanceof Object) {
+              return { ...acc, [k]: parseJsonRecursively(v as Record<string, unknown>) };
+            }
+          }
+          return { ...acc, [k]: v };
+        }, {});
+      } else {
+        return objWithInnerJSON.map((e) => {
+          const ele = safeJSONParse(e);
+          return ele !== null && (typeof ele === 'object' || Array.isArray(ele)) ? parseJsonRecursively(e) : e;
+        });
+      }
+    } catch (e) {
+      return {};
+    }
+  } else {
+    if (!Array.isArray(jsonOrObj)) {
+      return Object.entries(jsonOrObj).reduce((acc, [k, v]) => {
+        if (typeof v === 'object') {
+          if (Array.isArray(v)) {
+            return {
+              ...acc,
+              [k]: v.map((e) => {
+                const ele = safeJSONParse(e);
+                return ele !== null && (typeof ele === 'object' || Array.isArray(ele)) ? parseJsonRecursively(e) : e;
+              }),
+            };
+          }
+          if (JSON.stringify(v) === '{}') {
+            return { ...acc, [k]: v };
+          }
+          if (typeof v === 'string') {
+            const o = safeJSONParse(v);
+            return {
+              ...acc,
+              [k]: o !== null && (typeof o === 'object' || typeof o === 'string') ? parseJsonRecursively(v) : v,
+            };
+          }
+          if (v instanceof Object) {
+            return { ...acc, [k]: parseJsonRecursively(JSON.stringify(v)) };
+          }
+        } else if (Array.isArray(v)) {
+          return v.map((e) => {
+            const ele = safeJSONParse(e);
+            return ele !== null && (typeof ele === 'object' || typeof ele === 'string') ? parseJsonRecursively(e) : e;
+          });
+        } else if (typeof v === 'string') {
+          const o = safeJSONParse(v);
+          return {
+            ...acc,
+            [k]: o !== null && (typeof o === 'object' || typeof o === 'string') ? parseJsonRecursively(v) : v,
+          };
+        }
+        return { ...acc, [k]: v };
+      }, {});
+    } else {
+      return jsonOrObj.map((e) => {
+        const ele = safeJSONParse(e);
+        return ele !== null && (typeof ele === 'object' || Array.isArray(ele)) ? parseJsonRecursively(e) : e;
+      });
+    }
+  }
+};

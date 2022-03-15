@@ -1,5 +1,6 @@
 import to from 'await-to-js';
 import { ipcMain } from 'electron';
+import fileTools from '../tools/file/file';
 import AppApi from './appApi';
 import baseHandler, { ErrorResp, SuccessResp } from './appApi/base';
 import {
@@ -162,3 +163,15 @@ ipcMain.handle('getSubmissionDetailById', async (_, params: GetSubmissionDetailB
     data: res?.data ?? {},
   } as SuccessResp<GetNotesByQuestionIdResponse>;
 });
+
+// ipcMain.handle('readUserTemplate', async (_, params: ReadUserTemplateRequest) => {
+//   const [err, res] = await to(fileTools.readFolderFilesName(params));
+
+//   if (err) {
+//     throw new Error(transformCustomErrorToMsg(err));
+//   }
+//   return {
+//     code: res?.code ?? ERROR_CODE.OK,
+//     data: res?.data ?? {},
+//   } as SuccessResp<string>;
+// });

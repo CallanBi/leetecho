@@ -41,11 +41,11 @@ export const createEditor = (
           })
           .mounted(async (ctx) => {
             setEditorReady(true);
-            if (import.meta.env.DEV) {
-              const view = ctx.get(editorViewCtx);
-              const prosemirrorDevTools = await import('prosemirror-dev-tools');
-              prosemirrorDevTools.default(view);
-            }
+            // if (import.meta.env.DEV) {
+            //   const view = ctx.get(editorViewCtx);
+            //   const prosemirrorDevTools = await import('prosemirror-dev-tools');
+            //   prosemirrorDevTools.default(view);
+            // }
           });
       }
     })

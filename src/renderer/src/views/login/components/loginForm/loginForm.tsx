@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
-import { Button, Form, Input, message } from 'antd';
+import { Button, Form, Input, message, Checkbox } from 'antd';
 import { IconArrowRight } from '@douyinfe/semi-icons';
 import { useQuery } from 'react-query';
 import { app } from 'electron';
@@ -10,6 +10,8 @@ import { useLogin } from '@/rendererApi/user';
 import { getErrorCodeFromMessage } from '@/rendererApi';
 import { AppStoreContext } from '@/store/appStore/appStore';
 import { COLOR_PALETTE } from 'src/const/theme/color';
+import store, { User, UserConfig, UserGroup } from '@/storage/electron-store';
+import to from 'await-to-js';
 
 const { useRef, useState, useEffect, useMemo, useContext } = React;
 
@@ -22,6 +24,8 @@ const LoginInputSection = styled.section`
   }
 `;
 
+const [_err, userConfig] = await to(store.get('userConfig'));
+
 interface LoginFormProps {}
 
 const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
@@ -32,13 +36,13 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
 
   const [loginInfo, setLoginInfo] = useState<{
     isSubmitted: boolean;
-    submittedVal: { username: string; password: string };
+    submittedVal: { username: string; password: string; isUserRemembered: boolean };
   }>({
     isSubmitted: false,
-    submittedVal: { username: '', password: '' },
+    submittedVal: { username: '', password: '', isUserRemembered: false },
   });
 
-  const onLoginSuccess = () => {
+  const onLoginSuccess = async () => {
     if (loginInfo.isSubmitted) {
       setLoginInfo({ ...loginInfo, isSubmitted: false });
       appDispatch({
@@ -47,6 +51,37 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
           isLogin: true,
         },
       });
+      const [_, users = []] = (await to(store.get('userConfig.users.CN'))) as
+        | [Error, undefined]
+        | [null, UserGroup['CN']];
+      const user = users.findIndex((u) => u.usrName === (loginInfo?.submittedVal?.username || ''));
+      if (user !== -1) {
+        store.set('userConfig.users.CN', [
+          ...users.slice(0, user),
+          { ...users[user], pwd: loginInfo?.submittedVal?.password || '', endPoint: 'CN' },
+          ...users.slice(user + 1),
+        ] as User[]);
+      } else {
+        store.set('userConfig.users.CN', [
+          ...users,
+          {
+            usrName: loginInfo?.submittedVal?.username || '',
+            pwd: loginInfo?.submittedVal?.password || '',
+            endPoint: 'CN',
+          },
+        ] as User[]);
+      }
+      await to(
+        Promise.all([
+          store.set('userConfig.lastLoginUser', { usrName: loginInfo?.submittedVal?.username || '', endPoint: 'CN' }),
+          store.set(
+            'userConfig.isUserRemembered',
+            (loginInfo?.submittedVal?.isUserRemembered || false) as unknown as CascadeSelectProps<UserConfig>,
+          ),
+        ]),
+      );
+
+      const [err, res] = await to(store.get('userConfig'));
       message.success('登录成功');
     }
   };
@@ -72,15 +107,20 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     onLoginError,
   );
 
-  const onSubmit = (val: { username: string; password: string }) => {
+  const onSubmit = (val: { username: string; password: string; isUserRemembered: boolean }) => {
     setLoginInfo({
       isSubmitted: true,
       submittedVal: {
         username: val.username,
         password: val.password,
+        isUserRemembered: val.isUserRemembered,
       },
     });
   };
+
+  const lastLoginUserPwd = userConfig?.users?.['CN']?.find(
+    (u) => u?.usrName === userConfig?.lastLoginUser?.usrName,
+  )?.pwd;
 
   return (
     <LoginInputSection>
@@ -88,7 +128,11 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
         name="basic"
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
-        initialValues={{ remember: true }}
+        initialValues={{
+          username: userConfig?.isUserRemembered ? userConfig?.lastLoginUser?.usrName || '' : undefined,
+          password: userConfig?.isUserRemembered ? lastLoginUserPwd || '' : undefined,
+          isUserRemembered: userConfig?.isUserRemembered || false,
+        }}
         autoComplete="off"
         requiredMark={false}
         labelAlign="right"
@@ -106,13 +150,16 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
         <Form.Item label="LeetCode 密码" name="password" rules={[{ required: true, message: '请输入 Leetcode 密码' }]}>
           <Input.Password />
         </Form.Item>
+        <Form.Item wrapperCol={{ offset: 10, span: 16 }} label="" name="isUserRemembered" valuePropName="checked">
+          <Checkbox>记住我</Checkbox>
+        </Form.Item>
         <Form.Item wrapperCol={{ offset: 11, span: 16 }}>
           <Button
             type="primary"
             htmlType="submit"
             size="large"
             icon={<IconArrowRight style={withSemiIconStyle()} />}
-            style={{ borderRadius: 36, marginTop: 24 }}
+            style={{ borderRadius: 36, marginTop: 12 }}
             loading={isLoading}
           />
         </Form.Item>
