@@ -9,7 +9,10 @@ export const useLazy = (content: Content) => {
   React.useEffect(() => {
     if (typeof content === 'string') {
       setMd(content);
-      setLoading(false);
+      // for smooth transition
+      setTimeout(() => {
+        setLoading(false);
+      }, 400);
       return;
     }
     content()

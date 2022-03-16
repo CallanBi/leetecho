@@ -3,15 +3,17 @@ import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import { Button, Form, Input, message, Checkbox } from 'antd';
 import { IconArrowRight } from '@douyinfe/semi-icons';
-import { useQuery } from 'react-query';
-import { app } from 'electron';
 import { withSemiIconStyle } from '@/style';
 import { useLogin } from '@/rendererApi/user';
 import { getErrorCodeFromMessage } from '@/rendererApi';
 import { AppStoreContext } from '@/store/appStore/appStore';
 import { COLOR_PALETTE } from 'src/const/theme/color';
-import store, { User, UserConfig, UserGroup } from '@/storage/electron-store';
+import store, { EndPoint, User, UserConfig, UserGroup } from '@/storage/electron-store';
 import to from 'await-to-js';
+
+const {
+  bridge: { ipcRenderer },
+} = window;
 
 const { useRef, useState, useEffect, useMemo, useContext } = React;
 
@@ -42,48 +44,80 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     submittedVal: { username: '', password: '', isUserRemembered: false },
   });
 
+  const handleUserStatus = async () => {
+    // get user status from electron-store
+    const [_, users = []] = (await to(store.get('userConfig.users.CN'))) as
+      | [Error, undefined]
+      | [null, UserGroup['CN']];
+    const user = users.findIndex((u) => u.usrName === (loginInfo?.submittedVal?.username || ''));
+    // if user is not found, then create a new user
+    if (user !== -1) {
+      store.set('userConfig.users.CN', [
+        ...users.slice(0, user),
+        { ...users[user], pwd: loginInfo?.submittedVal?.password || '', endPoint: 'CN' },
+        ...users.slice(user + 1),
+      ] as User[]);
+    } else {
+      store.set('userConfig.users.CN', [
+        ...users,
+        {
+          usrName: loginInfo?.submittedVal?.username || '',
+          pwd: loginInfo?.submittedVal?.password || '',
+          endPoint: 'CN',
+        },
+      ] as User[]);
+    }
+    // update user config
+    await to(
+      Promise.all([
+        store.set('userConfig.lastLoginUser', { usrName: loginInfo?.submittedVal?.username || '', endPoint: 'CN' }),
+        store.set(
+          'userConfig.isUserRemembered',
+          (loginInfo?.submittedVal?.isUserRemembered || false) as unknown as CascadeSelectProps<UserConfig>,
+        ),
+      ]),
+    );
+
+    // update app state
+    appDispatch({
+      appActionType: 'change-user-status',
+      payload: {
+        isLogin: true,
+        usrName: loginInfo?.submittedVal?.username || '',
+        endPoint: 'CN',
+      },
+    });
+
+    // // read user template config from local folder
+    // const [readUserTemplateErr, userTemplates] = (await to(
+    //   ipcRenderer.invoke('readUserTemplate', {
+    //     userInfo: {
+    //       usrName: loginInfo?.submittedVal?.username || '',
+    //       endPoint: 'CN' as EndPoint,
+    //     },
+    //   } as ReadUserTemplateReq),
+    // )) as ReadUserTemplateResp;
+    // if (readUserTemplateErr) {
+    //   /** noop */
+    // }
+
+    // if template is not found, then create a new template
+    await to(
+      ipcRenderer.invoke('createTemplate', {
+        userInfo: {
+          usrName: loginInfo?.submittedVal?.username || '',
+          endPoint: 'CN' as EndPoint,
+        },
+      } as CreateTemplateReq),
+    );
+  };
+
   const onLoginSuccess = async () => {
     if (loginInfo.isSubmitted) {
       setLoginInfo({ ...loginInfo, isSubmitted: false });
-      appDispatch({
-        appActionType: 'change-user-status',
-        payload: {
-          isLogin: true,
-        },
-      });
-      const [_, users = []] = (await to(store.get('userConfig.users.CN'))) as
-        | [Error, undefined]
-        | [null, UserGroup['CN']];
-      const user = users.findIndex((u) => u.usrName === (loginInfo?.submittedVal?.username || ''));
-      if (user !== -1) {
-        store.set('userConfig.users.CN', [
-          ...users.slice(0, user),
-          { ...users[user], pwd: loginInfo?.submittedVal?.password || '', endPoint: 'CN' },
-          ...users.slice(user + 1),
-        ] as User[]);
-      } else {
-        store.set('userConfig.users.CN', [
-          ...users,
-          {
-            usrName: loginInfo?.submittedVal?.username || '',
-            pwd: loginInfo?.submittedVal?.password || '',
-            endPoint: 'CN',
-          },
-        ] as User[]);
-      }
-      await to(
-        Promise.all([
-          store.set('userConfig.lastLoginUser', { usrName: loginInfo?.submittedVal?.username || '', endPoint: 'CN' }),
-          store.set(
-            'userConfig.isUserRemembered',
-            (loginInfo?.submittedVal?.isUserRemembered || false) as unknown as CascadeSelectProps<UserConfig>,
-          ),
-        ]),
-      );
-
-      const [err, res] = await to(store.get('userConfig'));
       message.success('登录成功');
     }
+    await to(handleUserStatus());
   };
 
   const onLoginError = (error: Error) => {

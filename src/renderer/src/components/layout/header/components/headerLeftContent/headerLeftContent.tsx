@@ -239,7 +239,6 @@ const HeaderLeftContent: React.FC<HeaderLeftContentProps> = (props: HeaderLeftCo
                     }
                   `}
                   onClick={() => {
-                    console.log(item.value);
                     router.push(`problemDetail?titleSlug=${(item.value as ProblemItemFromGraphQL)?.titleSlug || ''}`);
                     setPopoverVisible(false);
                   }}

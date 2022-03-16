@@ -704,36 +704,55 @@ class Leetcode {
     skip?: number;
     targetId: string;
   }): Promise<GetNotesByQuestionIdResponse['noteOneTargetCommonNote']> {
-    const { limit = 0, noteType = 'COMMON_QUESTION', skip = 0, targetId = '' } = params;
-    const [err, response] = await to(
-      Helper.GraphQLRequest({
-        query: `
-        query noteOneTargetCommonNote($noteType: NoteCommonTypeEnum!, $targetId: String!, $limit: Int = 10, $skip: Int = 0) {
-          noteOneTargetCommonNote(noteType: $noteType, targetId: $targetId, limit: $limit, skip: $skip) {
-            count
-            userNotes {
-              config
-              content
-              id
-              noteType
-              status
-              summary
-              targetId
-              updatedAt
+    const { limit = 10, noteType = 'COMMON_QUESTION', skip = 0, targetId = '' } = params;
+
+    const requestOnce = async ({ realOffset }: { realOffset: number }): Promise<GetNotesByQuestionIdResponse> => {
+      const [err, response] = await to(
+        Helper.GraphQLRequest({
+          query: `
+          query noteOneTargetCommonNote($noteType: NoteCommonTypeEnum!, $targetId: String!, $limit: Int = 10, $skip: Int = 0) {
+            noteOneTargetCommonNote(noteType: $noteType, targetId: $targetId, limit: $limit, skip: $skip) {
+              count
+              userNotes {
+                config
+                content
+                id
+                noteType
+                status
+                summary
+                targetId
+                updatedAt
+                __typename
+              }
               __typename
             }
-            __typename
           }
-        }
       `,
-        variables: {
-          limit,
-          noteType,
-          skip,
-          targetId,
-        },
-      }),
-    );
+          variables: {
+            limit,
+            noteType,
+            skip: realOffset,
+            targetId,
+          },
+        }),
+      );
+
+      if (err) {
+        throw new ErrorResp({
+          code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+          message: err.message || getErrorCodeMessage(),
+        });
+      }
+
+      return response as GetNotesByQuestionIdResponse;
+    };
+
+    const notes: GetNotesByQuestionIdResponse['noteOneTargetCommonNote']['userNotes'] = [];
+
+    let curOffset = Number(skip);
+
+    let [err, res] = (await to(requestOnce({ realOffset: curOffset }))) as [Error | null, GetNotesByQuestionIdResponse];
+
     if (err) {
       throw new ErrorResp({
         code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
@@ -741,8 +760,38 @@ class Leetcode {
       });
     }
 
-    const { noteOneTargetCommonNote } = response as GetNotesByQuestionIdResponse;
-    return noteOneTargetCommonNote;
+    const {
+      noteOneTargetCommonNote = {
+        count: 0,
+        userNotes: [],
+      },
+    } = res;
+
+    const { count } = noteOneTargetCommonNote;
+
+    while (count > curOffset) {
+      const {
+        noteOneTargetCommonNote: { userNotes },
+      } = res;
+      notes.push(...userNotes);
+      curOffset += limit;
+      [err, res] = (await to(requestOnce({ realOffset: curOffset }))) as [Error | null, GetNotesByQuestionIdResponse];
+
+      if (err) {
+        throw new ErrorResp({
+          code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+          message: err.message || getErrorCodeMessage(),
+        });
+      }
+    }
+
+    notes.push(...(res?.noteOneTargetCommonNote?.userNotes || []));
+
+    return {
+      count: res?.noteOneTargetCommonNote?.count ?? 0,
+      userNotes: notes,
+      __typename: res?.noteOneTargetCommonNote?.__typename ?? '',
+    } as GetNotesByQuestionIdResponse['noteOneTargetCommonNote'];
   }
 
   async getNotes(params: {

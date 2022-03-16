@@ -1,3 +1,4 @@
+import { format, toDate } from 'date-fns';
 import { isNil } from 'lodash';
 
 interface DeleteNilValFunction {
@@ -152,3 +153,7 @@ export const parseJsonRecursively = (jsonOrObj: string | Record<string, unknown>
     }
   }
 };
+
+export function formatTimeStamp(timestamp: string | number) {
+  return format(toDate(Number(timestamp) * 1000), 'yyyy/MM/dd H:mm');
+}

@@ -1,8 +1,14 @@
 import to from 'await-to-js';
-import { ipcMain } from 'electron';
+import { app, ipcMain } from 'electron';
 import fileTools from '../tools/file/file';
 import AppApi from './appApi';
 import baseHandler, { ErrorResp, SuccessResp } from './appApi/base';
+import {
+  CreateTemplateRequest,
+  CreateTemplateResponse,
+  ReadUserTemplateRequest,
+  ReadUserTemplateResponse,
+} from './appApi/idl/io';
 import {
   GetAllProblemsResponse,
   GetNotesByQuestionIdRequest,
@@ -164,14 +170,67 @@ ipcMain.handle('getSubmissionDetailById', async (_, params: GetSubmissionDetailB
   } as SuccessResp<GetNotesByQuestionIdResponse>;
 });
 
-// ipcMain.handle('readUserTemplate', async (_, params: ReadUserTemplateRequest) => {
-//   const [err, res] = await to(fileTools.readFolderFilesName(params));
+ipcMain.handle('readUserTemplate', async (_, params: ReadUserTemplateRequest) => {
+  const {
+    userInfo: { usrName = '', endPoint = 'CN' },
+  } = params;
 
-//   if (err) {
-//     throw new Error(transformCustomErrorToMsg(err));
-//   }
-//   return {
-//     code: res?.code ?? ERROR_CODE.OK,
-//     data: res?.data ?? {},
-//   } as SuccessResp<string>;
-// });
+  const templatePath = `${app.getPath('documents')}/Leetecho Files/${endPoint}/${usrName}`;
+
+  const coverTemplate = fileTools.readFile(`${templatePath}/coverTemplate.md`);
+  const problemTemplate = fileTools.readFile(`${templatePath}/problemTemplate.md`);
+
+  const res = [
+    {
+      fileNameWithFileType: 'coverTemplate.md',
+      content: coverTemplate,
+    },
+    {
+      fileNameWithFileType: 'problemTemplate.md',
+      content: problemTemplate,
+    },
+  ];
+
+  return {
+    code: ERROR_CODE.OK,
+    data: res,
+  } as SuccessResp<ReadUserTemplateResponse>;
+});
+
+ipcMain.handle('createTemplate', async (_, params: CreateTemplateRequest) => {
+  const {
+    userInfo: { usrName = '', endPoint = 'CN' },
+  } = params;
+  const templatePath = `${app.getPath('documents')}/Leetecho Files/${endPoint}/${usrName}`;
+
+  const [_importTemplateErr, res] = await to(
+    Promise.all([
+      import('../../../assets/defaultTemplates/coverTemplate.md'),
+      import('../../../assets/defaultTemplates/problemTemplate.md'),
+    ]),
+  );
+
+  const coverTemplateModule = res?.[0] || { default: '' };
+  const problemTemplateModule = res?.[1] || { default: '' };
+
+  const coverTemplateContent = coverTemplateModule.default;
+  const problemTemplateContent = problemTemplateModule.default;
+
+  const [_createTemplateErr, _createTemplateRes] = await to(fileTools.readFolderFilesName(templatePath));
+
+  fileTools.createFilesInDir(templatePath, [
+    {
+      fileNameWithFileType: 'coverTemplate.md',
+      content: coverTemplateContent as string,
+    },
+    {
+      fileNameWithFileType: 'problemTemplate.md',
+      content: problemTemplateContent as string,
+    },
+  ]);
+
+  return {
+    code: ERROR_CODE.OK,
+    data: {},
+  } as SuccessResp<CreateTemplateResponse>;
+});

@@ -74,4 +74,4 @@ const MilkDownFullEditor = ({
   );
 };
 
-export { MilkDownFullEditor };
+export default MilkDownFullEditor;

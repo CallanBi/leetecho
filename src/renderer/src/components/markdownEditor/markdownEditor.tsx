@@ -1,9 +1,12 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 import { css, Global } from '@emotion/react';
-import { MilkDownFullEditor, Mode } from './components/milkdownEditor/milkdownFullEditor';
+import { Mode } from './components/milkdownEditor/milkdownFullEditor';
 import markdownEditorStyle from './styles';
 import EditorToolBars from './components/editorToolBars';
+import Loading from '../illustration/loading';
+
+const MilkDownFullEditor = React.lazy(() => import('./components/milkdownEditor/milkdownFullEditor'));
 
 const { useRef, useState, useEffect, useMemo } = React;
 
@@ -32,13 +35,15 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = (props: MarkdownEditorProp
     <section style={{ marginTop: 12, marginBottom: 12 }}>
       <EditorToolBars mode={mode} toggleMode={toggleMode}></EditorToolBars>
       <Global styles={markdownEditorStyle}></Global>
-      <MilkDownFullEditor
-        mode={mode}
-        isDarkMode={false}
-        isReadOnly={isReadOnly}
-        value={value}
-        onChange={onChange}
-      ></MilkDownFullEditor>
+      <React.Suspense fallback={<Loading></Loading>}>
+        <MilkDownFullEditor
+          mode={mode}
+          isDarkMode={false}
+          isReadOnly={isReadOnly}
+          value={value}
+          onChange={onChange}
+        ></MilkDownFullEditor>
+      </React.Suspense>
     </section>
   );
 };

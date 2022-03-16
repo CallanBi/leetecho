@@ -9,6 +9,9 @@ export type AppState = {
   };
   userState: {
     isLogin: boolean;
+    usrName?: string;
+    endPoint?: 'CN' | 'US';
+    avatar?: string;
   };
 };
 
@@ -24,22 +27,29 @@ export const initState: AppState = {
 
 export type AppActionType = 'change-ui-status';
 
-export type AppAction = {
-  appActionType: 'change-ui-status';
-  payload: Partial<AppState['uiStatus']>;
-  /** isReplacement: decide whether to replace or merge original data, false as default */
-  isReplacement?: boolean;
-} | {
-  appActionType: 'change-user-status';
-  payload: Partial<AppState['userState']>;
-  /** isReplacement: decide whether to replace or merge original data, false as default */
-  isReplacement?: boolean;
-};
+export type AppAction =
+  | {
+    appActionType: 'change-ui-status';
+    payload: Partial<AppState['uiStatus']>;
+    /** isReplacement: decide whether to replace or merge original data, false as default */
+    isReplacement?: boolean;
+  }
+  | {
+    appActionType: 'change-user-status';
+    payload: Partial<AppState['userState']>;
+    /** isReplacement: decide whether to replace or merge original data, false as default */
+    isReplacement?: boolean;
+  };
 
 export const AppStoreContext = React.createContext<{
   state: AppState;
   dispatch: React.Dispatch<AppAction>;
-}>({ state: initState, dispatch: (_) => { /** noop */ } });
+}>({
+  state: initState,
+  dispatch: (_) => {
+    /** noop */
+  },
+});
 
 export const reducer: React.Reducer<AppState, AppAction> = (state, appAction) => {
   const { appActionType } = appAction;
