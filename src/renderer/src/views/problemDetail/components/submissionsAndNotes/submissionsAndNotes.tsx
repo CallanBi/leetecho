@@ -12,7 +12,6 @@ import ContentSkeleton from '@/components/contentSkeleton';
 import MarkdownEditor from '@/components/markdownEditor';
 import ErrorIllustrator from '@/components/illustration/errorIllustrator';
 import Empty from '@/components/illustration/empty';
-import { toDate, format } from 'date-fns';
 import { formatTimeStamp } from 'src/main/tools';
 
 const { Title } = Typography;

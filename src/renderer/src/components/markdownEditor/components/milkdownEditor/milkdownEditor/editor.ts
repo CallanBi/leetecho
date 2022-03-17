@@ -20,6 +20,30 @@ import { menuConfig } from './menuConfig';
 
 import 'katex/dist/katex.min.css';
 
+import { commonmark, codeFence } from '@milkdown/preset-gfm';
+
+const nodes = commonmark.configure(codeFence, {
+  languageList: [
+    '--',
+    'leetecho',
+    'javascript',
+    'typescript',
+    'bash',
+    'sql',
+    'json',
+    'html',
+    'css',
+    'c',
+    'cpp',
+    'java',
+    'ruby',
+    'python',
+    'go',
+    'rust',
+    'markdown',
+  ],
+});
+
 export const createEditor = (
   root: HTMLElement | null,
   defaultValue: string,
@@ -50,7 +74,7 @@ export const createEditor = (
       }
     })
     .use(nordLight)
-    .use(gfm)
+    .use(nodes)
     .use(codeSandBox)
     .use(listener)
     .use(clipboard)

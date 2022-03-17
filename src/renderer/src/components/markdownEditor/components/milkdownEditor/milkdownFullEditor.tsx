@@ -47,6 +47,7 @@ const MilkDownFullEditor = ({
     const { current } = codeMirrorRef;
     if (!current) return;
     current.update(markdown);
+    onChange?.(markdown);
   }, []);
 
   const onCodeChange = React.useCallback((getCode: () => string) => {
@@ -54,6 +55,7 @@ const MilkDownFullEditor = ({
     if (!current) return;
     const value = getCode();
     current.update(value);
+    onChange?.(value);
   }, []);
 
   return !value.length ? null : (

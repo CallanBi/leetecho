@@ -347,11 +347,13 @@ const markdownEditorStyle = css`
     }
     background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
     border-top: 1px solid ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
+    top: -3px;
   }
 
   .milkdown-menu {
     border: ${`1px solid ${COLOR_PALETTE.LEETECHO_GREY}`}!important;
     border-left: ${`1px solid ${COLOR_PALETTE.LEETECHO_GREY}`}!important;
+    border-bottom: 0!important;
     background-color: ${COLOR_PALETTE.LEETECHO_GREY}!important;
     .icon {
       color: ${COLOR_PALETTE.LEETECHO_LIGHT_BLACK}!important;

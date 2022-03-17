@@ -17,6 +17,7 @@ import { DIFFICULTY_COLOR, DIFFICULTY_WORD, statusIconMap, STATUS_WORD } from '@
 import ContentSkeleton from '@/components/contentSkeleton';
 import SubmissionsAndNotes from '../submissionsAndNotes';
 import { useRouter } from '@/hooks/router/useRouter';
+import Resizer from '@/components/resizer';
 
 const { Link } = Typography;
 
@@ -95,20 +96,6 @@ const QuestionWrapper: React.FC<QuestionWrapperProps> = (props: QuestionWrapperP
     },
   };
 
-  const ResizerSection = styled.section`
-    width: 10px;
-    height: 100%;
-    z-index: 2;
-    cursor: col-resize;
-    background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND};
-    box-sizing: border-box;
-    transition: all 0.3s;
-
-    :hover {
-      background-color: ${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG};
-    }
-  `;
-
   const router = useRouter();
 
   return (
@@ -156,7 +143,7 @@ const QuestionWrapper: React.FC<QuestionWrapperProps> = (props: QuestionWrapperP
             )}
           </QuestionViewerSection>
         )}
-        <ResizerSection onMouseDown={handler} onTouchStart={handler}></ResizerSection>
+        <Resizer onMouseDown={handler} onTouchStart={handler}></Resizer>
         <SubmissionsAndNotes
           width={size > LEFT_HIDDEN_SIZE ? `calc(100% - ${size}px)` : '100%'}
           getQuestionQuery={getQuestionQuery}
