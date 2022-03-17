@@ -1,4 +1,5 @@
 import to from 'await-to-js';
+import path from 'path';
 import { app, ipcMain } from 'electron';
 import fileTools from '../tools/file/file';
 import AppApi from './appApi';
@@ -175,7 +176,11 @@ ipcMain.handle('readUserTemplate', async (_, params: ReadUserTemplateRequest) =>
     userInfo: { usrName = '', endPoint = 'CN' },
   } = params;
 
-  const templatePath = `${app.getPath('documents')}/Leetecho Files/${endPoint}/${usrName}`;
+  const delimiter = path.sep;
+
+  const templatePath = `${app.getPath(
+    'documents',
+  )}${delimiter}Leetecho Files${delimiter}${endPoint}${delimiter}${usrName}`;
 
   const coverTemplate = fileTools.readFile(`${templatePath}/coverTemplate.md`);
   const problemTemplate = fileTools.readFile(`${templatePath}/problemTemplate.md`);
@@ -201,7 +206,12 @@ ipcMain.handle('createTemplate', async (_, params: CreateTemplateRequest) => {
   const {
     userInfo: { usrName = '', endPoint = 'CN' },
   } = params;
-  const templatePath = `${app.getPath('documents')}/Leetecho Files/${endPoint}/${usrName}`;
+
+  const delimiter = path.sep;
+
+  const templatePath = `${app.getPath(
+    'documents',
+  )}${delimiter}Leetecho Files${delimiter}${endPoint}${delimiter}${usrName}`;
 
   const [_importTemplateErr, res] = await to(
     Promise.all([
