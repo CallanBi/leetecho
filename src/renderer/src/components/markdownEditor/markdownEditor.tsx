@@ -6,7 +6,7 @@ import markdownEditorStyle from './styles';
 import EditorToolBars from './components/editorToolBars';
 import Loading from '../illustration/loading';
 
-const MilkDownFullEditor = React.lazy(() => import('./components/milkdownEditor/milkdownFullEditor'));
+import MilkDownFullEditor from './components/milkdownEditor/milkdownFullEditor';
 
 const { useRef, useState, useEffect, useMemo } = React;
 
@@ -18,7 +18,7 @@ interface MarkdownEditorProps {
 
 const MarkdownEditor: React.FC<MarkdownEditorProps> = (props: MarkdownEditorProps) => {
   const {
-    isReadOnly = false,
+    isReadOnly,
     value = '',
     onChange = () => {
       /* noop */
@@ -35,15 +35,13 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = (props: MarkdownEditorProp
     <section style={{ marginTop: 12, marginBottom: 12 }}>
       <EditorToolBars mode={mode} toggleMode={toggleMode}></EditorToolBars>
       <Global styles={markdownEditorStyle}></Global>
-      <React.Suspense fallback={<Loading></Loading>}>
-        <MilkDownFullEditor
-          mode={mode}
-          isDarkMode={false}
-          isReadOnly={isReadOnly}
-          value={value}
-          onChange={onChange}
-        ></MilkDownFullEditor>
-      </React.Suspense>
+      <MilkDownFullEditor
+        mode={mode}
+        isDarkMode={false}
+        isReadOnly={isReadOnly}
+        value={value}
+        onChange={onChange}
+      ></MilkDownFullEditor>
     </section>
   );
 };

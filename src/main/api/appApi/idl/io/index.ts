@@ -20,3 +20,14 @@ export type ReadUserTemplateResponse = {
 }[];
 
 export type CreateTemplateResponse = Record<string, never>;
+
+export type SaveTemplateRequest = {
+  userInfo: {
+    usrName: string;
+    endPoint: EndPoint;
+  };
+  type: 'cover' | 'problem';
+  content: string;
+};
+
+export type SaveTemplateResponse = Record<string, never>;

@@ -126,7 +126,7 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
       if (getErrorCodeFromMessage(error) === 400) {
         message.error('用户名或密码错误，请重新输入');
       } else {
-        message.error('未知错误');
+        message.error(error?.message ? `登录失败，错误信息：${error.message}` : '登录失败，发生未知错误');
       }
     }
   };

@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import { Mode } from '../milkdownEditor/milkdownFullEditor';
-import { Button } from 'antd';
+import { Button, Tooltip } from 'antd';
 import { withSemiIconStyle } from '@/style';
 import { IconArticle, IconCode } from '@douyinfe/semi-icons';
 import { noop } from 'lodash';
@@ -47,26 +47,28 @@ const EditorToolBars: React.FC<EditorToolBarsProps> = (props: EditorToolBarsProp
         background: COLOR_PALETTE.LEETECHO_GREY,
       }}
     >
-      <Button
-        style={buttonStyle}
-        icon={
-          mode === Mode.Default ? (
-            <IconCode
-              style={withSemiIconStyle(buttonStyle)}
-              onClick={() => {
-                toggleMode?.();
-              }}
-            />
-          ) : (
-            <IconArticle
-              style={withSemiIconStyle(buttonStyle)}
-              onClick={() => {
-                toggleMode?.();
-              }}
-            />
-          )
-        }
-      ></Button>
+      <Tooltip title={mode === Mode.Default ? '代码模式' : '默认模式'} placement="topLeft">
+        <Button
+          style={buttonStyle}
+          icon={
+            mode === Mode.Default ? (
+              <IconCode
+                style={withSemiIconStyle(buttonStyle)}
+                onClick={() => {
+                  toggleMode?.();
+                }}
+              />
+            ) : (
+              <IconArticle
+                style={withSemiIconStyle(buttonStyle)}
+                onClick={() => {
+                  toggleMode?.();
+                }}
+              />
+            )
+          }
+        ></Button>
+      </Tooltip>
     </section>
   );
 };

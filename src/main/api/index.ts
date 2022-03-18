@@ -9,6 +9,8 @@ import {
   CreateTemplateResponse,
   ReadUserTemplateRequest,
   ReadUserTemplateResponse,
+  SaveTemplateRequest,
+  SaveTemplateResponse,
 } from './appApi/idl/io';
 import {
   GetAllProblemsResponse,
@@ -226,8 +228,6 @@ ipcMain.handle('createTemplate', async (_, params: CreateTemplateRequest) => {
   const coverTemplateContent = coverTemplateModule.default;
   const problemTemplateContent = problemTemplateModule.default;
 
-  const [_createTemplateErr, _createTemplateRes] = await to(fileTools.readFolderFilesName(templatePath));
-
   fileTools.createFilesInDir(templatePath, [
     {
       fileNameWithFileType: 'coverTemplate.md',
@@ -243,4 +243,57 @@ ipcMain.handle('createTemplate', async (_, params: CreateTemplateRequest) => {
     code: ERROR_CODE.OK,
     data: {},
   } as SuccessResp<CreateTemplateResponse>;
+});
+
+ipcMain.handle('saveTemplate', async (_, params: SaveTemplateRequest) => {
+  const {
+    userInfo: { usrName = '', endPoint = 'CN' },
+    type,
+    content,
+  } = params;
+
+  // console.log('%c content >>>', 'background: yellow; color: blue', content);
+
+  const delimiter = path.sep;
+
+  const templatePath = `${app.getPath(
+    'documents',
+  )}${delimiter}Leetecho Files${delimiter}${endPoint}${delimiter}${usrName}${delimiter}${type}Template.md`;
+
+  fileTools.writeFile(templatePath, content);
+
+  return {
+    code: ERROR_CODE.OK,
+    data: {},
+  } as SuccessResp<SaveTemplateResponse>;
+});
+
+ipcMain.handle('getDefaultTemplates', async (_) => {
+  const [importTemplateErr, res] = await to(
+    Promise.all([
+      import('../../../assets/defaultTemplates/coverTemplate.md'),
+      import('../../../assets/defaultTemplates/problemTemplate.md'),
+    ]),
+  );
+
+  if (importTemplateErr) {
+    throw new Error(transformCustomErrorToMsg(importTemplateErr));
+  }
+
+  const coverTemplateModule = res?.[0] || { default: '' };
+  const problemTemplateModule = res?.[1] || { default: '' };
+
+  const coverTemplateContent = coverTemplateModule.default;
+  const problemTemplateContent = problemTemplateModule.default;
+
+  return {
+    code: ERROR_CODE.OK,
+    data: {
+      coverTemplateContent,
+      problemTemplateContent,
+    },
+  } as SuccessResp<{
+    coverTemplateContent: typeof import('*.md');
+    problemTemplateContent: typeof import('*.md');
+  }>;
 });

@@ -12,7 +12,7 @@ export const useLazy = (content: Content) => {
       // for smooth transition
       setTimeout(() => {
         setLoading(false);
-      }, 400);
+      }, 160);
       return;
     }
     content()

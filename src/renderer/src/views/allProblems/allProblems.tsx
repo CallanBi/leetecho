@@ -11,6 +11,7 @@ import { FilterValue, SorterResult, TableCurrentDataSource } from 'antd/lib/tabl
 import { ProblemItemFromGraphQL } from 'src/main/api/leetcodeApi/utils/interfaces';
 import { COLUMN_KEY_SORTER_KEY_MAP, TABLE_SORTER_ORDER_MAP } from './const';
 import { useRouter } from '@/hooks/router/useRouter';
+import WrappedLoading from '@/components/illustration/loading/wrappedLoading';
 
 const { useRef, useState, useEffect, useMemo } = React;
 
@@ -223,11 +224,7 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
         tableStatus={{
           isLoading: {
             indicator: (
-              <section style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <section style={{ display: 'flex' }}>
-                  <Loading style={{ width: 45, height: 45 }}></Loading>
-                </section>
-              </section>
+              <WrappedLoading></WrappedLoading>
             ),
             spinning: isGetProblemsLoading,
           },

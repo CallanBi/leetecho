@@ -23,12 +23,16 @@ const MilkDownFullEditor = ({
   onChange = () => {
     /* noop */
   },
-  isReadOnly = false,
+  isReadOnly,
 }: MilkDownFullEditorProps) => {
   const ref = React.useRef<HTMLDivElement>(null);
   const lockCode = React.useRef(isReadOnly);
   const milkdownRef = React.useRef<MilkdownRef>(null);
   const codeMirrorRef = React.useRef<CodeMirrorRef>(null);
+
+  if (lockCode.current !== isReadOnly) {
+    lockCode.current = isReadOnly;
+  }
   // const [md, setMd] = React.useState('');
 
   // React.useEffect(() => {
@@ -40,23 +44,36 @@ const MilkDownFullEditor = ({
   //     .catch(console.error);
   // }, []);
 
-  const milkdownListener = React.useCallback((markdown: string) => {
-    const lock = lockCode.current;
-    if (lock) return;
+  const milkdownListener = React.useCallback(
+    (markdown: string) => {
+      const lock = lockCode.current;
+      if (lock) return;
 
-    const { current } = codeMirrorRef;
-    if (!current) return;
-    current.update(markdown);
-    onChange?.(markdown);
-  }, []);
+      if (isReadOnly) {
+        return;
+      }
 
-  const onCodeChange = React.useCallback((getCode: () => string) => {
-    const { current } = milkdownRef;
-    if (!current) return;
-    const value = getCode();
-    current.update(value);
-    onChange?.(value);
-  }, []);
+      const { current } = codeMirrorRef;
+      if (!current) return;
+      current.update(markdown);
+      onChange?.(markdown);
+    },
+    [lockCode.current, isReadOnly],
+  );
+
+  const onCodeChange = React.useCallback(
+    (getCode: () => string) => {
+      if (isReadOnly) {
+        return;
+      }
+      const { current } = milkdownRef;
+      if (!current) return;
+      const value = getCode();
+      current.update(value);
+      onChange?.(value);
+    },
+    [isReadOnly],
+  );
 
   return !value.length ? null : (
     <div ref={ref}>
