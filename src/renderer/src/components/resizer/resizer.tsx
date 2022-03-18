@@ -9,6 +9,7 @@ const ResizerSection = styled.section`
   background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND};
   box-sizing: border-box;
   transition: all 0.3s;
+  z-index: 100;
 
   :hover {
     background-color: ${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG};

@@ -2,12 +2,17 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import { UseQueryOptions } from 'react-query';
-import { PageHeader, Tabs } from 'antd';
+import { Button, PageHeader, Tabs } from 'antd';
 import { useReadUserTemplate } from '@/rendererApi/io';
 import { AppStoreContext } from '@/store/appStore/appStore';
 import Loading from '@/components/illustration/loading';
 import useResizable from '@/hooks/useResizable';
 import Resizer from '@/components/resizer';
+import { formatLeetechoSyntax } from 'src/main/tools';
+import { IconEdit, IconSave } from '@douyinfe/semi-icons';
+import { withSemiIconStyle } from '@/style';
+import Footer from '@/components/layout/footer';
+import { COLOR_PALETTE } from 'src/const/theme/color';
 
 const MarkDownEditor = React.lazy(() => import('@/components/markdownEditor'));
 
@@ -71,8 +76,8 @@ const TemplateManagement: React.FC<TemplateManagementProps> = (props: TemplateMa
   const { isLoading, isSuccess, isError, data, error } = useReadUserTemplate(queryArgs, queryOptions);
 
   const [editorStatus, setEditorStatus] = useState<EditorStatus>({
-    cover: { editable: true },
-    problem: { editable: true },
+    cover: { editable: false },
+    problem: { editable: false },
   });
 
   const onEditorSave = (type: 'cover' | 'problem') => {
@@ -81,6 +86,16 @@ const TemplateManagement: React.FC<TemplateManagementProps> = (props: TemplateMa
       [type]: {
         ...editorStatus[type],
         editable: false,
+      },
+    });
+  };
+
+  const onEditorEdit = (type: 'cover' | 'problem') => {
+    setEditorStatus({
+      ...editorStatus,
+      [type]: {
+        ...editorStatus[type],
+        editable: true,
       },
     });
   };
@@ -109,8 +124,34 @@ const TemplateManagement: React.FC<TemplateManagementProps> = (props: TemplateMa
       }}
     >
       {size > HIDDEN_SIZE && (
-        <section style={{ width: size < HIDDEN_SIZE ? 0 : size, height: '100%', overflowY: 'auto', paddingRight: 12 }}>
-          <PageHeader style={{ paddingTop: 0, paddingBottom: 24, paddingLeft: 8 }} title="封面模板"></PageHeader>
+        <section
+          style={{
+            width: size < HIDDEN_SIZE ? 0 : width - size > HIDDEN_SIZE ? size : '100%',
+            height: editorStatus.cover.editable ? 'calc(100% - 46px)' : '100%',
+            overflowY: 'auto',
+            paddingRight: 12,
+          }}
+        >
+          <PageHeader
+            style={{ paddingTop: 0, paddingBottom: 24, paddingLeft: 8 }}
+            title="封面模板"
+            extra={
+              <Button
+                icon={
+                  <IconEdit
+                    style={withSemiIconStyle({
+                      paddingRight: 12,
+                    })}
+                  />
+                }
+                onClick={() => {
+                  onEditorEdit('cover');
+                }}
+              >
+                编辑
+              </Button>
+            }
+          ></PageHeader>
           {data?.[0]?.content?.length > 0 && (
             <React.Suspense fallback={<Loading></Loading>}>
               <MarkDownEditor
@@ -119,6 +160,33 @@ const TemplateManagement: React.FC<TemplateManagementProps> = (props: TemplateMa
                 isReadOnly={!editorStatus.cover.editable}
               ></MarkDownEditor>
             </React.Suspense>
+          )}
+          {editorStatus.cover.editable && (
+            <Footer
+              style={{
+                width: size < HIDDEN_SIZE ? 0 : width - size > HIDDEN_SIZE ? size + 18 : 'calc(100% - 31px)',
+                marginLeft: -21,
+              }}
+            >
+              <Button
+                type="primary"
+                style={{
+                  marginRight: 12,
+                }}
+                icon={
+                  <IconSave
+                    style={withSemiIconStyle({
+                      paddingRight: 12,
+                    })}
+                  />
+                }
+                onClick={() => {
+                  onEditorSave('cover');
+                }}
+              >
+                保存
+              </Button>
+            </Footer>
           )}
         </section>
       )}
@@ -136,7 +204,26 @@ const TemplateManagement: React.FC<TemplateManagementProps> = (props: TemplateMa
             paddingRight: 12,
           }}
         >
-          <PageHeader style={{ paddingTop: 0, paddingBottom: 24, paddingLeft: 8 }} title="题目模版"></PageHeader>
+          <PageHeader
+            style={{ paddingTop: 0, paddingBottom: 24, paddingLeft: 8 }}
+            title="题目模版"
+            extra={
+              <Button
+                icon={
+                  <IconEdit
+                    style={withSemiIconStyle({
+                      paddingRight: 12,
+                    })}
+                  />
+                }
+                onClick={() => {
+                  onEditorEdit('problem');
+                }}
+              >
+                编辑
+              </Button>
+            }
+          ></PageHeader>
           {data?.[1]?.content?.length > 0 && (
             <React.Suspense fallback={<Loading></Loading>}>
               <MarkDownEditor
@@ -145,6 +232,38 @@ const TemplateManagement: React.FC<TemplateManagementProps> = (props: TemplateMa
                 isReadOnly={!editorStatus.problem.editable}
               ></MarkDownEditor>
             </React.Suspense>
+          )}
+          {editorStatus.problem.editable && (
+            <Footer
+              style={{
+                width:
+                  width - size > HIDDEN_SIZE
+                    ? size < HIDDEN_SIZE
+                      ? 'calc(100% - 31px)'
+                      : `calc(100% - ${size + 31}px)`
+                    : 0,
+                marginLeft: -12,
+              }}
+            >
+              <Button
+                type="primary"
+                style={{
+                  marginRight: 12,
+                }}
+                icon={
+                  <IconSave
+                    style={withSemiIconStyle({
+                      paddingRight: 12,
+                    })}
+                  />
+                }
+                onClick={() => {
+                  onEditorSave('problem');
+                }}
+              >
+                保存
+              </Button>
+            </Footer>
           )}
         </section>
       )}

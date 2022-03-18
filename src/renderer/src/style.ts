@@ -7,16 +7,16 @@ const globalStyles = css`
     font-size: 14px;
   }
   ::-webkit-scrollbar {
-    background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
-    border-radius: 2px;
-    width: 5px;
-    height: 5px;
+    background-color: ${COLOR_PALETTE.LEETECHO_HEADER_SEARCH_BG}!important;
+    border-radius: 10px;
+    width: 8px;
+    height: 8px;
   }
   ::-webkit-scrollbar-thumb {
     background-color: ${COLOR_PALETTE.LEETECHO_HEADER_SEARCH_BG_HOVER}!important;
-    border-radius: 2px;
-    width: 5px;
-    height: 5px;
+    border-radius: 10px;
+    width: 8px;
+    height: 8px;
   }
 
   [ant-click-animating-without-extra-node='true']::after {

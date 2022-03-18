@@ -63,6 +63,8 @@ export const safeJSONParse = (str: string) => {
 
 /**
  * parse jsonOrObj string to object recursively
+ * @param jsonOrObj string | Record<string, unknown>
+ * @returns object
  */
 export const parseJsonRecursively = (jsonOrObj: string | Record<string, unknown>): any => {
   if (typeof jsonOrObj === 'string') {
@@ -154,6 +156,35 @@ export const parseJsonRecursively = (jsonOrObj: string | Record<string, unknown>
   }
 };
 
+/**
+ * Format timestamp to date string with 'yyyy/MM/dd H:mm' format
+ * @param timestamp string | number
+ * @returns string
+ */
 export function formatTimeStamp(timestamp: string | number) {
   return format(toDate(Number(timestamp) * 1000), 'yyyy/MM/dd H:mm');
+}
+
+/**
+ * Erase ```leetecho``` syntax wrapper from the given template string.
+ * @param templ string
+ * @returns string
+ */
+export function formatLeetechoSyntax(templ: string): string {
+  let copiedTempl = templ;
+  const reg = /(?<syntaxStart>```leetecho)(?<syntaxContent>[^```leetecho]*[^```]*\n*)*(?<syntaxEnd>```)/g;
+  const results = templ.matchAll(reg);
+  if (results) {
+    for (const result of results) {
+      const { syntaxStart, syntaxContent, syntaxEnd } = result.groups as {
+        syntaxStart: string;
+        syntaxContent: string;
+        syntaxEnd: string;
+      };
+      if (syntaxStart && syntaxEnd) {
+        copiedTempl = copiedTempl.replace(syntaxStart + syntaxContent + syntaxEnd, syntaxContent);
+      }
+    }
+  }
+  return copiedTempl;
 }
