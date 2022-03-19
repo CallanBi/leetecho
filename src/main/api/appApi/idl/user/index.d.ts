@@ -1,4 +1,10 @@
 /** user types */
+import {
+  LoginResp as LoginRs,
+  GetUserProgressReq as GetUserProgressRq,
+  GetUserProgressResp as GetUserProgressRs,
+} from './index';
+
 export {};
 
 declare global {
@@ -7,5 +13,8 @@ declare global {
     pwd: string;
   };
 
-  type LoginResp = SuccessResp<Record<string, never>>;
+  type LoginResp = LoginRs;
+
+  type GetUserProgressReq = GetUserProgressRq;
+  type GetUserProgressResp = GetUserProgressRs;
 }

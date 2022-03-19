@@ -9,8 +9,14 @@ export type AppState = {
   };
   userState: {
     isLogin: boolean;
+    /** user nick name fetched from LeetCode remote server */
+    username: string;
+    /** the user name used in log in section, could be user's email or user's nick name */
     usrName?: string;
+    /** the string identifier for a unique user, fetched from LeetCode remote server */
+    usrSlug?: string;
     endPoint?: 'CN' | 'US';
+    /** user avatar link */
     avatar?: string;
   };
 };
@@ -22,6 +28,11 @@ export const initState: AppState = {
   },
   userState: {
     isLogin: false,
+    username: '',
+    usrName: '',
+    usrSlug: '',
+    endPoint: 'CN',
+    avatar: '',
   },
 };
 

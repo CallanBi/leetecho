@@ -10,7 +10,7 @@ import { useGetProblems } from '@/rendererApi';
 import Loading from '@/components/illustration/loading';
 import { useRouter } from '@/hooks/router/useRouter';
 import { css } from '@emotion/react';
-import { ProblemItemFromGraphQL } from 'src/main/api/leetcodeApi/utils/interfaces';
+import { ProblemItemFromGraphQL } from 'src/main/api/leetcodeServices/utils/interfaces';
 
 const { Search } = Input;
 

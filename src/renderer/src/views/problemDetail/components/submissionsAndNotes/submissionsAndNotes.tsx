@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import { UseQueryOptions, UseQueryResult } from 'react-query';
 import { useGetNotesByQuestionId, useGetSubmissionDetailById } from '@/rendererApi/problem';
-import { Question, SubmissionList } from 'src/main/api/leetcodeApi/utils/interfaces';
+import { Question, SubmissionList } from 'src/main/api/leetcodeServices/utils/interfaces';
 
 import { Descriptions, Pagination, Typography } from 'antd';
 import { COLOR_PALETTE } from 'src/const/theme/color';

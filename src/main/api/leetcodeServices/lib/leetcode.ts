@@ -17,6 +17,7 @@ import {
   GetSubmissionDetailByIdResponse,
   GetSubmissionsByQuestionSlugResponse,
   GetUserProfileQuestionsResponse,
+  GetUserProgressResponse,
   GetUserStatusResponse,
   QuestionSortField,
   QuestionStatus,
@@ -367,7 +368,7 @@ class Leetcode {
   }): Promise<UserProfileQuestions> {
     const {
       difficulty = [],
-      first = 0,
+      first = 20, // page size
       skip = 0,
       sortField = 'LAST_SUBMITTED_AT',
       sortOrder = 'DESCENDING',
@@ -387,16 +388,6 @@ class Leetcode {
               difficulty
               lastSubmittedAt
               numSubmitted
-              submissions {
-                id
-                timestamp
-                url
-                lang
-                memory
-                runtime
-                statusDisplay
-                __typename
-              }
               lastSubmissionSrc {
                 sourceType
                 ... on SubmissionSrcLeetbookNode {
@@ -913,6 +904,54 @@ class Leetcode {
 
     const { userStatus } = response as GetUserStatusResponse;
     return userStatus;
+  }
+
+  async getUserProgress(params: { userSlug: string }): Promise<GetUserProgressResponse> {
+    const { userSlug = '' } = params;
+    const [err, response] = await to(
+      Helper.GraphQLRequest({
+        query: `
+
+    query userSessionProgress($userSlug: String!) {
+      userProfileUserQuestionSubmitStats(userSlug: $userSlug) {
+        acSubmissionNum {
+          difficulty
+          count
+        }
+        totalSubmissionNum {
+          difficulty
+          count
+        }
+      }
+      userProfileUserQuestionProgress(userSlug: $userSlug) {
+        numAcceptedQuestions {
+          difficulty
+          count
+        }
+        numFailedQuestions {
+          difficulty
+          count
+        }
+        numUntouchedQuestions {
+          difficulty
+          count
+        }
+      }
+    }
+      `,
+        variables: {
+          userSlug,
+        },
+      }),
+    );
+    if (err) {
+      throw new ErrorResp({
+        code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: err.message || getErrorCodeMessage(),
+      });
+    }
+
+    return response as GetUserProgressResponse;
   }
 }
 

@@ -26,12 +26,30 @@ import {
 import { GetAllTagsResponse } from './appApi/idl/tags';
 import { LoginReq, LoginResp, LogoutResp } from './appApi/idl/user';
 import ERROR_CODE, { getErrorCodeMessage } from './errorCode';
-import { GetNotesByQuestionIdResponse, GetQuestionDetailByTitleSlugResponse } from './leetcodeApi/utils/interfaces';
+import {
+  Difficulty,
+  EndPoint,
+  GetNotesByQuestionIdResponse,
+  GetUserProgressResponse,
+  GetUserStatusResponse,
+} from './leetcodeServices/utils/interfaces';
+import { formatLeetechoSyntax } from '../tools';
+import { getAllUserProfileSuccessQuestions } from './services/publishServices';
+
+import Handlebars from 'handlebars';
+
+Handlebars.registerHelper('ifCN', function (endPoint, options) {
+  if (endPoint === 'CN') {
+    return options.fn();
+  } else {
+    return '';
+  }
+});
 
 let appApi: AppApi | null = null;
 
 /** V8's serialization algorithm does not include custom properties on errors, see: https://github.com/electron/electron/issues/24427 */
-const transformCustomErrorToMsg: (err: Error | ErrorResp) => string = (err) =>
+export const transformCustomErrorToMsg: (err: Error | ErrorResp) => string = (err) =>
   `${(err as ErrorResp).code ?? ERROR_CODE.UNKNOWN_ERROR} ${err.message ?? getErrorCodeMessage()}`;
 
 ipcMain.handle('login', async (_, params: LoginReq) => {
@@ -173,6 +191,21 @@ ipcMain.handle('getSubmissionDetailById', async (_, params: GetSubmissionDetailB
   } as SuccessResp<GetNotesByQuestionIdResponse>;
 });
 
+ipcMain.handle('getUserStatus', async () => {
+  if (!appApi) {
+    throw new ErrorResp({ code: ERROR_CODE.NOT_LOGIN });
+  }
+  const [err, res] = await to(baseHandler(appApi.getUserStatus()));
+
+  if (err) {
+    throw new Error(transformCustomErrorToMsg(err));
+  }
+  return {
+    code: res?.code ?? ERROR_CODE.OK,
+    data: res?.data ?? {},
+  } as SuccessResp<GetUserStatusResponse['userStatus']>;
+});
+
 ipcMain.handle('readUserTemplate', async (_, params: ReadUserTemplateRequest) => {
   const {
     userInfo: { usrName = '', endPoint = 'CN' },
@@ -252,8 +285,6 @@ ipcMain.handle('saveTemplate', async (_, params: SaveTemplateRequest) => {
     content,
   } = params;
 
-  // console.log('%c content >>>', 'background: yellow; color: blue', content);
-
   const delimiter = path.sep;
 
   const templatePath = `${app.getPath(
@@ -297,3 +328,161 @@ ipcMain.handle('getDefaultTemplates', async (_) => {
     problemTemplateContent: typeof import('*.md');
   }>;
 });
+
+ipcMain.handle(
+  'publish',
+  async (
+    _,
+    params: {
+      userSlug: string;
+      userName: string;
+      endPoint: EndPoint;
+    },
+  ) => {
+    if (!appApi) {
+      throw new Error(transformCustomErrorToMsg(new ErrorResp({ code: ERROR_CODE.NOT_LOGIN })));
+    }
+
+    const userCoverTemplateVariables: {
+      [key: string]: any;
+    } = {};
+
+    const { userSlug = '', userName = '', endPoint = 'CN' } = params;
+
+    const [getUserProgressErr, getUserProgressRes] = (await to(appApi.getUserProgress({ userSlug }))) as [
+      null | ErrorResp,
+      GetUserProgressResponse,
+    ];
+
+    if (getUserProgressErr) {
+      throw new Error(transformCustomErrorToMsg(getUserProgressErr));
+    }
+
+    const profile: {
+      numSolved: number;
+      numTotal: number;
+      acEasy: number;
+      acMedium: number;
+      acHard: number;
+      userName: string;
+      endPoint: 'CN';
+    } = {
+      numSolved:
+        getUserProgressRes?.userProfileUserQuestionProgress?.numAcceptedQuestions?.reduce?.((acc, cur) => {
+          const { count = 0 } = cur;
+          return acc + count;
+        }, 0) || 0,
+      numTotal:
+        Object.entries(getUserProgressRes?.userProfileUserQuestionProgress)?.reduce?.((acc, [_, v]) => {
+          return (
+            (
+              v as Array<{
+                difficulty: Difficulty;
+                count: number;
+              }>
+            ).reduce((innerAcc, innerCur) => {
+              const { count = 0 } = innerCur;
+              return innerAcc + count;
+            }, 0) + acc
+          );
+        }, 0) || 0,
+      acEasy:
+        getUserProgressRes?.userProfileUserQuestionProgress?.numAcceptedQuestions?.find((i) => i?.difficulty === 'EASY')
+          ?.count || 0,
+      acMedium:
+        getUserProgressRes?.userProfileUserQuestionProgress?.numAcceptedQuestions?.find(
+          (i) => i?.difficulty === 'MEDIUM',
+        )?.count || 0,
+      acHard:
+        getUserProgressRes?.userProfileUserQuestionProgress?.numAcceptedQuestions?.find((i) => i?.difficulty === 'HARD')
+          ?.count || 0,
+      userName: userSlug,
+      endPoint: 'CN',
+    };
+
+    userCoverTemplateVariables.profile = profile;
+
+    userCoverTemplateVariables.updateTime = new Date().toLocaleString();
+
+    console.log('%c 1 >>>', 'background: yellow; color: blue', 1);
+
+    let userCover = formatLeetechoSyntax(
+      fileTools.readFile(
+        `${app.getPath('documents')}${path.sep}Leetecho Files${path.sep}CN${path.sep}${userName}${
+          path.sep
+        }coverTemplate.md`,
+      ),
+    );
+
+    const userProblem = formatLeetechoSyntax(
+      fileTools.readFile(
+        `${app.getPath('documents')}${path.sep}Leetecho Files${path.sep}CN${path.sep}${userName}${
+          path.sep
+        }problemTemplate.md`,
+      ),
+    );
+
+    console.log('%c 2 >>>', 'background: yellow; color: blue', 2);
+
+    if (!userCover || !userProblem) {
+      throw new Error('Template is empty');
+    }
+
+    console.log('%c 3 >>>', 'background: yellow; color: blue', 3);
+
+    const [getAllUserProfileSuccessQuestionsErr, getAllUserProfileQuestionsRes] = await to(
+      getAllUserProfileSuccessQuestions(appApi),
+    );
+
+    console.log('%c 4 >>>', 'background: yellow; color: blue', 4);
+
+    if (getAllUserProfileSuccessQuestionsErr) {
+      throw new Error(transformCustomErrorToMsg(getAllUserProfileSuccessQuestionsErr));
+    }
+
+    console.log('%c 5 >>>', 'background: yellow; color: blue', 5);
+
+    const {
+      data: { questions = [] },
+    } = getAllUserProfileQuestionsRes;
+
+    userCover = userCover.replace(
+      ':allProblems{}',
+      questions
+        .map(
+          (question) =>
+            // eslint-disable-next-line max-len
+            `| ${question.frontendId ?? (question.questionFrontendId || '')} | ${question.title} | ${
+              question.translatedTitle
+            } | ${question.difficulty} | `,
+        )
+        .join('\n'),
+    );
+
+    console.log('%c 6 >>>', 'background: yellow; color: blue', 6);
+
+    const handleBarCoverTemplate = Handlebars.compile(userCover);
+
+    console.log('%c 7 >>>', 'background: yellow; color: blue', 7);
+
+    const coverContent = handleBarCoverTemplate(userCoverTemplateVariables);
+
+    console.log('%c 8 >>>', 'background: yellow; color: blue', 8);
+
+    const coverOutputPath = `${app.getPath('documents')}${path.sep}Leetecho Files${path.sep}CN${path.sep}${userName}${
+      path.sep
+    }outputs`;
+
+    console.log('%c 9 >>>', 'background: yellow; color: blue', 9);
+
+    fileTools.createFilesInDirForced(coverOutputPath, [
+      {
+        fileNameWithFileType: 'readme.md',
+        content: coverContent,
+      },
+    ]);
+
+    console.log('%c 10 >>>', 'background: yellow; color: blue', 10);
+  },
+  /** TODO: continue finishing user problem template*/
+);

@@ -1,13 +1,17 @@
 import to from 'await-to-js';
-import Leetcode from '../leetcodeApi';
-import { EndPoint } from '../leetcodeApi/utils/interfaces';
+import Leetcode from '../leetcodeServices';
+import {
+  EndPoint,
+} from '../leetcodeServices/utils/interfaces';
 import {
   GetNotesByQuestionIdRequest,
   GetProblemsRequest,
   GetQuestionDetailByTitleSlugRequest,
   GetSubmissionDetailByIdRequest,
   GetSubmissionsByQuestionSlugRequest,
+  GetUserProfileQuestionsRequest,
 } from './idl/problems';
+import { GetUserProgressReq } from './idl/user';
 
 interface UsrInfo {
   usrName: string;
@@ -92,6 +96,30 @@ class AppApi {
       throw err;
     }
     return res as UnPromisifyFunction<typeof this.leetcode.getSubmissionDetailById>;
+  }
+
+  async getUserProfileQuestions(params: GetUserProfileQuestionsRequest) {
+    const [err, res] = await to(this.leetcode.getUserProfileQuestions(params));
+    if (err) {
+      throw err;
+    }
+    return res as UnPromisifyFunction<typeof this.leetcode.getUserProfileQuestions>;
+  }
+
+  async getUserStatus() {
+    const [err, res] = await to(this.leetcode.getUserStatus());
+    if (err) {
+      throw err;
+    }
+    return res as UnPromisifyFunction<typeof this.leetcode.getUserStatus>;
+  }
+
+  async getUserProgress(params: GetUserProgressReq) {
+    const [err, res] = await to(this.leetcode.getUserProgress(params));
+    if (err) {
+      throw err;
+    }
+    return res as UnPromisifyFunction<typeof this.leetcode.getUserProgress>;
   }
 }
 

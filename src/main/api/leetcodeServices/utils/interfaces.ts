@@ -221,6 +221,8 @@ export interface Solution {
 
 export interface Question {
   questionId: string;
+  /** either Question has frontendId or questionFrontendId */
+  frontendId?: string;
   questionFrontendId?: string;
   categoryTitle?: string;
   boundTopicId?: number;
@@ -343,6 +345,47 @@ export interface UserStatus {
 
 export interface GetUserStatusResponse {
   userStatus: UserStatus;
+}
+
+export interface AcSubmissionNum {
+  difficulty: string;
+  count: number;
+}
+
+export interface TotalSubmissionNum {
+  difficulty: string;
+  count: number;
+}
+
+export interface UserProfileUserQuestionSubmitStats {
+  acSubmissionNum: AcSubmissionNum[];
+  totalSubmissionNum: TotalSubmissionNum[];
+}
+
+export interface NumAcceptedQuestion {
+  difficulty: Difficulty;
+  count: number;
+}
+
+export interface NumFailedQuestion {
+  difficulty: Difficulty;
+  count: number;
+}
+
+export interface NumUntouchedQuestion {
+  difficulty: Difficulty;
+  count: number;
+}
+
+export interface UserProfileUserQuestionProgress {
+  numAcceptedQuestions: NumAcceptedQuestion[];
+  numFailedQuestions: NumFailedQuestion[];
+  numUntouchedQuestions: NumUntouchedQuestion[];
+}
+
+export interface GetUserProgressResponse {
+  userProfileUserQuestionSubmitStats: UserProfileUserQuestionSubmitStats;
+  userProfileUserQuestionProgress: UserProfileUserQuestionProgress;
 }
 
 export {

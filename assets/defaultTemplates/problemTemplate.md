@@ -1,26 +1,35 @@
 ```leetecho
-## {{ frontendId }}. {{title }} - {{ titleTranslated }}
+## {{ questionFrontendId }}. {{title }} - {{ translatedTitle }}
 ```
 
 -----
 ```leetecho
-Tags / 题目标签：{{#each tags}}{{ this }} {{/each}}
+Tags - 题目标签：{{#each tags}}{{ this }} {{/each}}
+
+## Description - 题目描述
+
+### EN:
+{{ content }}
+
+### ZH-CN:
+{{ translatedContent }}
+
 ```
 
 ```leetecho
-Link / 题目链接：[LeetCode](https://leetcode.com/problems/{{ titleSlug }}/description/)  /  [LeetCode-CN](https://leetcode-cn.com/problems/{{ titleSlug }}/description/)
+Link - 题目链接：[LeetCode](https://leetcode.com/problems/{{ titleSlug }}/description/)  -  [LeetCode-CN](https://leetcode-cn.com/problems/{{ titleSlug }}/description/)
 ```
 
 ## Latest Accepted Solution
 
 ```leetecho
-| Language | Runtime | Memory |
-|:---:|:---:|:---:|
-| {{ lastAcSubmission.language }}  | {{ lastAcSubmission.runtime }} | {{ lastAcSubmission.memory }} |
+| Language | Runtime | Memory | Submission Time |
+|:---:|:---:|:---:|:---:|
+| {{ lastAcceptedSubmissionDetail.lang }}  | {{ lastAcceptedSubmissionDetail.runtime }} | {{ lastAcceptedSubmissionDetail.memory }} | {{ lastAcceptedSubmissionDetail.time }} |
 
-\`\`\`{{ lastAcSubmission.language }}
+\`\`\`{{ lastAcSubmission.lang }}
 
-{{ lastAcSubmission.code }}
+{{ lastAcceptedSubmissionDetail.code }}
 
 \`\`\`
 ```
@@ -29,7 +38,7 @@ Link / 题目链接：[LeetCode](https://leetcode.com/problems/{{ titleSlug }}/d
 ```leetecho
 {{#each notes}}
 
-{{ this }}
+{{ this.content }}
 
 {{/each}}
 ```

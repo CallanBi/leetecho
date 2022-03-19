@@ -5,6 +5,11 @@ import { COLOR_PALETTE } from 'src/const/theme/color';
 import { MEASUREMENT } from 'src/const/theme/measurement';
 // import { ReactComponent as RestoreIcon } from '@/assets/trafficLightIcons/restore.svg';
 import TrafficLight from '@/components/trafficLight';
+import { useGetUserStatus } from '@/rendererApi/user';
+import { UserStatus } from 'src/main/api/leetcodeServices/utils/interfaces';
+import { AppStoreContext } from '@/store/appStore/appStore';
+import to from 'await-to-js';
+import { message } from 'antd';
 
 const { useRef, useState, useEffect, useMemo } = React;
 
@@ -51,6 +56,65 @@ interface HeaderLeftContentProps {}
 
 const HeaderLeftContent: React.FC<HeaderLeftContentProps> = (props: HeaderLeftContentProps) => {
   const {} = props;
+
+  const { state: appState, dispatch: appDispatch } = React.useContext(AppStoreContext);
+
+  const logout = async () => {
+    await to(ipcRenderer.invoke('logout'));
+    appDispatch({
+      appActionType: 'change-user-status',
+      payload: {
+        ...appState.userState,
+        isLogin: false,
+        usrName: '',
+        endPoint: 'CN',
+      },
+    });
+  };
+
+  const onGetUserStatusSuccess: (data: UserStatus) => Promise<void> = async (data) => {
+    if (!data?.isSignedIn) {
+      message.info('登录状态过期，请重新登录');
+      await to(logout());
+    } else {
+      if (!appState.userState.isLogin || appState.userState.username !== data?.username) {
+        appDispatch({
+          appActionType: 'change-user-status',
+          payload: {
+            ...appState.userState,
+            isLogin: true,
+            username: data?.username || '',
+            endPoint: 'CN',
+            avatar: data?.avatar,
+            usrSlug: data?.userSlug || '',
+          },
+        });
+      } else {
+        if (!appState?.userState?.avatar || !appState?.userState?.usrSlug) {
+          appDispatch({
+            appActionType: 'change-user-status',
+            payload: {
+              ...appState.userState,
+              avatar: data?.avatar,
+              usrSlug: data?.userSlug || '',
+              endPoint: 'CN',
+            },
+          });
+        }
+      }
+    }
+  };
+
+  const onGetUserStatusError = (error: Error) => {
+    /** noop */
+  };
+
+  useGetUserStatus({
+    onSuccess: onGetUserStatusSuccess,
+    onError: onGetUserStatusError,
+    refetchInterval: 1000 * 60 * 10, // 10 minutes' cron job
+    refetchIntervalInBackground: true,
+  });
 
   return (
     <HeaderToolsSection>

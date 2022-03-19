@@ -9,7 +9,7 @@
 </p>
 <h3 align="center">My accepted leetcode solutions</h3>
 <p align="center">
-  <b>Last updated: {{ notes.updateTime }}</b>
+  <b>Last updated: {{ updateTime }}</b>
   <br>
 </p>
 ```
@@ -21,9 +21,14 @@ This repository is automatically generated and deployed by [**Leetecho**](https:
 My LeetCode homepage : [{{ profile.userName }} - Profile - LeetCode](https://leetcode{{#ifCN profile.endPoint }}-cn{{else}}{{/ifCN}}.com/{{ profile.userName }}/)
 ```
 ```leetecho
+# All Accepted Problems
 |  #  | Title |  Title-CN  | Difficulty |
 |:---:|:-----:|:-----:|:----------:|
-{{#each notes.all}}
-| {{ this.frontendId }} | [{{ this.title }}](problems/{{ this.titleSlug }}) | [{{ this.titleTranslated }}](problems/{{ this.titleSlug }})  | ![](img/{{ this.difficulity }}.png) |
-{{/each}}
+:allProblems{}
+
+<!-- TODO: add filter component and custom syntax parsing for markdown editor -->
+# My Customized Problem Set
+|  #  | Title |  Title-CN  | Difficulty |
+|:---:|:-----:|:-----:|:----------:|
+:problemFilter{"{"list":"qgq7m9e","difficulty":"MEDIUM","tags":["database"]}"}
 ```

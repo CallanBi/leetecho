@@ -1,9 +1,14 @@
-import Problem from 'src/main/api/leetcodeApi/lib/problem';
+import Problem from 'src/main/api/leetcodeServices/lib/problem';
 import {
+  Difficulty,
   GetProblemsFromGraphQLResponse,
   GetQuestionDetailByTitleSlugResponse,
   GetSubmissionsByQuestionSlugResponse as GetSubmissionsByQuestionSlug,
-} from 'src/main/api/leetcodeApi/utils/interfaces';
+  QuestionSortField,
+  QuestionStatus,
+  SortOrder,
+  UserProfileQuestions,
+} from 'src/main/api/leetcodeServices/utils/interfaces';
 
 import { SuccessResp } from '../../base';
 
@@ -53,3 +58,14 @@ export type GetNotesByQuestionIdRequest = {
 export type GetSubmissionDetailByIdRequest = {
   id: string;
 };
+
+export type GetUserProfileQuestionsRequest = {
+  difficulty?: Difficulty[];
+  first?: number;
+  skip?: number;
+  sortField?: QuestionSortField;
+  sortOrder?: SortOrder;
+  status?: QuestionStatus;
+};
+
+export type GetUserProfileQuestionsResponse = UserProfileQuestions;

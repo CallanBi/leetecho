@@ -172,7 +172,7 @@ export function formatTimeStamp(timestamp: string | number) {
  */
 export function formatLeetechoSyntax(templ: string): string {
   let copiedTempl = templ;
-  const reg = /(?<syntaxStart>```leetecho)(?<syntaxContent>[^```leetecho]*[^```]*\n*)*(?<syntaxEnd>```)/g;
+  const reg = /(?<syntaxStart>```leetecho)(?<syntaxContent>[\s\S]*?)(?<syntaxEnd>```[\s]*)/g;
   const results = templ.matchAll(reg);
   if (results) {
     for (const result of results) {

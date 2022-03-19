@@ -1,10 +1,18 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import { IconGithubLogo, IconGlobeStroke, IconLanguage, IconSetting, IconUpload } from '@douyinfe/semi-icons';
 import { withSemiIconStyle } from '@/style';
+import { AppStoreContext } from '@/store/appStore/appStore';
+import to from 'await-to-js';
+import { EndPoint } from 'src/main/api/leetcodeServices/utils/interfaces';
+import { getErrorCodeMessage } from 'src/main/api/errorCode';
 
 const { useRef, useState, useEffect, useMemo } = React;
+
+const {
+  bridge: { ipcRenderer },
+} = window;
 
 const Footer = styled.section`
   display: flex;
@@ -43,25 +51,61 @@ const publishButtonIconStyle: React.CSSProperties = {
 
 interface NavFooterProps {}
 
-const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => (
-  <Footer>
-    <PublishButtonSection>
-      <Button
-        type="primary"
-        shape="round"
-        style={publishButtonStyle}
-        icon={<IconUpload style={withSemiIconStyle(publishButtonIconStyle)} />}
-      >
-        发布
-      </Button>
-    </PublishButtonSection>
-    <FooterToolSection>
-      <Button type="link" icon={<IconSetting />} />
-      <Button type="link" icon={<IconGlobeStroke />} />
-      <Button type="link" icon={<IconGithubLogo />} />
-      <Button type="link" icon={<IconLanguage />} />
-    </FooterToolSection>
-  </Footer>
-);
+const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
+  const { state: appState, dispatch: appDispatch } = React.useContext(AppStoreContext);
+
+  const {
+    userState: { usrSlug = '', usrName = '', endPoint = 'CN' },
+  } = appState;
+
+  const [publishLoading, setPublishLoading] = useState(false);
+
+  return (
+    <Footer>
+      <PublishButtonSection>
+        <Button
+          type="primary"
+          shape="round"
+          style={publishButtonStyle}
+          icon={<IconUpload style={withSemiIconStyle(publishButtonIconStyle)} />}
+          loading={publishLoading}
+          onClick={async () => {
+            if (!usrSlug) {
+              message.error('未找到用户名，请稍后再试');
+              return;
+            }
+            setPublishLoading(true);
+            const [err, res] = await to(
+              ipcRenderer.invoke('publish', {
+                userSlug: usrSlug,
+                userName: usrName,
+                endPoint,
+              } as {
+                userSlug: string;
+                userName: string;
+                endPoint: 'CN' | 'US';
+              }),
+            );
+            setPublishLoading(false);
+            if (err) {
+              message.error(
+                err?.message ? `发布失败, 错误信息: ${err?.message ?? getErrorCodeMessage()}` : '发布失败, 未知错误',
+              );
+            }
+            message.success('🥰 发布成功～');
+          }}
+        >
+          发布
+        </Button>
+      </PublishButtonSection>
+      <FooterToolSection>
+        <Button type="link" icon={<IconSetting />} />
+        <Button type="link" icon={<IconGlobeStroke />} />
+        <Button type="link" icon={<IconGithubLogo />} />
+        <Button type="link" icon={<IconLanguage />} />
+      </FooterToolSection>
+    </Footer>
+  );
+};
 
 export default NavFooter;

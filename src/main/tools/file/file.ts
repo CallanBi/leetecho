@@ -60,6 +60,20 @@ class FileTools {
       }
     });
   }
+
+  // Force mode, if the file exists, still rewrite it
+  createFilesInDirForced(
+    dirPath: string,
+    files: {
+      fileNameWithFileType: string;
+      content: string;
+    }[],
+  ): void {
+    this.mkdirPath(dirPath);
+    files.forEach((file) => {
+      this.writeFile(path.join(dirPath, file.fileNameWithFileType), file.content);
+    });
+  }
 }
 
 const fileTools = new FileTools();

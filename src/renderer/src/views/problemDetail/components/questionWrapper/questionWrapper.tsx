@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 
 const { useRef, useState, useEffect, useMemo } = React;
 import parse, { HTMLReactParserOptions, domToReact, attributesToProps } from 'html-react-parser';
-import { Question, SubmissionList } from 'src/main/api/leetcodeApi/utils/interfaces';
+import { Question, SubmissionList } from 'src/main/api/leetcodeServices/utils/interfaces';
 import useResizable from '@/hooks/useResizable';
 import ImageComponent from '@/components/imageComponent';
 import { ImageDecorator } from 'react-viewer/lib/ViewerProps';
