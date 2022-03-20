@@ -239,6 +239,7 @@ export interface Question {
   similarQuestions?: string;
   contributors?: any[];
   langToValidPlayground?: string;
+  lastSubmittedAt?: number;
   topicTags?: TopicTag[];
   companyTagStats?: any;
   codeSnippets?: CodeSnippet[];

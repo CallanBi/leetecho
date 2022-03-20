@@ -44,6 +44,38 @@ export interface GetQuestionAllInfoByTitleSlugResponse extends Question {
   notes: UserNote[];
 }
 
+export async function concurrencyController<T, U>(args: {
+  requestFunc: (params: T) => Promise<U>;
+  params: T[];
+  concurrency: number;
+}): Promise<U[]> {
+  const { requestFunc, params, concurrency } = args;
+  const requestWindow: T[] = [];
+  const results: U[] = [];
+
+  for (let i = 0; i < params.length; i++) {
+    requestWindow.push(params[i]);
+    if (requestWindow.length === concurrency) {
+      const requestPromises = requestWindow.map((param) => requestFunc(param));
+      const [err, responses] = await to(Promise.all(requestPromises));
+      if (err) {
+        throw err;
+      }
+      results.push(...responses);
+      requestWindow.length = 0;
+    } else {
+      continue;
+    }
+  }
+  const finalRequestPromises = requestWindow.map((param) => requestFunc(param));
+  const [finalErr, res] = await to(Promise.all(finalRequestPromises));
+  if (finalErr) {
+    throw finalErr;
+  }
+  results.push(...res);
+  return results;
+}
+
 /**
  * Format timestamp to date string with 'yyyy/MM/dd H:mm' format
  * @param timestamp string | number
@@ -199,7 +231,7 @@ export const getQuestionAllInfoByTitleSlug = async (params: { appApi: AppApi; ti
       ...questionDetail,
       lastAcceptedSubmissionDetail: {
         ...lastAcceptedSubmissionDetail,
-        time: formatTimeStamp(lastAcceptedSubmissionDetail.timestamp),
+        time: formatTimeStamp(lastAcceptedSubmissionDetail?.timestamp ?? 0),
       },
       notes: userNotes,
     },

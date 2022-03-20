@@ -182,7 +182,8 @@ export function formatLeetechoSyntax(templ: string): string {
         syntaxEnd: string;
       };
       if (syntaxStart && syntaxEnd) {
-        copiedTempl = copiedTempl.replace(syntaxStart + syntaxContent + syntaxEnd, syntaxContent);
+        const content = syntaxContent.replace(/\\`\\`\\`/g, '```');
+        copiedTempl = copiedTempl.replace(syntaxStart + syntaxContent + syntaxEnd, content);
       }
     }
   }

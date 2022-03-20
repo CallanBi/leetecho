@@ -125,7 +125,7 @@ class Problem {
             s.memory,
             s.runtime,
             Helper.submissionStatusMap(s.statusDisplay),
-            Number(s.timestamp),
+            Number(s?.timestamp ?? 0),
           ),
         );
       });

@@ -34,8 +34,9 @@ import {
   GetUserStatusResponse,
   Question,
 } from './leetcodeServices/utils/interfaces';
-import { formatLeetechoSyntax } from '../tools';
+import { formatLeetechoSyntax, formatTimeStamp } from '../tools';
 import {
+  concurrencyController,
   getAllUserProfileSuccessQuestions,
   getQuestionAllInfoByTitleSlug,
   GetQuestionAllInfoByTitleSlugResponse,
@@ -45,6 +46,8 @@ import {
 import Handlebars from 'handlebars';
 
 import { format, toDate } from 'date-fns';
+
+import he from 'he';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -471,6 +474,8 @@ ipcMain.handle(
       data: { questions = [] },
     } = getAllUserProfileQuestionsRes;
 
+    console.log('%c questions >>>', 'background: yellow; color: blue', questions);
+
     userCover = userCover.replace(
       ':allProblems{}',
       questions
@@ -479,9 +484,9 @@ ipcMain.handle(
             // eslint-disable-next-line max-len
             `| ${question.frontendId ?? (question.questionFrontendId || '')} | [${question.title}](problems/${
               question.titleSlug
-            }) | [${question.translatedTitle}](problems/${question.titleSlug}) | ![](imgs/${
+            }.md) | [${question.translatedTitle}](problems/${question.titleSlug}) | ![](imgs/${
               question.difficulty
-            }.png) | `,
+            }.png) | ${formatTimeStamp(question?.lastSubmittedAt ?? 0)}`,
         )
         .join('\n'),
     );
@@ -495,24 +500,30 @@ ipcMain.handle(
       if (err) {
         throw new Error(transformCustomErrorToMsg(err));
       }
-      console.log('%c handleQuestionResData >>>', 'background: yellow; color: blue', res.data);
+      // console.log('%c handleQuestionResData >>>', 'background: yellow; color: blue', res.data);
 
       const { data } = res;
+      const mergedData = { ...q, ...data };
       const userProblemTemp = Handlebars.compile(userProblem);
-      const problemContent = userProblemTemp(data);
+      const problemContent = he.decode(userProblemTemp(mergedData) || '');
       fileTools.createFilesInDirForced(path.join(outputPath, 'problems'), [
         {
-          fileNameWithFileType: `${data.titleSlug}.md`,
+          fileNameWithFileType: `${mergedData.titleSlug}.md`,
           content: problemContent,
         },
       ]);
     };
 
-    for (let i = 0; i < questions.length; i++) {
-      const [err, _] = await to(handleQuestion(questions[i]));
-      if (err) {
-        throw new Error(transformCustomErrorToMsg(err));
-      }
+    const [err, _allQuestionInfoRes] = await to(
+      concurrencyController({
+        requestFunc: handleQuestion,
+        params: questions,
+        concurrency: 3,
+      }),
+    );
+
+    if (err) {
+      throw new Error(transformCustomErrorToMsg(err));
     }
 
     console.log('%c 7 >>>', 'background: yellow; color: blue', 7);
