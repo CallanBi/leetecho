@@ -32,7 +32,7 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = (props: MarkdownEditorProp
   };
 
   return (
-    <section style={{ marginTop: 12, marginBottom: 12 }}>
+    <section style={{ marginTop: 0, marginBottom: 12 }}>
       <EditorToolBars mode={mode} toggleMode={toggleMode}></EditorToolBars>
       <Global styles={markdownEditorStyle}></Global>
       <MilkDownFullEditor

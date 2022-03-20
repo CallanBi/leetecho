@@ -2,12 +2,12 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import { UseQueryOptions } from 'react-query';
-import { Button, message, PageHeader, Tabs } from 'antd';
+import { Alert, Button, message, PageHeader, Typography } from 'antd';
 import { useReadUserTemplate, useSaveUserTemplate } from '@/rendererApi/io';
 import { AppStoreContext } from '@/store/appStore/appStore';
 import useResizable from '@/hooks/useResizable';
 import Resizer from '@/components/resizer';
-import { IconEdit, IconSave } from '@douyinfe/semi-icons';
+import { IconEdit, IconInfoCircle, IconSave } from '@douyinfe/semi-icons';
 import { withSemiIconStyle } from '@/style';
 import Footer from '@/components/layout/footer';
 import { getErrorCodeMessage } from 'src/main/api/errorCode';
@@ -15,9 +15,12 @@ import to from 'await-to-js';
 
 import MarkDownEditor from '@/components/markdownEditor';
 import WrappedLoading from '@/components/illustration/loading/wrappedLoading';
+import { COLOR_PALETTE } from 'src/const/theme/color';
+
+const { Link } = Typography;
 
 const {
-  bridge: { ipcRenderer },
+  bridge: { ipcRenderer, path, __filename, __dirname, isDev, fs },
 } = window;
 
 const { useRef, useState, useEffect, useMemo, useContext } = React;
@@ -270,6 +273,26 @@ const TemplateManagement: React.FC<TemplateManagementProps> = (props: TemplateMa
     isLoading,
   ]);
 
+  const alertInfo = (
+    <>
+      <section>支持 Markdown 语法;</section>
+      <section>如期望上传本地图片，可直接从本地拖曳到编辑器中，编辑器会自动将其转为 base64 编码；</section>
+      <section>如期望插入远程图片，直接插入图片即可。</section>
+      <section>
+        Leetecho 自定义模板语法可参考{' '}
+        <Link
+          style={{
+            color: COLOR_PALETTE.LEETECHO_LIGHT_BLUE,
+          }}
+          target="_blank"
+        >
+          说明文档（建设中）
+        </Link>
+        ;
+      </section>
+    </>
+  );
+
   return (
     <section
       ref={ref}
@@ -327,6 +350,18 @@ const TemplateManagement: React.FC<TemplateManagementProps> = (props: TemplateMa
               </HeaderExtraSection>
             }
           ></PageHeader>
+          <Alert
+            style={{
+              borderColor: COLOR_PALETTE.LEETECHO_BLUE,
+              marginBottom: 12,
+              marginTop: 3,
+            }}
+            description={alertInfo}
+            type="info"
+            showIcon
+            icon={<IconInfoCircle style={withSemiIconStyle({ paddingRight: 12 })} />}
+            closable={true}
+          />
           {editorStatus.cover.content.length > 0 && CoverEditor}
           {editorStatus.cover.editable && (
             <Footer

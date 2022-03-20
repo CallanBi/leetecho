@@ -45,6 +45,7 @@ async function createWindow() {
   if (Boolean(app.isPackaged) && !process.env.DEBUG) {
     // isProductionEnv
     win.loadFile(join(__dirname, '../renderer/index.html'));
+    win.webContents.openDevTools();
   } else {
     const pkg = await import('../../package.json');
     const url = `http://${pkg.env.HOST || '127.0.0.1'}:${pkg.env.PORT}`;

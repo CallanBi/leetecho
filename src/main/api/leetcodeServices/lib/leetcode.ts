@@ -5,6 +5,7 @@ import { deleteNilVal } from '../../../tools';
 import { ErrorResp } from '../../appApi/base';
 import { GetProblemsRequest } from '../../appApi/idl/problems';
 import ERROR_CODE, { getErrorCodeMessage } from '../../errorCode';
+import { sleep } from '../../services/publishServices';
 import Helper from '../utils/helper';
 import {
   Credit,
@@ -425,11 +426,16 @@ class Leetcode {
     return userProfileQuestions;
   }
 
-  async getSubmissionsByQuestionSlug(params: {
-    limit?: number;
-    offset?: number;
-    questionSlug: string;
-  }): Promise<GetSubmissionsByQuestionSlugResponse['submissionList']> {
+  async getSubmissionsByQuestionSlug(
+    params: {
+      limit?: number;
+      offset?: number;
+      questionSlug: string;
+    },
+    options?: {
+      sleepTime?: number;
+    },
+  ): Promise<GetSubmissionsByQuestionSlugResponse['submissionList']> {
     const { limit = 20, offset = 0, questionSlug = '' } = params;
 
     const requestOnce = async ({

@@ -46,6 +46,7 @@ export default defineConfig({
     emptyOutDir: true,
     sourcemap: process.env.NODE_ENV === 'debug',
     outDir: '../../dist/renderer',
+    target: ['edge90', 'chrome90', 'firefox90', 'safari15'],
   },
   resolve: {
     alias: [

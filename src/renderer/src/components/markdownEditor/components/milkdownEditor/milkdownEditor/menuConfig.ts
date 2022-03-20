@@ -53,8 +53,6 @@ const hasMark = (state: EditorState, type: MarkType): boolean => {
   return state.doc.rangeHasMark(from, to, type);
 };
 
-export const SelectParent = createCmdKey('SelectParent');
-
 export const menuConfig: Config = [
   // [
   //     {
@@ -198,11 +196,6 @@ export const menuConfig: Config = [
       type: 'button',
       icon: 'divider',
       key: 'InsertHr',
-    },
-    {
-      type: 'button',
-      icon: 'select',
-      key: SelectParent,
     },
   ],
 ];

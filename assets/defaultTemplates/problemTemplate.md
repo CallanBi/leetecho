@@ -4,7 +4,7 @@
 
 -----
 ```leetecho
-Tags - 题目标签：{{#each tags}}{{ this }} {{/each}}
+Tags - 题目标签：{{#each topicTags}}{{ this.name }} - {{ this.translatedName }} {{/each}}
 
 ## Description - 题目描述
 

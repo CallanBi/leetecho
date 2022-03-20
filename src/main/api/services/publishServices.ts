@@ -1,3 +1,4 @@
+/* eslint-disable no-async-promise-executor */
 import to from 'await-to-js';
 import { StatusCodeError } from 'request-promise-native/errors';
 import { transformCustomErrorToMsg } from '..';
@@ -17,6 +18,24 @@ import {
 } from '../leetcodeServices/utils/interfaces';
 
 import { format, toDate } from 'date-fns';
+
+export async function sleep<T, U>(fn: (par: T) => Promise<U>, par: T, sleepTime?: number) {
+  const promise = new Promise<U>(async (resolve, reject) => {
+    const [err, res] = (await to(fn(par))) as [null | Error | ErrorResp, U];
+    setTimeout(
+      async function () {
+        if (err) {
+          reject(err);
+        }
+        resolve(res);
+      },
+      sleepTime || 100,
+      fn,
+      par,
+    );
+  });
+  return promise;
+}
 
 export interface GetQuestionAllInfoByTitleSlugResponse extends Question {
   lastAcceptedSubmissionDetail: SubmissionDetail & {
@@ -106,7 +125,9 @@ export const getAllUserProfileSuccessQuestions = async (appApi: AppApi) => {
  * @param titleSlug
  * @returns
  */
-export const getQuestionAllInfoByTitleSlug = async (appApi: AppApi, titleSlug: string) => {
+export const getQuestionAllInfoByTitleSlug = async (params: { appApi: AppApi; titleSlug: string }) => {
+  const { appApi, titleSlug } = params;
+
   const [questionDetailErr, questionDetail] = (await to(appApi.getProblem({ titleSlug }))) as [
     null | ErrorResp,
     GetQuestionDetailByTitleSlugResponse['question'],
@@ -165,12 +186,12 @@ export const getQuestionAllInfoByTitleSlug = async (appApi: AppApi, titleSlug: s
 
   const { userNotes = [] } = allNotes;
 
-  if (userNotes.length === 0) {
-    throw new ErrorResp({
-      code: ERROR_CODE.NO_NOTES,
-      message: 'No notes',
-    });
-  }
+  // if (userNotes.length === 0) {
+  //   throw new ErrorResp({
+  //     code: ERROR_CODE.NO_NOTES,
+  //     message: 'No notes',
+  //   });
+  // }
 
   return {
     code: ERROR_CODE.OK,

@@ -32,11 +32,21 @@ import {
   GetNotesByQuestionIdResponse,
   GetUserProgressResponse,
   GetUserStatusResponse,
+  Question,
 } from './leetcodeServices/utils/interfaces';
 import { formatLeetechoSyntax } from '../tools';
-import { getAllUserProfileSuccessQuestions } from './services/publishServices';
+import {
+  getAllUserProfileSuccessQuestions,
+  getQuestionAllInfoByTitleSlug,
+  GetQuestionAllInfoByTitleSlugResponse,
+  sleep,
+} from './services/publishServices';
 
 import Handlebars from 'handlebars';
+
+import { format, toDate } from 'date-fns';
+
+const isDev = process.env.NODE_ENV === 'development';
 
 Handlebars.registerHelper('ifCN', function (endPoint, options) {
   if (endPoint === 'CN') {
@@ -349,6 +359,21 @@ ipcMain.handle(
 
     const { userSlug = '', userName = '', endPoint = 'CN' } = params;
 
+    const outputPath = `${app.getPath('documents')}${path.sep}Leetecho Files${path.sep}CN${path.sep}${userName}${
+      path.sep
+    }outputs`;
+
+    fileTools.mkdirPath(`${outputPath}${path.sep}imgs`);
+
+    fileTools.mkdirPath(`${outputPath}${path.sep}problems`);
+
+    fileTools.copyFiles(
+      isDev
+        ? path.join(__dirname, '../../assets/defaultTemplates/imgs')
+        : path.join(process.resourcesPath, 'assets', 'defaultTemplates', 'imgs'),
+      `${outputPath}${path.sep}imgs`,
+    );
+
     const [getUserProgressErr, getUserProgressRes] = (await to(appApi.getUserProgress({ userSlug }))) as [
       null | ErrorResp,
       GetUserProgressResponse,
@@ -402,7 +427,7 @@ ipcMain.handle(
 
     userCoverTemplateVariables.profile = profile;
 
-    userCoverTemplateVariables.updateTime = new Date().toLocaleString();
+    userCoverTemplateVariables.updateTime = format(new Date(), 'yyyy/MM/dd H:mm');
 
     console.log('%c 1 >>>', 'background: yellow; color: blue', 1);
 
@@ -452,30 +477,57 @@ ipcMain.handle(
         .map(
           (question) =>
             // eslint-disable-next-line max-len
-            `| ${question.frontendId ?? (question.questionFrontendId || '')} | ${question.title} | ${
-              question.translatedTitle
-            } | ${question.difficulty} | `,
+            `| ${question.frontendId ?? (question.questionFrontendId || '')} | [${question.title}](problems/${
+              question.titleSlug
+            }) | [${question.translatedTitle}](problems/${question.titleSlug}) | ![](imgs/${
+              question.difficulty
+            }.png) | `,
         )
         .join('\n'),
     );
 
     console.log('%c 6 >>>', 'background: yellow; color: blue', 6);
 
-    const handleBarCoverTemplate = Handlebars.compile(userCover);
+    const handleQuestion = async (q: Question) => {
+      const [err, res] = (await to(
+        getQuestionAllInfoByTitleSlug({ appApi: appApi as AppApi, titleSlug: q.titleSlug }),
+      )) as [null | ErrorResp, SuccessResp<GetQuestionAllInfoByTitleSlugResponse>];
+      if (err) {
+        throw new Error(transformCustomErrorToMsg(err));
+      }
+      console.log('%c handleQuestionResData >>>', 'background: yellow; color: blue', res.data);
+
+      const { data } = res;
+      const userProblemTemp = Handlebars.compile(userProblem);
+      const problemContent = userProblemTemp(data);
+      fileTools.createFilesInDirForced(path.join(outputPath, 'problems'), [
+        {
+          fileNameWithFileType: `${data.titleSlug}.md`,
+          content: problemContent,
+        },
+      ]);
+    };
+
+    for (let i = 0; i < questions.length; i++) {
+      const [err, _] = await to(handleQuestion(questions[i]));
+      if (err) {
+        throw new Error(transformCustomErrorToMsg(err));
+      }
+    }
 
     console.log('%c 7 >>>', 'background: yellow; color: blue', 7);
 
-    const coverContent = handleBarCoverTemplate(userCoverTemplateVariables);
+    const handleBarCoverTemplate = Handlebars.compile(userCover);
 
     console.log('%c 8 >>>', 'background: yellow; color: blue', 8);
 
-    const coverOutputPath = `${app.getPath('documents')}${path.sep}Leetecho Files${path.sep}CN${path.sep}${userName}${
-      path.sep
-    }outputs`;
+    const coverContent = handleBarCoverTemplate(userCoverTemplateVariables);
 
     console.log('%c 9 >>>', 'background: yellow; color: blue', 9);
 
-    fileTools.createFilesInDirForced(coverOutputPath, [
+    console.log('%c 10 >>>', 'background: yellow; color: blue', 10);
+
+    fileTools.createFilesInDirForced(outputPath, [
       {
         fileNameWithFileType: 'readme.md',
         content: coverContent,
@@ -484,5 +536,5 @@ ipcMain.handle(
 
     console.log('%c 10 >>>', 'background: yellow; color: blue', 10);
   },
-  /** TODO: continue finishing user problem template*/
+  /** TODO: continue to finish remote github repo pushing function*/
 );

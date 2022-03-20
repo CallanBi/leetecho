@@ -4,7 +4,7 @@
   "artifactName": "Leetecho-${version}-${os}-${arch}.${ext}",
   "appId": "com.electron.leetecho",
   "copyright": "Copyright © 2022 ${author}",
-  "asar": true,
+  "asar": false,
   "directories": {
     "output": "release/${version}"
   },
@@ -12,6 +12,13 @@
     "dist",
     "node_modules/**/*"
   ],
+  "extraResources": [
+    {
+      "from": "./assets",
+      "to": "assets"
+    }
+  ],
+  "extends": null,
   "mac": {
     "icon": "./assets/icon/icon-mac.icns",
     "target": [

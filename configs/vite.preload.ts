@@ -26,12 +26,13 @@ export default defineConfig({
         entryFileNames: '[name].cjs',
       },
     },
+    target: ['edge90', 'chrome90', 'firefox90', 'safari15'],
   },
   resolve: {
     /** rollup本身不具备路径解析能力, 需指定 ailas */
     alias: [
       { find: /^~/, replacement: '' },
       { find: 'src', replacement: join(__dirname, '../src') },
-    ]
+    ],
   },
 });
