@@ -14,9 +14,9 @@
 </p>
 ```
 
-This repository is automatically generated and deployed by **[Leetecho](https://github.com/CallanBi/Leetecho)**.
-
 ```leetecho
+This repository is automatically generated and deployed by [Leetecho](https://github.com/CallanBi/Leetecho).
+
 My LeetCode homepage : [{{ profile.userName }} - Profile - LeetCode](https://leetcode{{#ifCN profile.endPoint }}-cn{{else}}{{/ifCN}}.com/{{ profile.userName }}/)
 ```
 

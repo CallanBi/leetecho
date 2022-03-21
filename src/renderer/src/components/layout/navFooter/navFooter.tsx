@@ -1,13 +1,15 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 import { Button, message } from 'antd';
-import { IconGithubLogo, IconGlobeStroke, IconLanguage, IconSetting, IconUpload } from '@douyinfe/semi-icons';
+import { IconGithubLogo, IconGlobeStroke, IconLanguage, IconLink, IconSetting, IconUpload } from '@douyinfe/semi-icons';
 import { withSemiIconStyle } from '@/style';
 import { AppStoreContext } from '@/store/appStore/appStore';
 import to from 'await-to-js';
 import { getErrorCodeMessage } from 'src/main/router/errorCode';
 import { useQuery } from 'react-query';
-import store, { UserConfig } from '@/storage/electronStore';
+import store, { User, UserConfig } from '@/storage/electronStore';
+import { COLOR_PALETTE } from 'src/const/theme/color';
+import { useCheckRepoConnection } from '@/rendererApi/user';
 
 const { useRef, useState, useEffect, useMemo } = React;
 
@@ -42,7 +44,7 @@ const FooterToolSection = styled.section`
 `;
 
 const publishButtonStyle: React.CSSProperties = {
-  width: 128,
+  width: 150,
 };
 
 const publishButtonIconStyle: React.CSSProperties = {
@@ -81,6 +83,32 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
         },
       });
 
+  const onCheckSuccess = () => {
+    message.success('🎉 连接成功，去发布吧~');
+    setCheckRepoConnectionQuery({
+      ...checkRepoConnectionQuery,
+      enableRequest: false,
+    });
+  };
+
+  const onCheckError = (error: Error) => {
+    message.error(error.message ? `仓库链接检测失败, 错误信息：${error.message}` : '仓库链接检测失败');
+    setCheckRepoConnectionQuery({
+      ...checkRepoConnectionQuery,
+      enableRequest: false,
+    });
+  };
+
+  const [checkRepoConnectionQuery, setCheckRepoConnectionQuery] = useState<{
+    enableRequest: boolean;
+    onSuccess: (value: SuccessResp<Record<string, never>>) => void;
+    onError: (error: Error) => void;
+  }>({
+        enableRequest: false,
+        onSuccess: onCheckSuccess,
+        onError: onCheckError,
+      });
+
   const { data: userConfig } = useQuery(
     ['fetchStoreUserConfig', 'userConfig'],
     async () => {
@@ -98,10 +126,49 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
     },
   ) as any as { data: UserConfig };
 
+  const thisUser: User = useMemo(
+    () => userConfig?.users?.[endPoint || 'CN']?.find((user) => user?.usrName === appState.userState.usrName) || {},
+    [userConfig, endPoint, appState.userState.usrName],
+  ) as User;
+
+  const { enableRequest, onSuccess, onError } = checkRepoConnectionQuery;
+
+  const { isLoading: isCheckRepoConnectionLoading, isFetching: isCheckRepoConnectionFetching } = useCheckRepoConnection(
+    {
+      repoName: thisUser?.appSettings?.repoName || '',
+      branch: thisUser?.appSettings?.branch || '',
+      userName: thisUser?.appSettings?.userName || '',
+      email: thisUser?.appSettings?.email || '',
+      token: thisUser?.appSettings?.token || '',
+    },
+    {
+      enabled: enableRequest,
+      onSuccess: onSuccess,
+      onError: onError,
+      cacheTime: 0,
+    },
+  );
+
   const [publishLoading, setPublishLoading] = useState(false);
 
   return (
     <Footer>
+      <PublishButtonSection>
+        <Button
+          shape="round"
+          style={{ ...publishButtonStyle, background: COLOR_PALETTE.LEETECHO_HEADER_SEARCH_BG }}
+          icon={<IconLink style={withSemiIconStyle(publishButtonIconStyle)} />}
+          loading={isCheckRepoConnectionLoading || isCheckRepoConnectionFetching}
+          onClick={() => {
+            setCheckRepoConnectionQuery({
+              ...checkRepoConnectionQuery,
+              enableRequest: true,
+            });
+          }}
+        >
+          检查仓库连接
+        </Button>
+      </PublishButtonSection>
       <PublishButtonSection>
         <Button
           type="primary"

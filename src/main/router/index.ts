@@ -33,7 +33,7 @@ import {
   GetUserStatusResponse,
   Question,
 } from '../services/leetcodeServices/utils/interfaces';
-import { formatLeetechoSyntax, formatTimeStamp, parseJsonRecursively } from '../tools';
+import { formatLeetechoSyntax, formatTimeStamp, parseJsonRecursively, replaceAllBase64MarkdownImgs } from '../tools';
 import {
   concurrencyController,
   getAllUserProfileSuccessQuestions,
@@ -50,6 +50,8 @@ import { format } from 'date-fns';
 
 import he from 'he';
 import RepoDeploy from '../services/repoDeployServices/repoDeployServices';
+
+import fs from 'fs';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -430,7 +432,6 @@ ipcMain.handle(
 
     const userConfig = parseJsonRecursively(store.get('userConfig') as UserConfig) as UserConfig;
 
-
     if (!userConfig) {
       throw new Error(
         transformCustomErrorToMsg(new ErrorResp({ code: ERROR_CODE.NO_USER_CONFIG, message: 'user config not found' })),
@@ -439,9 +440,7 @@ ipcMain.handle(
 
     const { userSlug = '', userName = '', endPoint = 'CN' } = params;
 
-
     const thisUserConfig = userConfig?.lastLoginUser;
-
 
     if (!thisUserConfig) {
       throw new Error(
@@ -589,6 +588,14 @@ ipcMain.handle(
         .join('\n'),
     );
 
+    userCover = replaceAllBase64MarkdownImgs(userCover, (imgTitle: string, imgSrc: string) => {
+      const imgPath = `${outputPath}${path.sep}imgs${path.sep}${decodeURI(imgTitle)}.png`;
+      fs.writeFile(imgPath, imgSrc, 'base64', (err) => {
+        throw err;
+      });
+      return `![](imgs/${decodeURI(imgTitle)}.png)`;
+    });
+
     const handleQuestion = async (q: Question) => {
       const [err, res] = (await to(
         getQuestionAllInfoByTitleSlug({ apiBridge: apiBridge as ApiBridge, titleSlug: q.titleSlug }),
@@ -601,10 +608,20 @@ ipcMain.handle(
       const mergedData = { ...q, ...data };
       const userProblemTemp = Handlebars.compile(userProblem);
       const problemContent = he.decode(userProblemTemp(mergedData) || '');
+      const problemContentWithoutImgs = replaceAllBase64MarkdownImgs(
+        problemContent,
+        (imgTitle: string, imgSrc: string) => {
+          const imgPath = `${outputPath}${path.sep}problems${path.sep}${decodeURI(imgTitle)}.png`;
+          fs.writeFile(imgPath, imgSrc, 'base64', (err) => {
+            throw err;
+          });
+          return `![](problems/${decodeURI(imgTitle)}.png)`;
+        },
+      );
       fileTools.createFilesInDirForced(path.join(outputPath, 'problems'), [
         {
           fileNameWithFileType: `${mergedData.titleSlug}.md`,
-          content: problemContent,
+          content: problemContentWithoutImgs,
         },
       ]);
     };
