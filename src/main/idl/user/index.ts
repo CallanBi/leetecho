@@ -1,5 +1,5 @@
-import { GetUserProgressResponse } from 'src/main/api/leetcodeServices/utils/interfaces';
-import { SuccessResp } from '../../base';
+import { GetUserProgressResponse } from 'src/main/services/leetcodeServices/utils/interfaces';
+import { SuccessResp } from '../../middleware/apiBridge/base';
 
 /** interface types here */
 

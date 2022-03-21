@@ -16,7 +16,9 @@
     "noErrorTruncation": true,
     "include": [
       "types/**/*.d.ts",
-      "src/main/api/**/*.d.ts"
+      "src/main/router/**/*.d.ts",
+      "src/main/idl/**/*.d.ts",
+      "src/main/middleware/**/*.d.ts"
     ]
   }
 }

@@ -10,7 +10,7 @@ import Resizer from '@/components/resizer';
 import { IconEdit, IconInfoCircle, IconSave } from '@douyinfe/semi-icons';
 import { withSemiIconStyle } from '@/style';
 import Footer from '@/components/layout/footer';
-import { getErrorCodeMessage } from 'src/main/api/errorCode';
+import { getErrorCodeMessage } from 'src/main/router/errorCode';
 import to from 'await-to-js';
 
 import MarkDownEditor from '@/components/markdownEditor';
@@ -275,9 +275,9 @@ const TemplateManagement: React.FC<TemplateManagementProps> = (props: TemplateMa
 
   const alertInfo = (
     <>
-      <section>支持 Markdown 语法;</section>
+      <section>支持 Markdown 语法；</section>
       <section>如期望上传本地图片，可直接从本地拖曳到编辑器中，编辑器会自动将其转为 base64 编码；</section>
-      <section>如期望插入远程图片，直接插入图片即可。</section>
+      <section>如期望插入远程图片，直接插入图片即可；</section>
       <section>
         Leetecho 自定义模板语法可参考{' '}
         <Link
@@ -288,7 +288,7 @@ const TemplateManagement: React.FC<TemplateManagementProps> = (props: TemplateMa
         >
           说明文档（建设中）
         </Link>
-        ;
+        。
       </section>
     </>
   );

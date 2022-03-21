@@ -6,7 +6,7 @@ import { MEASUREMENT } from 'src/const/theme/measurement';
 // import { ReactComponent as RestoreIcon } from '@/assets/trafficLightIcons/restore.svg';
 import TrafficLight from '@/components/trafficLight';
 import { useGetUserStatus } from '@/rendererApi/user';
-import { UserStatus } from 'src/main/api/leetcodeServices/utils/interfaces';
+import { UserStatus } from 'src/main/services/leetcodeServices/utils/interfaces';
 import { AppStoreContext } from '@/store/appStore/appStore';
 import to from 'await-to-js';
 import { message } from 'antd';

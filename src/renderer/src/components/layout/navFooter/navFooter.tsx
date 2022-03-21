@@ -5,8 +5,7 @@ import { IconGithubLogo, IconGlobeStroke, IconLanguage, IconSetting, IconUpload 
 import { withSemiIconStyle } from '@/style';
 import { AppStoreContext } from '@/store/appStore/appStore';
 import to from 'await-to-js';
-import { EndPoint } from 'src/main/api/leetcodeServices/utils/interfaces';
-import { getErrorCodeMessage } from 'src/main/api/errorCode';
+import { getErrorCodeMessage } from 'src/main/router/errorCode';
 
 const { useRef, useState, useEffect, useMemo } = React;
 

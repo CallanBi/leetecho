@@ -2,11 +2,10 @@
 # {{ questionFrontendId }}. {{title }} - {{ translatedTitle }}
 ```
 
------
 ```leetecho
 ## Tags - 题目标签
 
-{{#each topicTags}}<img src="https://img.shields.io/badge/{{ this.name }}-{{ this.translatedName }}-blue.svg">  {{/each}}
+{{#each topicTags}} <img src="https://img.shields.io/badge/{{ this.name }}-{{ this.translatedName }}-blue.svg">  {{/each}}
 
 
 ## Description - 题目描述
@@ -39,7 +38,7 @@
 \`\`\`
 ```
 
-## Notes
+## My Notes - 我的笔记
 ```leetecho
 {{#each notes}}
 

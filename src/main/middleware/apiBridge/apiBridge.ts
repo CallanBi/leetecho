@@ -1,6 +1,6 @@
 import to from 'await-to-js';
-import Leetcode from '../leetcodeServices';
-import { EndPoint } from '../leetcodeServices/utils/interfaces';
+import Leetcode from '../../services/leetcodeServices';
+import { EndPoint } from '../../services/leetcodeServices/utils/interfaces';
 import {
   GetNotesByQuestionIdRequest,
   GetProblemsRequest,
@@ -8,15 +8,15 @@ import {
   GetSubmissionDetailByIdRequest,
   GetSubmissionsByQuestionSlugRequest,
   GetUserProfileQuestionsRequest,
-} from './idl/problems';
-import { GetUserProgressReq } from './idl/user';
+} from '../../idl/problems';
+import { GetUserProgressReq } from '../../idl/user';
 
 interface UsrInfo {
   usrName: string;
   pwd: string;
 }
 
-class AppApi {
+class ApiBridge {
   leetcode: Leetcode;
   // static leetcode: Leetcode;
 
@@ -29,7 +29,7 @@ class AppApi {
     if (err) {
       throw err;
     }
-    return new AppApi(leetcode as Leetcode);
+    return new ApiBridge(leetcode as Leetcode);
   }
 
   async getAllProblems() {
@@ -126,4 +126,4 @@ class AppApi {
   }
 }
 
-export default AppApi;
+export default ApiBridge;

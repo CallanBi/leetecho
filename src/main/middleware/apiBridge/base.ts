@@ -1,5 +1,5 @@
 import to from 'await-to-js';
-import ERROR_CODE, { ErrorMessage, getErrorCodeMessage } from '../errorCode';
+import ERROR_CODE, { ErrorMessage, getErrorCodeMessage } from '../../router/errorCode';
 
 export type SuccessResp<T> = {
   code: number;

@@ -2,8 +2,8 @@ import to from 'await-to-js';
 import path from 'path';
 import { app, ipcMain } from 'electron';
 import fileTools from '../tools/file/file';
-import AppApi from './appApi';
-import baseHandler, { ErrorResp, SuccessResp } from './appApi/base';
+import ApiBridge from '../middleware/apiBridge';
+import baseHandler, { ErrorResp, SuccessResp } from '../middleware/apiBridge/base';
 import {
   CreateTemplateRequest,
   CreateTemplateResponse,
@@ -11,7 +11,7 @@ import {
   ReadUserTemplateResponse,
   SaveTemplateRequest,
   SaveTemplateResponse,
-} from './appApi/idl/io';
+} from '../idl/io';
 import {
   GetAllProblemsResponse,
   GetNotesByQuestionIdRequest,
@@ -22,9 +22,9 @@ import {
   GetSubmissionDetailByIdRequest,
   GetSubmissionsByQuestionSlugRequest,
   GetSubmissionsByQuestionSlugResponse,
-} from './appApi/idl/problems';
-import { GetAllTagsResponse } from './appApi/idl/tags';
-import { LoginReq, LoginResp, LogoutResp } from './appApi/idl/user';
+} from '../idl/problems';
+import { GetAllTagsResponse } from '../idl/tags';
+import { LoginReq, LoginResp, LogoutResp } from '../idl/user';
 import ERROR_CODE, { getErrorCodeMessage } from './errorCode';
 import {
   Difficulty,
@@ -33,7 +33,7 @@ import {
   GetUserProgressResponse,
   GetUserStatusResponse,
   Question,
-} from './leetcodeServices/utils/interfaces';
+} from '../services/leetcodeServices/utils/interfaces';
 import { formatLeetechoSyntax, formatTimeStamp } from '../tools';
 import {
   concurrencyController,
@@ -41,7 +41,7 @@ import {
   getQuestionAllInfoByTitleSlug,
   GetQuestionAllInfoByTitleSlugResponse,
   sleep,
-} from './services/publishServices';
+} from '../services/publishServices/publishServices';
 
 import Handlebars from 'handlebars';
 
@@ -59,20 +59,20 @@ Handlebars.registerHelper('ifCN', function (endPoint, options) {
   }
 });
 
-let appApi: AppApi | null = null;
+let apiBridge: ApiBridge | null = null;
 
 /** V8's serialization algorithm does not include custom properties on errors, see: https://github.com/electron/electron/issues/24427 */
 export const transformCustomErrorToMsg: (err: Error | ErrorResp) => string = (err) =>
   `${(err as ErrorResp).code ?? ERROR_CODE.UNKNOWN_ERROR} ${err.message ?? getErrorCodeMessage()}`;
 
 ipcMain.handle('login', async (_, params: LoginReq) => {
-  const [err, res] = await to(baseHandler(AppApi.login(params)));
+  const [err, res] = await to(baseHandler(ApiBridge.login(params)));
 
   if (err) {
     throw new Error(transformCustomErrorToMsg(err));
   }
 
-  appApi = res?.data ?? null;
+  apiBridge = res?.data ?? null;
   return {
     code: res?.code ?? ERROR_CODE.OK,
     data: {},
@@ -80,14 +80,14 @@ ipcMain.handle('login', async (_, params: LoginReq) => {
 });
 
 ipcMain.handle('logout', async () => {
-  if (!appApi) {
+  if (!apiBridge) {
     return {
       code: ERROR_CODE.OK,
       data: {},
     };
   }
 
-  appApi = null;
+  apiBridge = null;
 
   return {
     code: ERROR_CODE.OK,
@@ -96,11 +96,11 @@ ipcMain.handle('logout', async () => {
 });
 
 ipcMain.handle('getAllProblems', async () => {
-  if (!appApi) {
+  if (!apiBridge) {
     throw new ErrorResp({ code: ERROR_CODE.NOT_LOGIN });
   }
 
-  const [err, res] = await to(baseHandler(appApi.getAllProblems()));
+  const [err, res] = await to(baseHandler(apiBridge.getAllProblems()));
 
   if (err) {
     throw new Error(transformCustomErrorToMsg(err));
@@ -113,11 +113,11 @@ ipcMain.handle('getAllProblems', async () => {
 });
 
 ipcMain.handle('getAllTags', async () => {
-  if (!appApi) {
+  if (!apiBridge) {
     throw new ErrorResp({ code: ERROR_CODE.NOT_LOGIN });
   }
 
-  const [err, res] = await to(baseHandler(appApi.getAllTags()));
+  const [err, res] = await to(baseHandler(apiBridge.getAllTags()));
 
   if (err) {
     throw new Error(transformCustomErrorToMsg(err));
@@ -130,10 +130,10 @@ ipcMain.handle('getAllTags', async () => {
 });
 
 ipcMain.handle('getProblems', async (_, params: GetProblemsRequest) => {
-  if (!appApi) {
+  if (!apiBridge) {
     throw new ErrorResp({ code: ERROR_CODE.NOT_LOGIN });
   }
-  const [err, res] = await to(baseHandler(appApi.getProblems(params)));
+  const [err, res] = await to(baseHandler(apiBridge.getProblems(params)));
 
   if (err) {
     throw new Error(transformCustomErrorToMsg(err));
@@ -145,10 +145,10 @@ ipcMain.handle('getProblems', async (_, params: GetProblemsRequest) => {
 });
 
 ipcMain.handle('getProblem', async (_, params: GetQuestionDetailByTitleSlugRequest) => {
-  if (!appApi) {
+  if (!apiBridge) {
     throw new ErrorResp({ code: ERROR_CODE.NOT_LOGIN });
   }
-  const [err, res] = await to(baseHandler(appApi.getProblem(params)));
+  const [err, res] = await to(baseHandler(apiBridge.getProblem(params)));
 
   if (err) {
     throw new Error(transformCustomErrorToMsg(err));
@@ -160,10 +160,10 @@ ipcMain.handle('getProblem', async (_, params: GetQuestionDetailByTitleSlugReque
 });
 
 ipcMain.handle('getSubmissionsByTitleSlug', async (_, params: GetSubmissionsByQuestionSlugRequest) => {
-  if (!appApi) {
+  if (!apiBridge) {
     throw new ErrorResp({ code: ERROR_CODE.NOT_LOGIN });
   }
-  const [err, res] = await to(baseHandler(appApi.getSubmissionsByTitleSlug(params)));
+  const [err, res] = await to(baseHandler(apiBridge.getSubmissionsByTitleSlug(params)));
 
   if (err) {
     throw new Error(transformCustomErrorToMsg(err));
@@ -175,10 +175,10 @@ ipcMain.handle('getSubmissionsByTitleSlug', async (_, params: GetSubmissionsByQu
 });
 
 ipcMain.handle('getNotesByQuestionId', async (_, params: GetNotesByQuestionIdRequest) => {
-  if (!appApi) {
+  if (!apiBridge) {
     throw new ErrorResp({ code: ERROR_CODE.NOT_LOGIN });
   }
-  const [err, res] = await to(baseHandler(appApi.getNotesByQuestionId(params)));
+  const [err, res] = await to(baseHandler(apiBridge.getNotesByQuestionId(params)));
 
   if (err) {
     throw new Error(transformCustomErrorToMsg(err));
@@ -190,10 +190,10 @@ ipcMain.handle('getNotesByQuestionId', async (_, params: GetNotesByQuestionIdReq
 });
 
 ipcMain.handle('getSubmissionDetailById', async (_, params: GetSubmissionDetailByIdRequest) => {
-  if (!appApi) {
+  if (!apiBridge) {
     throw new ErrorResp({ code: ERROR_CODE.NOT_LOGIN });
   }
-  const [err, res] = await to(baseHandler(appApi.getSubmissionDetailById(params)));
+  const [err, res] = await to(baseHandler(apiBridge.getSubmissionDetailById(params)));
 
   if (err) {
     throw new Error(transformCustomErrorToMsg(err));
@@ -205,10 +205,10 @@ ipcMain.handle('getSubmissionDetailById', async (_, params: GetSubmissionDetailB
 });
 
 ipcMain.handle('getUserStatus', async () => {
-  if (!appApi) {
+  if (!apiBridge) {
     throw new ErrorResp({ code: ERROR_CODE.NOT_LOGIN });
   }
-  const [err, res] = await to(baseHandler(appApi.getUserStatus()));
+  const [err, res] = await to(baseHandler(apiBridge.getUserStatus()));
 
   if (err) {
     throw new Error(transformCustomErrorToMsg(err));
@@ -352,7 +352,7 @@ ipcMain.handle(
       endPoint: EndPoint;
     },
   ) => {
-    if (!appApi) {
+    if (!apiBridge) {
       throw new Error(transformCustomErrorToMsg(new ErrorResp({ code: ERROR_CODE.NOT_LOGIN })));
     }
 
@@ -377,7 +377,7 @@ ipcMain.handle(
       `${outputPath}${path.sep}imgs`,
     );
 
-    const [getUserProgressErr, getUserProgressRes] = (await to(appApi.getUserProgress({ userSlug }))) as [
+    const [getUserProgressErr, getUserProgressRes] = (await to(apiBridge.getUserProgress({ userSlug }))) as [
       null | ErrorResp,
       GetUserProgressResponse,
     ];
@@ -459,7 +459,7 @@ ipcMain.handle(
     console.log('%c 3 >>>', 'background: yellow; color: blue', 3);
 
     const [getAllUserProfileSuccessQuestionsErr, getAllUserProfileQuestionsRes] = await to(
-      getAllUserProfileSuccessQuestions(appApi),
+      getAllUserProfileSuccessQuestions(apiBridge),
     );
 
     console.log('%c 4 >>>', 'background: yellow; color: blue', 4);
@@ -495,7 +495,7 @@ ipcMain.handle(
 
     const handleQuestion = async (q: Question) => {
       const [err, res] = (await to(
-        getQuestionAllInfoByTitleSlug({ appApi: appApi as AppApi, titleSlug: q.titleSlug }),
+        getQuestionAllInfoByTitleSlug({ apiBridge: apiBridge as ApiBridge, titleSlug: q.titleSlug }),
       )) as [null | ErrorResp, SuccessResp<GetQuestionAllInfoByTitleSlugResponse>];
       if (err) {
         throw new Error(transformCustomErrorToMsg(err));

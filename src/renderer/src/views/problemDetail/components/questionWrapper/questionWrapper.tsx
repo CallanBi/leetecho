@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 
 const { useRef, useState, useEffect, useMemo } = React;
 import parse, { HTMLReactParserOptions, domToReact, attributesToProps } from 'html-react-parser';
-import { Question, SubmissionList } from 'src/main/api/leetcodeServices/utils/interfaces';
+import { Question, SubmissionList } from 'src/main/services/leetcodeServices/utils/interfaces';
 import useResizable from '@/hooks/useResizable';
 import ImageComponent from '@/components/imageComponent';
 import { ImageDecorator } from 'react-viewer/lib/ViewerProps';
@@ -101,7 +101,7 @@ const QuestionWrapper: React.FC<QuestionWrapperProps> = (props: QuestionWrapperP
   return (
     <>
       <QuestionWrapperSection>
-        {size > LEFT_HIDDEN_SIZE && (
+        {(size as number) > LEFT_HIDDEN_SIZE && (
           <QuestionViewerSection style={{ width: size }}>
             <PageHeader
               style={{ paddingTop: 0, paddingBottom: 24, paddingLeft: 8 }}

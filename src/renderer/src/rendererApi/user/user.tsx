@@ -1,7 +1,6 @@
 import to from 'await-to-js';
 import { QueryKey, useQuery, UseQueryOptions } from 'react-query';
-import { ErrorResp } from 'src/main/api/appApi/base';
-import { GetUserStatusResponse, UserStatus } from 'src/main/api/leetcodeServices/utils/interfaces';
+import { GetUserStatusResponse, UserStatus } from 'src/main/services/leetcodeServices/utils/interfaces';
 
 const {
   bridge: { ipcRenderer },

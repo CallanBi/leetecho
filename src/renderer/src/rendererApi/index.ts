@@ -1,4 +1,4 @@
-import ERROR_CODE, { ErrorCodeMessageMap } from 'src/main/api/errorCode';
+import ERROR_CODE, { ErrorCodeMessageMap } from 'src/main/router/errorCode';
 
 export * from './problems/problems';
 

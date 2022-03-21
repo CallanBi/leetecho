@@ -1,10 +1,10 @@
 /* eslint-disable no-async-promise-executor */
 import to from 'await-to-js';
 import { StatusCodeError } from 'request-promise-native/errors';
-import { transformCustomErrorToMsg } from '..';
-import AppApi from '../appApi';
-import { ErrorResp, SuccessResp } from '../appApi/base';
-import ERROR_CODE, { getErrorCodeMessage } from '../errorCode';
+import { transformCustomErrorToMsg } from '../../router';
+import ApiBridge from '../../middleware/apiBridge';
+import { ErrorResp, SuccessResp } from '../../middleware/apiBridge/base';
+import ERROR_CODE, { getErrorCodeMessage } from '../../router/errorCode';
 import {
   GetNotesByQuestionIdResponse,
   GetQuestionDetailByTitleSlugResponse,
@@ -85,7 +85,7 @@ export function formatTimeStamp(timestamp: string | number) {
   return format(toDate(Number(timestamp) * 1000), 'yyyy/MM/dd H:mm');
 }
 
-export const getAllUserProfileSuccessQuestions = async (appApi: AppApi) => {
+export const getAllUserProfileSuccessQuestions = async (apiBridge: ApiBridge) => {
   const first = 20; // page size
 
   const requestOnce = async ({
@@ -93,12 +93,12 @@ export const getAllUserProfileSuccessQuestions = async (appApi: AppApi) => {
   }: {
     realOffset: number;
   }): Promise<GetUserProfileQuestionsResponse['userProfileQuestions']> => {
-    if (!appApi) {
+    if (!apiBridge) {
       throw new Error(transformCustomErrorToMsg(new ErrorResp({ code: ERROR_CODE.NOT_LOGIN })));
     }
 
     const [err, response] = await to(
-      appApi.getUserProfileQuestions({
+      apiBridge.getUserProfileQuestions({
         skip: realOffset,
       }),
     );
@@ -153,14 +153,14 @@ export const getAllUserProfileSuccessQuestions = async (appApi: AppApi) => {
 
 /**
  * Get a question's detail and its submissions and notes by title slug.
- * @param appApi
+ * @param apiBridge
  * @param titleSlug
  * @returns
  */
-export const getQuestionAllInfoByTitleSlug = async (params: { appApi: AppApi; titleSlug: string }) => {
-  const { appApi, titleSlug } = params;
+export const getQuestionAllInfoByTitleSlug = async (params: { apiBridge: ApiBridge; titleSlug: string }) => {
+  const { apiBridge, titleSlug } = params;
 
-  const [questionDetailErr, questionDetail] = (await to(appApi.getProblem({ titleSlug }))) as [
+  const [questionDetailErr, questionDetail] = (await to(apiBridge.getProblem({ titleSlug }))) as [
     null | ErrorResp,
     GetQuestionDetailByTitleSlugResponse['question'],
   ];
@@ -173,7 +173,7 @@ export const getQuestionAllInfoByTitleSlug = async (params: { appApi: AppApi; ti
   }
 
   const [getSubmissionErr, allSubmissionsList] = (await to(
-    appApi.getSubmissionsByTitleSlug({ questionSlug: titleSlug }),
+    apiBridge.getSubmissionsByTitleSlug({ questionSlug: titleSlug }),
   )) as [null | ErrorResp, GetSubmissionsByQuestionSlugResponse['submissionList']];
 
   if (getSubmissionErr) {
@@ -195,11 +195,11 @@ export const getQuestionAllInfoByTitleSlug = async (params: { appApi: AppApi; ti
   }
 
   const [getSubmissionDetailByIdErr, lastAcceptedSubmissionDetail] = (await to(
-    appApi.getSubmissionDetailById({ id: lastAcceptedSubmission.id }),
+    apiBridge.getSubmissionDetailById({ id: lastAcceptedSubmission.id }),
   )) as [null | ErrorResp, GetSubmissionDetailByIdResponse['submissionDetail']];
 
   const [getNotesErr, allNotes] = (await to(
-    appApi.getNotesByQuestionId({ questionId: Number(questionDetail.questionId) }),
+    apiBridge.getNotesByQuestionId({ questionId: Number(questionDetail.questionId) }),
   )) as [null | ErrorResp, GetNotesByQuestionIdResponse['noteOneTargetCommonNote']];
 
   if (getNotesErr) {

@@ -1,6 +1,5 @@
 import to from 'await-to-js';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { GetSubmissionsByQuestionSlugResponse } from 'src/main/api/leetcodeServices/utils/interfaces';
 
 const {
   bridge: { ipcRenderer },

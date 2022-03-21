@@ -8,7 +8,7 @@ import ProblemTable from '../../components/problemTable';
 import ProblemFilter from '@/components/problemFilter';
 import { ProblemsFilterObj } from '@/components/problemFilter/problemFilter';
 import { FilterValue, SorterResult, TableCurrentDataSource } from 'antd/lib/table/interface';
-import { ProblemItemFromGraphQL } from 'src/main/api/leetcodeServices/utils/interfaces';
+import { ProblemItemFromGraphQL } from 'src/main/services/leetcodeServices/utils/interfaces';
 import { COLUMN_KEY_SORTER_KEY_MAP, TABLE_SORTER_ORDER_MAP } from './const';
 import { useRouter } from '@/hooks/router/useRouter';
 import WrappedLoading from '@/components/illustration/loading/wrappedLoading';

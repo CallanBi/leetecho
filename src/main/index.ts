@@ -8,7 +8,7 @@ import { DEFAULT_WINDOW_OPTIONS } from './const/electronOptions/window';
 
 // const { default: installExtension, REACT_DEVELOPER_TOOLS } = await import('electron-devtools-installer');
 
-import './api/index';
+import './router/index';
 
 process.setMaxListeners(0);
 

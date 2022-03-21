@@ -2,10 +2,10 @@
 import to from 'await-to-js';
 import { StatusCodeError } from 'request-promise-native/errors';
 import { deleteNilVal } from '../../../tools';
-import { ErrorResp } from '../../appApi/base';
-import { GetProblemsRequest } from '../../appApi/idl/problems';
-import ERROR_CODE, { getErrorCodeMessage } from '../../errorCode';
-import { sleep } from '../../services/publishServices';
+import { ErrorResp } from '../../../middleware/apiBridge/base';
+import { GetProblemsRequest } from '../../../idl/problems';
+import ERROR_CODE, { getErrorCodeMessage } from '../../../router/errorCode';
+import { sleep } from '../../publishServices/publishServices';
 import Helper from '../utils/helper';
 import {
   Credit,

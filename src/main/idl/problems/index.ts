@@ -1,4 +1,4 @@
-import Problem from 'src/main/api/leetcodeServices/lib/problem';
+import Problem from 'src/main/services/leetcodeServices/lib/problem';
 import {
   Difficulty,
   GetProblemsFromGraphQLResponse,
@@ -8,9 +8,9 @@ import {
   QuestionStatus,
   SortOrder,
   UserProfileQuestions,
-} from 'src/main/api/leetcodeServices/utils/interfaces';
+} from 'src/main/services/leetcodeServices/utils/interfaces';
 
-import { SuccessResp } from '../../base';
+import { SuccessResp } from '../../middleware/apiBridge/base';
 
 /** interface types here */
 export type GetAllProblemsResponse = SuccessResp<{
