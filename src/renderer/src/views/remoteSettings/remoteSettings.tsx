@@ -100,14 +100,10 @@ const RemoteSettings: React.FC<RemoteSettingsProps> = (props: RemoteSettingsProp
     },
   ) as any as { data: UserConfig };
 
-  console.log('%c userConfig >>>', 'background: yellow; color: blue', userConfig);
-
   const thisUser: User = useMemo(
     () => userConfig?.users?.[endPoint || 'CN']?.find((user) => user?.usrName === appState.userState.usrName) || {},
     [userConfig, endPoint, appState.userState.usrName],
   ) as User;
-
-  console.log('%c thisUser >>>', 'background: yellow; color: blue', thisUser);
 
   const { isLoading: isCheckRepoConnectionLoading } = useCheckRepoConnection(
     {

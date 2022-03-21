@@ -429,9 +429,7 @@ ipcMain.handle(
     }
 
     const userConfig = parseJsonRecursively(store.get('userConfig') as UserConfig) as UserConfig;
-    // console.log('%c res >>>', 'background: yellow; color: blue', userConfig);
 
-    console.log('%c -1 >>>', 'background: yellow; color: blue', -1);
 
     if (!userConfig) {
       throw new Error(
@@ -441,19 +439,9 @@ ipcMain.handle(
 
     const { userSlug = '', userName = '', endPoint = 'CN' } = params;
 
-    console.log('%c params >>>', 'background: yellow; color: blue', params);
-
-    console.log('%c userCOnfig >>>', 'background: yellow; color: blue', userConfig);
-
-    console.log(
-      '%c userConfig?.users?.[endPoint]? >>>',
-      'background: yellow; color: blue',
-      userConfig?.users?.[endPoint],
-    );
 
     const thisUserConfig = userConfig?.lastLoginUser;
 
-    console.log('%c 0 >>>', 'background: yellow; color: blue', 0);
 
     if (!thisUserConfig) {
       throw new Error(
@@ -554,8 +542,6 @@ ipcMain.handle(
 
     userCoverTemplateVariables.updateTime = format(new Date(), 'yyyy/MM/dd H:mm');
 
-    console.log('%c 1 >>>', 'background: yellow; color: blue', 1);
-
     let userCover = formatLeetechoSyntax(
       fileTools.readFile(
         `${app.getPath('documents')}${path.sep}Leetecho Files${path.sep}CN${path.sep}${userName}${
@@ -572,31 +558,21 @@ ipcMain.handle(
       ),
     );
 
-    console.log('%c 2 >>>', 'background: yellow; color: blue', 2);
-
     if (!userCover || !userProblem) {
       throw new Error('Template is empty');
     }
-
-    console.log('%c 3 >>>', 'background: yellow; color: blue', 3);
 
     const [getAllUserProfileSuccessQuestionsErr, getAllUserProfileQuestionsRes] = await to(
       getAllUserProfileSuccessQuestions(apiBridge),
     );
 
-    console.log('%c 4 >>>', 'background: yellow; color: blue', 4);
-
     if (getAllUserProfileSuccessQuestionsErr) {
       throw new Error(transformCustomErrorToMsg(getAllUserProfileSuccessQuestionsErr));
     }
 
-    console.log('%c 5 >>>', 'background: yellow; color: blue', 5);
-
     const {
       data: { questions = [] },
     } = getAllUserProfileQuestionsRes;
-
-    console.log('%c questions >>>', 'background: yellow; color: blue', questions);
 
     userCover = userCover.replace(
       ':allProblems{}',
@@ -613,8 +589,6 @@ ipcMain.handle(
         .join('\n'),
     );
 
-    console.log('%c 6 >>>', 'background: yellow; color: blue', 6);
-
     const handleQuestion = async (q: Question) => {
       const [err, res] = (await to(
         getQuestionAllInfoByTitleSlug({ apiBridge: apiBridge as ApiBridge, titleSlug: q.titleSlug }),
@@ -622,7 +596,6 @@ ipcMain.handle(
       if (err) {
         throw new Error(transformCustomErrorToMsg(err));
       }
-      // console.log('%c handleQuestionResData >>>', 'background: yellow; color: blue', res.data);
 
       const { data } = res;
       const mergedData = { ...q, ...data };
@@ -648,17 +621,9 @@ ipcMain.handle(
       throw new Error(transformCustomErrorToMsg(err));
     }
 
-    console.log('%c 7 >>>', 'background: yellow; color: blue', 7);
-
     const handleBarCoverTemplate = Handlebars.compile(userCover);
 
-    console.log('%c 8 >>>', 'background: yellow; color: blue', 8);
-
     const coverContent = handleBarCoverTemplate(userCoverTemplateVariables);
-
-    console.log('%c 9 >>>', 'background: yellow; color: blue', 9);
-
-    console.log('%c 10 >>>', 'background: yellow; color: blue', 10);
 
     fileTools.createFilesInDirForced(outputPath, [
       {
@@ -667,17 +632,11 @@ ipcMain.handle(
       },
     ]);
 
-    console.log('%c 10 >>>', 'background: yellow; color: blue', 10);
-
     const [pushErr, _pushRes] = await to(deployTool.push());
-
-    console.log('%c 11 >>>', 'background: yellow; color: blue', 11);
 
     if (pushErr) {
       throw new Error(transformCustomErrorToMsg(pushErr));
     }
-
-    console.log('%c 12 >>>', 'background: yellow; color: blue', 12);
 
     return {
       code: ERROR_CODE.OK,

@@ -113,8 +113,6 @@ export default class RepoDeploy {
       }),
     );
     if (getRemoteInfoErr || !info) {
-      console.log('%c 222 >>>', 'background: yellow; color: blue', 222);
-
       throw new ErrorResp({
         code: ERROR_CODE.REPO_CONNECTION_ERROR,
         message: `Repo connection error, ${getRemoteInfoErr.message}`,
@@ -144,8 +142,6 @@ export default class RepoDeploy {
       );
 
       if (currentBranchErr || listenBranchErr || checkoutErr || branchErr) {
-        console.log('%c 333 >>>', 'background: yellow; color: blue', 333);
-
         throw new ErrorResp({
           code: ERROR_CODE.REPO_CONNECTION_ERROR,
           message: 'Repo connection error',
@@ -162,8 +158,6 @@ export default class RepoDeploy {
   async push() {
     const [_statusErr, statusSummary] = await to(git.status({ fs, dir: this.outputDir, filepath: '.' }));
     if (_statusErr) {
-      console.log('%c 111 >>>', 'background: yellow; color: blue', 111);
-
       throw new ErrorResp({
         code: ERROR_CODE.REPO_CONNECTION_ERROR,
         message: `Repo connection error, ${_statusErr.message}`,
@@ -189,15 +183,6 @@ export default class RepoDeploy {
 
     await to(this.checkCurrentBranch());
 
-    console.log('%c publishPar >>>', 'background: yellow; color: blue', {
-      fs,
-      http,
-      dir: this.outputDir,
-      remote: 'origin',
-      ref: this.settings.branch,
-      force: true,
-    });
-
     const [pushErr, pushRes] = await to(
       git.push({
         fs,
@@ -210,9 +195,6 @@ export default class RepoDeploy {
     );
 
     if (pushErr || !pushRes) {
-      console.log('%c 444 >>>', 'background: yellow; color: blue', 444);
-      console.log('%c pushErr >>>', 'background: yellow; color: blue', pushErr);
-
       throw new ErrorResp({
         code: ERROR_CODE.REPO_PUSH_ERROR,
         message: pushErr.message ? `Error occurred when pushing: ${pushErr.message}` : 'Error occurred when pushing',
