@@ -20,7 +20,7 @@ const FooterWrapperSection = styled.section`
   position: absolute;
   bottom: 0;
   height: 48px;
-  border-top: 4px solid ${COLOR_PALETTE.LEETECHO_GREY};
+  border-top: 2px solid ${COLOR_PALETTE.LEETECHO_GREY};
   z-index: 100;
   background-color: ${COLOR_PALETTE.LEETECHO_WHITE};
 `;

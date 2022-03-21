@@ -1,7 +1,7 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
-import './storage/electron-store';
+import './storage/electronStore';
 import './index.less';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
 
@@ -12,12 +12,16 @@ import globalStyles from './style';
 import AppStoreProvider from './store/appStore';
 import App from './app';
 import { defaultOptions } from './const/reactQuery/reactQuerySettings';
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, message } from 'antd';
 
 import Empty from './components/illustration/empty';
+import { globalMessageConfig } from './const/layout';
+
+
+message.config(globalMessageConfig);
 
 const {
-  bridge: { removeLoading, ipcRenderer },
+  bridge: { removeLoading },
 } = window;
 
 const queryClient = new QueryClient({

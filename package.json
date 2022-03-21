@@ -100,6 +100,7 @@
     "handlebar": "^1.0.0",
     "he": "^1.2.0",
     "import": "^0.0.6",
+    "isomorphic-git": "^1.15.0",
     "lodash": "^4.17.21",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.9",

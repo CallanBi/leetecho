@@ -16,3 +16,5 @@ ipcMain.handle('electron-store', async (_event, methodSign: string, ...args: any
   }
   return (store as any)[methodSign];
 });
+
+export default store;

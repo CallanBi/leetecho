@@ -37,13 +37,6 @@ export async function sleep<T, U>(fn: (par: T) => Promise<U>, par: T, sleepTime?
   return promise;
 }
 
-export interface GetQuestionAllInfoByTitleSlugResponse extends Question {
-  lastAcceptedSubmissionDetail: SubmissionDetail & {
-    time: string;
-  };
-  notes: UserNote[];
-}
-
 export async function concurrencyController<T, U>(args: {
   requestFunc: (params: T) => Promise<U>;
   params: T[];
@@ -83,6 +76,13 @@ export async function concurrencyController<T, U>(args: {
  */
 export function formatTimeStamp(timestamp: string | number) {
   return format(toDate(Number(timestamp) * 1000), 'yyyy/MM/dd H:mm');
+}
+
+export interface GetQuestionAllInfoByTitleSlugResponse extends Question {
+  lastAcceptedSubmissionDetail: SubmissionDetail & {
+    time: string;
+  };
+  notes: UserNote[];
 }
 
 export const getAllUserProfileSuccessQuestions = async (apiBridge: ApiBridge) => {
@@ -218,13 +218,6 @@ export const getQuestionAllInfoByTitleSlug = async (params: { apiBridge: ApiBrid
 
   const { userNotes = [] } = allNotes;
 
-  // if (userNotes.length === 0) {
-  //   throw new ErrorResp({
-  //     code: ERROR_CODE.NO_NOTES,
-  //     message: 'No notes',
-  //   });
-  // }
-
   return {
     code: ERROR_CODE.OK,
     data: {
@@ -233,7 +226,7 @@ export const getQuestionAllInfoByTitleSlug = async (params: { apiBridge: ApiBrid
         ...lastAcceptedSubmissionDetail,
         time: formatTimeStamp(lastAcceptedSubmissionDetail?.timestamp ?? 0),
       },
-      notes: userNotes,
+      notes: userNotes.length === 0 ? [{ content: 'No notes' }] : userNotes,
     },
   } as SuccessResp<GetQuestionAllInfoByTitleSlugResponse>;
 };

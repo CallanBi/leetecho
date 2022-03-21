@@ -10,11 +10,15 @@ import { DEFAULT_WINDOW_OPTIONS } from './const/electronOptions/window';
 
 import './router/index';
 
-process.setMaxListeners(0);
+import events from 'events';
+
+events.EventEmitter.defaultMaxListeners = 100;
+
+events.EventEmitter.setMaxListeners(100);
 
 const isDev = process.env.NODE_ENV === 'development';
 
-/* devTools 安装 */
+/* devTools installation */
 const installDevTools = async () => {
   const [err, name] = await to(installExtension(REACT_DEVELOPER_TOOLS.id));
   if (err) {
@@ -39,7 +43,7 @@ async function createWindow() {
 
   win.setTitle('Leetecho');
 
-  /** 去除菜单栏，保持跨平台风格统一 */
+  /** remove menu bar to keep a unified style in all platforms */
   win.removeMenu();
 
   if (Boolean(app.isPackaged) && !process.env.DEBUG) {
@@ -59,12 +63,12 @@ async function createWindow() {
   //   win?.webContents.send('main-process-message', (new Date).toLocaleString());
   // });
 
-  /** renderer 事件监听 */
-  /** 注意：需要通过句点表示法访问 win 实例里的方法，不能解构，否则win 实例的 this 得不到保留，会报错 */
-
-  // ipcMain.on('get-path', (event, args: Parameters<typeof app.getPath>[0]) => {
-  //   event.returnValue = app.getPath(args);
-  // });
+  /** renderer event listener */
+  /** NOTES:
+   * Must visit functions in win instance by full stop.
+   * Cannot use destructuring assignment, otherwise the this in the win instance will not be retained,
+   * and will throw a error.
+   * */
 
   const getWinStatus = () => {
     if (!win) {
@@ -79,6 +83,10 @@ async function createWindow() {
       ? 'maximized'
       : ((isMinimized ? 'minimized' : allWindows.length === 0 ? 'closed' : 'windowed') as WindowStatus);
   };
+
+  // ipcMain.on('get-path', (event, args: Parameters<typeof app.getPath>[0]) => {
+  //   event.returnValue = app.getPath(args);
+  // });
 
   ipcMain.on('get-win-status', (event) => {
     if (!win) {
@@ -111,7 +119,7 @@ async function createWindow() {
     event.sender.send('set-win-status', { isSuccessful: true, winStatus: params } as SetWinStatusResp);
   });
 
-  /** win 状态监听 */
+  /** win status listen */
   win?.on('maximize', () => {
     win?.webContents.send('maximized', { isSuccessful: true, winStatus: 'maximized' } as MaximizedResp);
   });
@@ -121,7 +129,7 @@ async function createWindow() {
   });
 }
 
-/** 监听 IO */
+/** listen for IO */
 app.whenReady().then(() => {
   if (isDev) {
     installDevTools();
@@ -138,7 +146,7 @@ app.on('window-all-closed', () => {
 
 app.on('second-instance', () => {
   if (win) {
-    // Someone tried to run a second instance, we should focus our window.
+    // if running a second instance is attempted, should restore the main window.
     if (win.isMinimized()) {
       win.restore();
     }
@@ -161,4 +169,9 @@ app.on('web-contents-created', (e, webContents) => {
     event.preventDefault();
     shell.openExternal(url);
   });
+});
+
+app.on('quit', () => {
+  win = null;
+  ipcMain.removeAllListeners();
 });

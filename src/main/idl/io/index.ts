@@ -1,4 +1,4 @@
-import { EndPoint } from '@/storage/electron-store';
+import { EndPoint } from '@/storage/electronStore';
 
 export type ReadUserTemplateRequest = {
   userInfo: {

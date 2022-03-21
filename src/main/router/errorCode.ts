@@ -14,11 +14,34 @@ const enum ERROR_CODE {
   NOT_LOGIN = 4000001,
   REQUEST_PARAMS_ERROR = 4000002,
 
+  NOT_A_REPO = 4030003,
+
   NO_AC_SUBMISSIONS = 5000001,
   NO_NOTES = 5000002,
+  REPO_CONNECTION_ERROR = 5000003,
+  REPO_PUSH_ERROR = 5000004,
+  NO_USER_CONFIG = 5000005,
 }
 
-type ErrorCodeType = 200 | 302 | 304 | 400 | 403 | 404 | 500 | 502 | 503 | 1 | 4000001 | 4000002 | 5000001 | 5000002;
+type ErrorCodeType =
+  | 200
+  | 302
+  | 304
+  | 400
+  | 403
+  | 404
+  | 500
+  | 502
+  | 503
+  | 1
+  | 4000001
+  | 4000002
+  | 5000001
+  | 5000002
+  | 4030003
+  | 5000003
+  | 5000004
+  | 5000005;
 
 type ErrorCodeMessageType =
   | 'OK'
@@ -34,7 +57,11 @@ type ErrorCodeMessageType =
   | 'NOT_LOGIN'
   | 'REQUEST_PARAMS_ERROR'
   | 'NO_AC_SUBMISSIONS'
-  | 'NO_NOTES';
+  | 'NO_NOTES'
+  | 'NOT_A_REPO'
+  | 'REPO_CONNECTION_ERROR'
+  | 'REPO_PUSH_ERROR'
+  | 'NO_USER_CONFIG';
 
 const ErrorCodeMessageMap: { [key in ErrorCodeType]: ErrorCodeMessageType } = {
   200: 'OK',
@@ -51,9 +78,13 @@ const ErrorCodeMessageMap: { [key in ErrorCodeType]: ErrorCodeMessageType } = {
 
   4000001: 'NOT_LOGIN',
   4000002: 'REQUEST_PARAMS_ERROR',
+  4030003: 'NOT_A_REPO',
 
   5000001: 'NO_AC_SUBMISSIONS',
   5000002: 'NO_NOTES',
+  5000003: 'REPO_CONNECTION_ERROR',
+  5000004: 'REPO_PUSH_ERROR',
+  5000005: 'NO_USER_CONFIG',
 };
 
 type ErrorCode = keyof typeof ErrorCodeMessageMap;

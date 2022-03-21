@@ -24,32 +24,72 @@ import {
   GetSubmissionsByQuestionSlugResponse,
 } from '../idl/problems';
 import { GetAllTagsResponse } from '../idl/tags';
-import { LoginReq, LoginResp, LogoutResp } from '../idl/user';
+import { CheckRepoConnectionRequest, LoginReq, LoginResp, LogoutResp } from '../idl/user';
 import ERROR_CODE, { getErrorCodeMessage } from './errorCode';
 import {
   Difficulty,
-  EndPoint,
   GetNotesByQuestionIdResponse,
   GetUserProgressResponse,
   GetUserStatusResponse,
   Question,
 } from '../services/leetcodeServices/utils/interfaces';
-import { formatLeetechoSyntax, formatTimeStamp } from '../tools';
+import { formatLeetechoSyntax, formatTimeStamp, parseJsonRecursively } from '../tools';
 import {
   concurrencyController,
   getAllUserProfileSuccessQuestions,
   getQuestionAllInfoByTitleSlug,
   GetQuestionAllInfoByTitleSlugResponse,
-  sleep,
+  // sleep,
 } from '../services/publishServices/publishServices';
+
+import store from '../electronStore/electronStore';
 
 import Handlebars from 'handlebars';
 
-import { format, toDate } from 'date-fns';
+import { format } from 'date-fns';
 
 import he from 'he';
+import RepoDeploy from '../services/repoDeployServices/repoDeployServices';
 
 const isDev = process.env.NODE_ENV === 'development';
+
+export type EndPoint = 'CN' | 'US';
+
+export type User = {
+  usrName: string;
+  pwd: string;
+  endPoint: EndPoint;
+  localFileFolderPath?: string;
+  appSettings: Partial<{
+    repoName: string;
+    branch: string;
+    userName: string;
+    email: string;
+    token: string; // 令牌
+  }>;
+};
+
+export type UserGroup = {
+  CN: User[];
+  US: User[];
+};
+
+export type UserConfig = {
+  users: UserGroup;
+  lastLoginUser: {
+    // 最后一次登录的用户
+    usrName?: string;
+    endPoint?: EndPoint;
+    appSettings?: Partial<{
+      repoName: string;
+      branch: string;
+      userName: string;
+      email: string;
+      token: string; // 令牌
+    }>;
+  };
+  isUserRemembered: boolean; // 是否勾选'记住我'
+};
 
 Handlebars.registerHelper('ifCN', function (endPoint, options) {
   if (endPoint === 'CN') {
@@ -342,6 +382,38 @@ ipcMain.handle('getDefaultTemplates', async (_) => {
   }>;
 });
 
+ipcMain.handle('checkRepoConnection', async (_, params: CheckRepoConnectionRequest) => {
+  const { userName = '', repoName = '', token = '', email = '', branch = 'main' } = params;
+
+  RepoDeploy.deleteInstance();
+
+  const outputPath = `${app.getPath('documents')}${path.sep}Leetecho Files${path.sep}CN${path.sep}${userName}${
+    path.sep
+  }outputs`;
+
+  const deployTool = RepoDeploy.init({
+    outputDir: outputPath,
+    settings: {
+      token,
+      email,
+      branch,
+      userName,
+      repoName,
+    },
+  });
+
+  const [checkRepoConnectionErr, _checkRepoConnectionRes] = await to(deployTool.checkRepoConnection());
+
+  if (checkRepoConnectionErr) {
+    throw new Error(transformCustomErrorToMsg(checkRepoConnectionErr));
+  }
+
+  return {
+    code: ERROR_CODE.OK,
+    data: {},
+  } as SuccessResp<Record<string, never>>;
+});
+
 ipcMain.handle(
   'publish',
   async (
@@ -349,22 +421,72 @@ ipcMain.handle(
     params: {
       userSlug: string;
       userName: string;
-      endPoint: EndPoint;
+      endPoint: 'CN' | 'US';
     },
   ) => {
     if (!apiBridge) {
       throw new Error(transformCustomErrorToMsg(new ErrorResp({ code: ERROR_CODE.NOT_LOGIN })));
     }
 
-    const userCoverTemplateVariables: {
-      [key: string]: any;
-    } = {};
+    const userConfig = parseJsonRecursively(store.get('userConfig') as UserConfig) as UserConfig;
+    // console.log('%c res >>>', 'background: yellow; color: blue', userConfig);
+
+    console.log('%c -1 >>>', 'background: yellow; color: blue', -1);
+
+    if (!userConfig) {
+      throw new Error(
+        transformCustomErrorToMsg(new ErrorResp({ code: ERROR_CODE.NO_USER_CONFIG, message: 'user config not found' })),
+      );
+    }
 
     const { userSlug = '', userName = '', endPoint = 'CN' } = params;
+
+    console.log('%c params >>>', 'background: yellow; color: blue', params);
+
+    console.log('%c userCOnfig >>>', 'background: yellow; color: blue', userConfig);
+
+    console.log(
+      '%c userConfig?.users?.[endPoint]? >>>',
+      'background: yellow; color: blue',
+      userConfig?.users?.[endPoint],
+    );
+
+    const thisUserConfig = userConfig?.lastLoginUser;
+
+    console.log('%c 0 >>>', 'background: yellow; color: blue', 0);
+
+    if (!thisUserConfig) {
+      throw new Error(
+        transformCustomErrorToMsg(new ErrorResp({ code: ERROR_CODE.NO_USER_CONFIG, message: 'user config not found' })),
+      );
+    }
 
     const outputPath = `${app.getPath('documents')}${path.sep}Leetecho Files${path.sep}CN${path.sep}${userName}${
       path.sep
     }outputs`;
+
+    RepoDeploy.deleteInstance();
+
+    const deployTool = RepoDeploy.init({
+      outputDir: outputPath,
+      settings: {
+        userName: thisUserConfig?.appSettings?.userName || '',
+        repoName: thisUserConfig?.appSettings?.repoName || '',
+        token: thisUserConfig?.appSettings?.token || '',
+        email: thisUserConfig?.appSettings?.email || '',
+        branch: thisUserConfig?.appSettings?.branch || 'main',
+      },
+    });
+
+    const [checkRepoConnectionErr, _checkRepoConnectionRes] = await to(deployTool.checkRepoConnection());
+
+    if (checkRepoConnectionErr) {
+      throw new Error(transformCustomErrorToMsg(checkRepoConnectionErr));
+    }
+
+    const userCoverTemplateVariables: {
+      [key: string]: any;
+    } = {};
 
     fileTools.mkdirPath(`${outputPath}${path.sep}imgs`);
 
@@ -546,6 +668,20 @@ ipcMain.handle(
     ]);
 
     console.log('%c 10 >>>', 'background: yellow; color: blue', 10);
+
+    const [pushErr, _pushRes] = await to(deployTool.push());
+
+    console.log('%c 11 >>>', 'background: yellow; color: blue', 11);
+
+    if (pushErr) {
+      throw new Error(transformCustomErrorToMsg(pushErr));
+    }
+
+    console.log('%c 12 >>>', 'background: yellow; color: blue', 12);
+
+    return {
+      code: ERROR_CODE.OK,
+      data: {},
+    } as SuccessResp<Record<string, never>>;
   },
-  /** TODO: continue to finish remote github repo pushing function*/
 );

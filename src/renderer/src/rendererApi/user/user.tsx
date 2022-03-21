@@ -30,9 +30,7 @@ const useLogin = (
     },
   );
 
-const useGetUserStatus = (
-  options: Omit<UseQueryOptions<UserStatus, Error, UserStatus, QueryKey>, 'queryKey' | 'queryFn'>,
-) =>
+const useGetUserStatus = (options: Omit<UseQueryOptions<GetUserStatusResponse, Error>, 'queryKey' | 'queryFn'>) =>
   useQuery<GetUserStatusResponse['userStatus'], Error>(
     ['getUserStatus'],
     async () => {
@@ -49,4 +47,24 @@ const useGetUserStatus = (
     options,
   );
 
-export { useLogin, useGetUserStatus };
+const useCheckRepoConnection = (
+  params: CheckRepoConnectionReq,
+  options: Omit<UseQueryOptions<CheckRepoConnectionResp, Error>, 'queryKey' | 'queryFn'>,
+) =>
+  useQuery<CheckRepoConnectionResp, Error>(
+    ['checkRepoConnection', params],
+    async () => {
+      const [err, res] = (await to(ipcRenderer.invoke('checkRepoConnection', params))) as [
+        Error | null,
+        CheckRepoConnectionResp,
+      ];
+      if (err) {
+        throw err;
+      }
+
+      return res as CheckRepoConnectionResp;
+    },
+    options,
+  );
+
+export { useLogin, useGetUserStatus, useCheckRepoConnection };

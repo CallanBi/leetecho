@@ -12,25 +12,32 @@ export type User = {
   localFileFolderPath?: string;
   appSettings: Partial<{
     repoName: string;
-    repoBranch: string;
-    repoUserName: string;
-    repoEmail: string;
+    branch: string;
+    userName: string;
+    email: string;
     token: string; // 令牌
   }>;
 };
 
 export type UserGroup = {
   CN: User[];
-  EN: User[];
+  US: User[];
 };
 
 export type UserConfig = {
   users: UserGroup;
   lastLoginUser: {
     // 最后一次登录的用户
-    usrName: string;
-    endPoint: EndPoint;
-  } | null;
+    usrName?: string;
+    endPoint?: EndPoint;
+    appSettings?: Partial<{
+      repoName: string;
+      branch: string;
+      userName: string;
+      email: string;
+      token: string; // 令牌
+    }>;
+  };
   isUserRemembered: boolean; // 是否勾选'记住我'
 };
 
@@ -95,7 +102,7 @@ const store = {
           CN: [],
           EN: [],
         },
-        lastLoginUser: null,
+        lastLoginUser: undefined,
         isUserRemembered: false,
       }),
     );

@@ -35,6 +35,12 @@ const globalStyles = css`
     }
   }
 
+  .ant-message {
+    .ant-message-notice-content {
+      max-width: 800px;
+    }
+  }
+
   /* table {
     border-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
   }

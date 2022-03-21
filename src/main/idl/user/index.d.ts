@@ -3,6 +3,7 @@ import {
   LoginResp as LoginRs,
   GetUserProgressReq as GetUserProgressRq,
   GetUserProgressResp as GetUserProgressRs,
+  CheckRepoConnectionRequest,
 } from './index';
 
 export {};
@@ -17,4 +18,7 @@ declare global {
 
   type GetUserProgressReq = GetUserProgressRq;
   type GetUserProgressResp = GetUserProgressRs;
+
+  type CheckRepoConnectionReq = CheckRepoConnectionRequest;
+  type CheckRepoConnectionResp = SuccessResp<Record<string, never>>;
 }

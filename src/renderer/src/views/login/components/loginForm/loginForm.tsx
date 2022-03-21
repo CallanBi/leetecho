@@ -8,7 +8,7 @@ import { useLogin } from '@/rendererApi/user';
 import { getErrorCodeFromMessage } from '@/rendererApi';
 import { AppStoreContext } from '@/store/appStore/appStore';
 import { COLOR_PALETTE } from 'src/const/theme/color';
-import store, { EndPoint, User, UserConfig, UserGroup } from '@/storage/electron-store';
+import store, { EndPoint, User, UserConfig, UserGroup } from '@/storage/electronStore';
 import to from 'await-to-js';
 
 const {
@@ -70,7 +70,28 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     // update user config
     await to(
       Promise.all([
-        store.set('userConfig.lastLoginUser', { usrName: loginInfo?.submittedVal?.username || '', endPoint: 'CN' }),
+        store.set('userConfig.lastLoginUser', {
+          ...(userConfig?.lastLoginUser || {}),
+          usrName: loginInfo?.submittedVal?.username || '',
+          endPoint: 'CN',
+          appSettings:
+            user === -1
+              ? ({
+                repoName: undefined,
+                branch: undefined,
+                userName: undefined,
+                email: undefined,
+                token: undefined,
+              } as UserConfig['lastLoginUser'])
+              : (users[user]?.appSettings as UserConfig['lastLoginUser']) ||
+                ({
+                  repoName: undefined,
+                  branch: undefined,
+                  userName: undefined,
+                  email: undefined,
+                  token: undefined,
+                } as UserConfig['lastLoginUser'] as UserConfig['lastLoginUser']),
+        }),
         store.set(
           'userConfig.isUserRemembered',
           (loginInfo?.submittedVal?.isUserRemembered || false) as unknown as CascadeSelectProps<UserConfig>,
