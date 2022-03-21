@@ -1,5 +1,4 @@
-
-export { };
+export {};
 
 declare global {
   interface Window {
@@ -12,8 +11,10 @@ declare global {
       ipcRenderer: import('electron').IpcRenderer;
       removeLoading: () => void;
       isDev: boolean;
+      isDebug: boolean;
+      isNotProduction: boolean;
       // app: typeof import('electron').app;
-      platform: typeof process.platform,
+      platform: typeof process.platform;
     };
   }
 }

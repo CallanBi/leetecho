@@ -1,14 +1,25 @@
+// https://www.electron.build/configuration/configuration
 {
-  "appId": "com.electron.${productName}",
-  "asar": true,
+  "productName": "Leetecho",
+  "artifactName": "Leetecho-${version}-${os}-${arch}.${ext}",
+  "appId": "com.electron.leetecho",
+  "copyright": "Copyright © 2022 ${author}",
+  "asar": false,
   "directories": {
     "output": "release/${version}"
   },
   "files": [
-    "dist"
+    "dist",
+    "node_modules/**/*"
   ],
+  "extraResources": [
+    {
+      "from": "./assets",
+      "to": "assets"
+    }
+  ],
+  "extends": null,
   "mac": {
-    "artifactName": "${productName}_${version}.${ext}",
     "icon": "./assets/icon/icon-mac.icns",
     "target": [
       "dmg"
@@ -24,7 +35,6 @@
         ]
       }
     ],
-    "artifactName": "${productName}_${version}.${ext}"
   },
   "linux": {
     "icon": "./assets/icon/icon-linux.png",
@@ -41,9 +51,12 @@
     ]
   },
   "nsis": {
-    "oneClick": false,
+    "oneClick": false, // 是否一键安装
+    "allowElevation": true, // 允许请求提升。 如果为false，则用户必须使用提升的权限重新启动安装程序
+    "allowToChangeInstallationDirectory": true, // 允许修改安装目录
+    "createDesktopShortcut": true, // 创建桌面图标
+    "createStartMenuShortcut": true, // 创建开始菜单图标
     "perMachine": false,
-    "allowToChangeInstallationDirectory": true,
     "deleteAppDataOnUninstall": false
   }
 }

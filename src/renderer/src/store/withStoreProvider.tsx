@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 const { useReducer } = React;
 
 type WithProviderProps<State, Action> = {
@@ -12,7 +13,7 @@ type WithProviderProps<State, Action> = {
 };
 
 /**
- * 生产包裹需要共享 store 的子组件的高阶组件
+ * produces HOC that wrap child components who need the store
  * @param props {
  *    reducer: React.Reducer<State, Action>;
  *    initState: State;
@@ -27,7 +28,9 @@ type WithProviderProps<State, Action> = {
 function withStoreProvider<State, Action>(props: React.PropsWithChildren<WithProviderProps<State, Action>>) {
   const { reducer, initState, StoreContext } = props;
 
-  const StoreProvider: React.FC<React.PropsWithChildren<WithProviderProps<State, Action>>> = (props: React.PropsWithChildren<Record<string, unknown>>) => {
+  const StoreProvider: React.FC<React.PropsWithChildren<WithProviderProps<State, Action>>> = (
+    props: React.PropsWithChildren<Record<string, unknown>>,
+  ) => {
     const [state, dispatch] = useReducer(reducer, initState);
     const { children } = props;
     return <StoreContext.Provider value={{ state, dispatch }}>{children}</StoreContext.Provider>;

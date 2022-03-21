@@ -5,7 +5,10 @@ import { domReady } from './utils';
 import { useLoading } from './loading';
 
 const isDev = process.env.NODE_ENV === 'development';
-const platform = process.platform;
+const isDebug = process.env.NODE_ENV === 'debug';
+const isNotProduction = isDev || isDebug;
+
+const { platform } = process;
 
 const { appendLoading, removeLoading } = useLoading();
 
@@ -25,6 +28,8 @@ contextBridge.exposeInMainWorld('bridge', {
   ipcRenderer: withPrototype(ipcRenderer),
   removeLoading,
   isDev,
+  isDebug,
+  isNotProduction,
   platform,
 });
 

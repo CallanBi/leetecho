@@ -1,14 +1,11 @@
-process.env.NODE_ENV = "production";
+import { build as viteBuild, createServer } from 'vite';
 
-import { build as viteBuild } from "vite";
-import chalk from "chalk";
-
-const TAG = chalk.bgBlue("[build.mjs]");
+const TAG = '[build.mjs]';
 
 const viteConfigs = {
-  main: "configs/vite.main.ts",
-  preload: "configs/vite.preload.ts",
-  renderer: "configs/vite.renderer.ts",
+  main: 'configs/vite.main.ts',
+  preload: 'configs/vite.preload.ts',
+  renderer: 'configs/vite.renderer.ts',
 };
 
 async function buildElectron() {
@@ -16,7 +13,7 @@ async function buildElectron() {
     console.group(TAG, name);
     await viteBuild({
       configFile: configPath,
-      mode: process.env.NODE_ENV,
+      mode: process.env.NODE_ENV === 'debug' ? 'debug' : 'production',
     });
     console.groupEnd();
     console.log(); // for beautiful log.

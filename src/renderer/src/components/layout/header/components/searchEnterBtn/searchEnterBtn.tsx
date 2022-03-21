@@ -4,7 +4,9 @@ import { css } from '@emotion/react';
 import { IconSearch } from '@douyinfe/semi-icons';
 import { withSemiIconStyle } from '@/style';
 
-const { useRef, useState, useEffect, useMemo } = React;
+const {
+  useRef, useState, useEffect, useMemo,
+} = React;
 
 interface SearchEnterBtnProps {
 

@@ -1,40 +1,47 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
-import './storage/electron-store';
+import './storage/electronStore';
 import './index.less';
-import App from './app';
+import 'material-design-icons-iconfont/dist/material-design-icons.css';
+
 import { HashRouter } from 'react-router-dom';
-import AppStoreProvider from './store/appStore';
 import { Global } from '@emotion/react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import globalStyles from './style';
+import AppStoreProvider from './store/appStore';
+import App from './app';
+import { defaultOptions } from './const/reactQuery/reactQuerySettings';
+import { ConfigProvider, message } from 'antd';
 
-const { bridge: { removeLoading, ipcRenderer } } = window;
+import Empty from './components/illustration/empty';
+import { globalMessageConfig } from './const/layout';
 
+
+message.config(globalMessageConfig);
+
+const {
+  bridge: { removeLoading },
+} = window;
+
+const queryClient = new QueryClient({
+  defaultOptions,
+});
 
 ReactDOM.render(
-  <AppStoreProvider>
-    <Global styles={globalStyles}></Global>
-    <HashRouter>
-      <App />
-    </HashRouter>,
-  </AppStoreProvider>,
+  <QueryClientProvider client={queryClient}>
+    <AppStoreProvider>
+      <Global styles={globalStyles} />
+      <HashRouter>
+        <ConfigProvider renderEmpty={() => <Empty />}>
+          <App />
+        </ConfigProvider>
+      </HashRouter>
+    </AppStoreProvider>
+    ,
+  </QueryClientProvider>,
   document.getElementById('root'),
   () => {
     removeLoading();
   },
 );
-
-
-// -----------------------------------------------------------
-
-// console.log('contextBridge ->', window.bridge);
-
-// Use ipcRenderer.on
-// ipcRenderer.on('main-process-message', (_event, ...args) => {
-//   console.log('[Receive Main-process message]:', ...args);
-// });
-
-// const home = ipcRenderer.sendSync('get-path', 'home');
-
-// console.log('%c get-path home >>>', 'background: yellow; color: blue', home ?? undefined);

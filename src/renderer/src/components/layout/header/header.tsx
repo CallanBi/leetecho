@@ -1,13 +1,13 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
+import { MEASUREMENT } from 'src/const/theme/measurement';
 import HeaderLeftContent from './components/headerLeftContent';
 import HeaderRightContent from './components/headerRightContent';
-import { MEASUREMENT } from 'src/const/theme/measurement';
 
-
-
-const { useRef, useState, useEffect, useMemo } = React;
+const {
+  useRef, useState, useEffect, useMemo,
+} = React;
 
 const HeaderSection = styled.section`
   display: flex;
@@ -25,8 +25,8 @@ const Header: React.FC<HeaderProps> = (props: HeaderProps) => {
 
   return (
     <HeaderSection>
-      <HeaderLeftContent></HeaderLeftContent>
-      <HeaderRightContent></HeaderRightContent>
+      <HeaderLeftContent />
+      <HeaderRightContent />
     </HeaderSection>
   );
 };
