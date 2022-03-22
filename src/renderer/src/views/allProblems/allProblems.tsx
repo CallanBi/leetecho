@@ -116,7 +116,6 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
   } = useGetProblems(queryArgs, queryOptions);
 
   const onFilterChange = (val: ProblemsFilterObj) => {
-    // console.log('%c val >>>', 'background: yellow; color: blue', JSON.stringify(val));
     const { list = '', difficulty = '', status = '', search = '', tags = [] } = val;
     setRequestParams({
       ...requestParams,

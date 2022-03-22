@@ -21,6 +21,7 @@ const enum ERROR_CODE {
   REPO_CONNECTION_ERROR = 5000003,
   REPO_PUSH_ERROR = 5000004,
   NO_USER_CONFIG = 5000005,
+  REPO_INIT_ERROR = 5000006,
 }
 
 type ErrorCodeType =
@@ -41,7 +42,8 @@ type ErrorCodeType =
   | 4030003
   | 5000003
   | 5000004
-  | 5000005;
+  | 5000005
+  | 5000006;
 
 type ErrorCodeMessageType =
   | 'OK'
@@ -61,7 +63,8 @@ type ErrorCodeMessageType =
   | 'NOT_A_REPO'
   | 'REPO_CONNECTION_ERROR'
   | 'REPO_PUSH_ERROR'
-  | 'NO_USER_CONFIG';
+  | 'NO_USER_CONFIG'
+  | 'REPO_INIT_ERROR';
 
 const ErrorCodeMessageMap: { [key in ErrorCodeType]: ErrorCodeMessageType } = {
   200: 'OK',
@@ -85,6 +88,7 @@ const ErrorCodeMessageMap: { [key in ErrorCodeType]: ErrorCodeMessageType } = {
   5000003: 'REPO_CONNECTION_ERROR',
   5000004: 'REPO_PUSH_ERROR',
   5000005: 'NO_USER_CONFIG',
+  5000006: 'REPO_INIT_ERROR',
 };
 
 type ErrorCode = keyof typeof ErrorCodeMessageMap;

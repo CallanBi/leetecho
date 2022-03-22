@@ -23,6 +23,8 @@ export type ProblemsFilterObj = {
 interface ProblemFilterProps {
   onChange: (val: ProblemsFilterObj) => unknown;
   hasRouterQuery?: boolean;
+  style?: React.CSSProperties;
+  invisibleItem?: (keyof ProblemsFilterObj)[];
 }
 
 const ProblemFilterSection = styled.section`
@@ -42,8 +44,8 @@ const SelectedTagsDisplaySection = styled.section`
   padding-top: 12px;
 `;
 
-const ProblemFilter: React.FC<ProblemFilterProps> = (props: ProblemFilterProps) => {
-  const { onChange, hasRouterQuery = false } = props;
+const ProblemFilter: React.FC<ProblemFilterProps> = (props: React.PropsWithChildren<ProblemFilterProps>) => {
+  const { onChange, hasRouterQuery = false, style = {}, invisibleItem = [], children } = props;
 
   const [selectedTagsValue, setSelectedTagsValue] = useState<FormattedTagItem[]>([]);
   const [filterVal, setFilterVal] = useState<ProblemsFilterObj>({
@@ -70,7 +72,7 @@ const ProblemFilter: React.FC<ProblemFilterProps> = (props: ProblemFilterProps) 
   }, [selectedTagsValue]);
 
   return (
-    <ProblemFilterSection>
+    <ProblemFilterSection style={style}>
       <LightFilter
         initialValues={{}}
         size={'middle'}
@@ -79,21 +81,29 @@ const ProblemFilter: React.FC<ProblemFilterProps> = (props: ProblemFilterProps) 
           onChange?.({ ...val, tags: selectedTagsValue.map?.((t) => t.value || '') || [] });
         }}
       >
-        <ProFormSelect
-          name="list"
-          label="题单"
-          allowClear={true}
-          valueEnum={Object.values(LEETCODE_PROBLEM_LIST.CN).reduce((acc, v) => {
-            return { ...acc, [v.listId]: v.name };
-          }, {})}
-          fieldProps={{
-            dropdownMatchSelectWidth: 198,
-          }}
-        />
-        <ProFormSelect name="difficulty" label="难度" allowClear={true} valueEnum={DIFFICULTY_WORD} />
-        <ProFormSelect name="status" label="状态" allowClear={true} valueEnum={STATUS_WORD} />
-        <TagSelector labelInValue value={selectedTagsValue} onChange={onTagsValueChange}></TagSelector>
-        {!hasRouterQuery && (
+        {!invisibleItem.includes('list') && (
+          <ProFormSelect
+            name="list"
+            label="题单"
+            allowClear={true}
+            valueEnum={Object.values(LEETCODE_PROBLEM_LIST.CN).reduce((acc, v) => {
+              return { ...acc, [v.listId]: v.name };
+            }, {})}
+            fieldProps={{
+              dropdownMatchSelectWidth: 198,
+            }}
+          />
+        )}
+        {!invisibleItem.includes('difficulty') && (
+          <ProFormSelect name="difficulty" label="难度" allowClear={true} valueEnum={DIFFICULTY_WORD} />
+        )}
+        {!invisibleItem.includes('status') && (
+          <ProFormSelect name="status" label="状态" allowClear={true} valueEnum={STATUS_WORD} />
+        )}
+        {!invisibleItem.includes('tags') && (
+          <TagSelector labelInValue value={selectedTagsValue} onChange={onTagsValueChange}></TagSelector>
+        )}
+        {!invisibleItem.includes('search') && !hasRouterQuery && (
           <ProFormText
             name="search"
             label="搜索题目，编号或内容"
@@ -104,22 +114,25 @@ const ProblemFilter: React.FC<ProblemFilterProps> = (props: ProblemFilterProps) 
             }}
           />
         )}
+        {children}
       </LightFilter>
-      <SelectedTagsDisplaySection>
-        {selectedTagsValue?.map((tag) => (
-          <Tag
-            key={tag.value}
-            closable={true}
-            onClose={(e) => {
-              e.preventDefault(); // disable default closing tag movement
-              const filteredTags = selectedTagsValue.filter((t) => t.value !== tag.value);
-              setSelectedTagsValue(filteredTags);
-            }}
-          >
-            {tag.label}
-          </Tag>
-        ))}
-      </SelectedTagsDisplaySection>
+      {!invisibleItem.includes('tags') && (
+        <SelectedTagsDisplaySection>
+          {selectedTagsValue?.map((tag) => (
+            <Tag
+              key={tag.value}
+              closable={true}
+              onClose={(e) => {
+                e.preventDefault(); // disable default closing tag movement
+                const filteredTags = selectedTagsValue.filter((t) => t.value !== tag.value);
+                setSelectedTagsValue(filteredTags);
+              }}
+            >
+              {tag.label}
+            </Tag>
+          ))}
+        </SelectedTagsDisplaySection>
+      )}
     </ProblemFilterSection>
   );
 };

@@ -32,10 +32,18 @@ import {
   GetUserProgressResponse,
   GetUserStatusResponse,
   Question,
+  Status,
 } from '../services/leetcodeServices/utils/interfaces';
-import { formatLeetechoSyntax, formatTimeStamp, parseJsonRecursively, replaceAllBase64MarkdownImgs } from '../tools';
+import {
+  formatLeetechoSyntax,
+  formatTimeStamp,
+  parseJsonRecursively,
+  replaceAllBase64MarkdownImgs,
+  replaceProblemFilterSyntax,
+} from '../tools';
 import {
   concurrencyController,
+  getAllFilteredProblem,
   getAllUserProfileSuccessQuestions,
   getQuestionAllInfoByTitleSlug,
   GetQuestionAllInfoByTitleSlugResponse,
@@ -91,6 +99,29 @@ export type UserConfig = {
     }>;
   };
   isUserRemembered: boolean; // 是否勾选'记住我'
+};
+
+export type LeetCodeProblemListType = {
+  CN:
+  | 'CODING_INTERVIEW_SPECIAL'
+  | 'CODING_INTERVIEW_2'
+  | 'PROGRAMMER_INTERVIEW_GOLDEN_6'
+  | 'LEETCODE_HOT_100'
+  | 'LEETCODE_DATABASE_70'
+  | 'LEETCODE_ALGORITHM_200'
+  | 'LEETCODE_CONTEST'
+  | 'TENCENT_50'
+  | 'LEETCODE_TOP_INTERVIEW'
+  | 'FAVORITE';
+  EN: never;
+};
+
+export type ProblemsFilterObj = {
+  list: LeetCodeProblemListType['CN'] | LeetCodeProblemListType['EN'] | '';
+  difficulty: Difficulty | '';
+  status: Status | '';
+  search: string | '';
+  tags?: string[];
 };
 
 Handlebars.registerHelper('ifCN', function (endPoint, options) {
@@ -581,19 +612,71 @@ ipcMain.handle(
             // eslint-disable-next-line max-len
             `| ${question.frontendId ?? (question.questionFrontendId || '')} | [${question.title}](problems/${
               question.titleSlug
-            }.md) | [${question.translatedTitle}](problems/${question.titleSlug}) | ![](imgs/${
-              question.difficulty
+            }.md) | [${question.translatedTitle}](problems/${question.titleSlug}) | ![](./imgs/${
+              question?.difficulty?.toLowerCase() ?? ''
             }.png) | ${formatTimeStamp(question?.lastSubmittedAt ?? 0)}`,
         )
-        .join('\n'),
+        ?.join('\n'),
     );
+
+    const [replaceProblemFilterErr, replaceProblemFilterRes] = await to(
+      replaceProblemFilterSyntax(userCover, async (filterStr: string) => {
+        const val = parseJsonRecursively(filterStr) as ProblemsFilterObj;
+
+        if (!val) {
+          return userCover;
+        }
+        const filters = {
+          difficulty: val.difficulty || ('' as Difficulty),
+          status: 'AC' as Status,
+          /** searchKeywords: problem title, frontend id or content */
+          searchKeywords: val.search || '',
+          /** tags: tags that a problem belongs to, defined as tagSlug */
+          tags: val.tags || [],
+          /** listId: problem list that a problem belongs to */
+          listId: val.list || '',
+          orderBy: 'FRONTEND_ID' as '' | 'FRONTEND_ID' | 'AC_RATE' | 'DIFFICULTY',
+          sortOrder: 'ASCENDING' as 'DESCENDING' | 'ASCENDING' | '',
+        };
+
+        const [getAllFilteredProblemsErr, getAllFilteredProblemsRes] = await to(
+          getAllFilteredProblem(apiBridge as ApiBridge, filters),
+        );
+
+        if (getAllFilteredProblemsErr) {
+          throw new Error(transformCustomErrorToMsg(getAllFilteredProblemsErr));
+        }
+
+        return (
+          getAllFilteredProblemsRes?.data?.questions
+            ?.map(
+              (question) =>
+                // eslint-disable-next-line max-len
+                `| ${question.frontendQuestionId ?? (question.frontendQuestionId || '')} | [${
+                  question.title
+                }](problems/${question.titleSlug}.md) | [${question.titleCn}](problems/${
+                  question.titleSlug
+                }) | ![](./imgs/${question?.difficulty?.toLowerCase() ?? ''}.png) | ${formatTimeStamp(
+                  questions?.find((q) => q.titleSlug === question.titleSlug)?.lastSubmittedAt ?? 0,
+                )}`,
+            )
+            ?.join('\n') || userCover
+        );
+      }),
+    );
+
+    if (replaceProblemFilterErr) {
+      throw new Error(transformCustomErrorToMsg(replaceProblemFilterErr));
+    }
+
+    userCover = replaceProblemFilterRes;
 
     userCover = replaceAllBase64MarkdownImgs(userCover, (imgTitle: string, imgSrc: string) => {
       const imgPath = `${outputPath}${path.sep}imgs${path.sep}${decodeURI(imgTitle)}.png`;
       fs.writeFile(imgPath, imgSrc, 'base64', (err) => {
         throw err;
       });
-      return `![](imgs/${decodeURI(imgTitle)}.png)`;
+      return decodeURI(`![](./imgs/${decodeURI(imgTitle)}.png)`);
     });
 
     const handleQuestion = async (q: Question) => {
@@ -607,7 +690,7 @@ ipcMain.handle(
       const { data } = res;
       const mergedData = { ...q, ...data };
       const userProblemTemp = Handlebars.compile(userProblem);
-      const problemContent = he.decode(userProblemTemp(mergedData) || '');
+      const problemContent = userProblemTemp(mergedData) || '';
       const problemContentWithoutImgs = replaceAllBase64MarkdownImgs(
         problemContent,
         (imgTitle: string, imgSrc: string) => {
@@ -615,13 +698,13 @@ ipcMain.handle(
           fs.writeFile(imgPath, imgSrc, 'base64', (err) => {
             throw err;
           });
-          return `![](problems/${decodeURI(imgTitle)}.png)`;
+          return decodeURI(`![](problems/${decodeURI(imgTitle)}.png)`);
         },
       );
       fileTools.createFilesInDirForced(path.join(outputPath, 'problems'), [
         {
           fileNameWithFileType: `${mergedData.titleSlug}.md`,
-          content: problemContentWithoutImgs,
+          content: he.decode(problemContentWithoutImgs),
         },
       ]);
     };
@@ -630,7 +713,7 @@ ipcMain.handle(
       concurrencyController({
         requestFunc: handleQuestion,
         params: questions,
-        concurrency: 3,
+        concurrency: 4,
       }),
     );
 
@@ -640,7 +723,7 @@ ipcMain.handle(
 
     const handleBarCoverTemplate = Handlebars.compile(userCover);
 
-    const coverContent = handleBarCoverTemplate(userCoverTemplateVariables);
+    const coverContent = he.decode(handleBarCoverTemplate(userCoverTemplateVariables));
 
     fileTools.createFilesInDirForced(outputPath, [
       {

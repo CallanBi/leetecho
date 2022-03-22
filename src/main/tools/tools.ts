@@ -1,3 +1,4 @@
+import to from 'await-to-js';
 import { format, toDate } from 'date-fns';
 import { isNil } from 'lodash';
 
@@ -232,6 +233,32 @@ export function replaceAllBase64MarkdownImgs(content: string, cb: (imgTitle: str
         base64Syntax: string;
       };
       copiedContent = copiedContent.replace(`![${title}](${base64Syntax}${src})`, cb(title, src));
+    }
+  }
+  return copiedContent;
+}
+
+/**
+ * Erase :problemFilter{""} syntax wrapper from the given template string and replace it by callback function.
+ * @param content string
+ * @returns string
+ */
+export async function replaceProblemFilterSyntax(
+  content: string,
+  cb: (filterStr: string) => Promise<string>,
+): Promise<string> {
+  let copiedContent = content;
+  const reg = /(?<syntax>:problemFilter{"(?<filterStr>.*?)"})/g;
+  const results = content.matchAll(reg);
+  if (results) {
+    for (const result of results) {
+      const { filterStr, syntax } = result.groups as { filterStr: string; syntax: string };
+      const [err, res] = await to(cb(filterStr));
+      if (err) {
+        throw err;
+      }
+
+      copiedContent = copiedContent.replace(syntax, res as string);
     }
   }
   return copiedContent;
