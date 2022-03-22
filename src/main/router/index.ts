@@ -61,6 +61,8 @@ import RepoDeploy from '../services/repoDeployServices/repoDeployServices';
 
 import fs from 'fs';
 
+import { win } from '../index';
+
 const isDev = process.env.NODE_ENV === 'development';
 
 export type EndPoint = 'CN' | 'US';
@@ -114,6 +116,12 @@ export type LeetCodeProblemListType = {
   | 'LEETCODE_TOP_INTERVIEW'
   | 'FAVORITE';
   EN: never;
+};
+
+export type PublishProgressInfo = {
+  percent: number;
+  message: string;
+  isError: boolean;
 };
 
 export type ProblemsFilterObj = {
@@ -461,9 +469,26 @@ ipcMain.handle(
       throw new Error(transformCustomErrorToMsg(new ErrorResp({ code: ERROR_CODE.NOT_LOGIN })));
     }
 
+    const sendProgressError = (percent: number, errorMsg: string) => {
+      win?.webContents?.send('publish-progress-info', {
+        percent: percent,
+        message: '发布失败，错误信息: ' + errorMsg,
+        isError: true,
+        isSuccess: false,
+      } as PublishProgressInfo);
+    };
+
+    win?.webContents?.send('publish-progress-info', {
+      percent: 1,
+      message: '正在获取用户信息...',
+      isError: false,
+      isSuccess: false,
+    } as PublishProgressInfo);
+
     const userConfig = parseJsonRecursively(store.get('userConfig') as UserConfig) as UserConfig;
 
     if (!userConfig) {
+      sendProgressError(1, 'user config not found');
       throw new Error(
         transformCustomErrorToMsg(new ErrorResp({ code: ERROR_CODE.NO_USER_CONFIG, message: 'user config not found' })),
       );
@@ -474,10 +499,18 @@ ipcMain.handle(
     const thisUserConfig = userConfig?.lastLoginUser;
 
     if (!thisUserConfig) {
+      sendProgressError(1, 'user config not found');
       throw new Error(
         transformCustomErrorToMsg(new ErrorResp({ code: ERROR_CODE.NO_USER_CONFIG, message: 'user config not found' })),
       );
     }
+
+    win?.webContents?.send('publish-progress-info', {
+      percent: 4,
+      message: '正在初始化发布设置...',
+      isError: false,
+      isSuccess: false,
+    } as PublishProgressInfo);
 
     const outputPath = `${app.getPath('documents')}${path.sep}Leetecho Files${path.sep}CN${path.sep}${userName}${
       path.sep
@@ -496,11 +529,26 @@ ipcMain.handle(
       },
     });
 
+    win?.webContents?.send('publish-progress-info', {
+      percent: 7,
+      message: '正在检查仓库连接...',
+      isError: false,
+      isSuccess: false,
+    } as PublishProgressInfo);
+
     const [checkRepoConnectionErr, _checkRepoConnectionRes] = await to(deployTool.checkRepoConnection());
 
     if (checkRepoConnectionErr) {
+      sendProgressError(7, transformCustomErrorToMsg(checkRepoConnectionErr));
       throw new Error(transformCustomErrorToMsg(checkRepoConnectionErr));
     }
+
+    win?.webContents?.send('publish-progress-info', {
+      percent: 14,
+      message: '正在初始化资源文件...',
+      isError: false,
+      isSuccess: false,
+    } as PublishProgressInfo);
 
     const userCoverTemplateVariables: {
       [key: string]: any;
@@ -517,14 +565,29 @@ ipcMain.handle(
       `${outputPath}${path.sep}imgs`,
     );
 
+    win?.webContents?.send('publish-progress-info', {
+      percent: 16,
+      message: '正在获取 LeetCode 用户做题进度...',
+      isError: false,
+      isSuccess: false,
+    } as PublishProgressInfo);
+
     const [getUserProgressErr, getUserProgressRes] = (await to(apiBridge.getUserProgress({ userSlug }))) as [
       null | ErrorResp,
       GetUserProgressResponse,
     ];
 
     if (getUserProgressErr) {
+      sendProgressError(16, transformCustomErrorToMsg(getUserProgressErr));
       throw new Error(transformCustomErrorToMsg(getUserProgressErr));
     }
+
+    win?.webContents?.send('publish-progress-info', {
+      percent: 20,
+      message: '正在生成进度描述...',
+      isError: false,
+      isSuccess: false,
+    } as PublishProgressInfo);
 
     const profile: {
       numSolved: number;
@@ -572,6 +635,13 @@ ipcMain.handle(
 
     userCoverTemplateVariables.updateTime = format(new Date(), 'yyyy/MM/dd H:mm');
 
+    win?.webContents?.send('publish-progress-info', {
+      percent: 25,
+      message: '正在处理模板...',
+      isError: false,
+      isSuccess: false,
+    } as PublishProgressInfo);
+
     let userCover = formatLeetechoSyntax(
       fileTools.readFile(
         `${app.getPath('documents')}${path.sep}Leetecho Files${path.sep}CN${path.sep}${userName}${
@@ -589,20 +659,36 @@ ipcMain.handle(
     );
 
     if (!userCover || !userProblem) {
+      sendProgressError(25, '模板文件不存在，请检查模板文件是否存在');
       throw new Error('Template is empty');
     }
+
+    win?.webContents?.send('publish-progress-info', {
+      percent: 29,
+      message: '正在获取已 AC 题目...',
+      isError: false,
+      isSuccess: false,
+    } as PublishProgressInfo);
 
     const [getAllUserProfileSuccessQuestionsErr, getAllUserProfileQuestionsRes] = await to(
       getAllUserProfileSuccessQuestions(apiBridge),
     );
 
     if (getAllUserProfileSuccessQuestionsErr) {
+      sendProgressError(29, transformCustomErrorToMsg(getAllUserProfileSuccessQuestionsErr));
       throw new Error(transformCustomErrorToMsg(getAllUserProfileSuccessQuestionsErr));
     }
 
     const {
       data: { questions = [] },
     } = getAllUserProfileQuestionsRes;
+
+    win?.webContents?.send('publish-progress-info', {
+      percent: 30,
+      message: '正在处理所有题目题集...',
+      isError: false,
+      isSuccess: false,
+    } as PublishProgressInfo);
 
     userCover = userCover.replace(
       ':allProblems{}',
@@ -618,6 +704,13 @@ ipcMain.handle(
         )
         ?.join('\n'),
     );
+
+    win?.webContents?.send('publish-progress-info', {
+      percent: 32,
+      message: '正在处理自定义题集...',
+      isError: false,
+      isSuccess: false,
+    } as PublishProgressInfo);
 
     const [replaceProblemFilterErr, replaceProblemFilterRes] = await to(
       replaceProblemFilterSyntax(userCover, async (filterStr: string) => {
@@ -644,6 +737,7 @@ ipcMain.handle(
         );
 
         if (getAllFilteredProblemsErr) {
+          sendProgressError(32, transformCustomErrorToMsg(getAllFilteredProblemsErr));
           throw new Error(transformCustomErrorToMsg(getAllFilteredProblemsErr));
         }
 
@@ -666,8 +760,16 @@ ipcMain.handle(
     );
 
     if (replaceProblemFilterErr) {
+      sendProgressError(32, transformCustomErrorToMsg(replaceProblemFilterErr));
       throw new Error(transformCustomErrorToMsg(replaceProblemFilterErr));
     }
+
+    win?.webContents?.send('publish-progress-info', {
+      percent: 34,
+      message: '正在处理封面图片...',
+      isError: false,
+      isSuccess: false,
+    } as PublishProgressInfo);
 
     userCover = replaceProblemFilterRes;
 
@@ -679,11 +781,28 @@ ipcMain.handle(
       return decodeURI(`![](./imgs/${decodeURI(imgTitle)}.png)`);
     });
 
-    const handleQuestion = async (q: Question) => {
+    win?.webContents?.send('publish-progress-info', {
+      percent: 36,
+      message: '图片处理成功',
+      isError: false,
+      isSuccess: false,
+    } as PublishProgressInfo);
+
+    const handleQuestion = async (q: Question, idx: number) => {
       const [err, res] = (await to(
         getQuestionAllInfoByTitleSlug({ apiBridge: apiBridge as ApiBridge, titleSlug: q.titleSlug }),
       )) as [null | ErrorResp, SuccessResp<GetQuestionAllInfoByTitleSlugResponse>];
+
+      win?.webContents?.send('publish-progress-info', {
+        percent: 37 + (idx / questions.length) * 55,
+        message: `正在渲染题目 ${q?.translatedTitle ?? q?.title ?? q?.titleSlug ?? ''} ...(${idx + 1}/${
+          questions.length
+        })`,
+        isError: false,
+      } as PublishProgressInfo);
+
       if (err) {
+        sendProgressError(37 + (idx / questions.length) * 55, transformCustomErrorToMsg(err));
         throw new Error(transformCustomErrorToMsg(err));
       }
 
@@ -713,17 +832,32 @@ ipcMain.handle(
       concurrencyController({
         requestFunc: handleQuestion,
         params: questions,
-        concurrency: 4,
+        concurrency: 3,
       }),
     );
 
     if (err) {
+      sendProgressError(37 + (questions.length / questions.length) * 55, transformCustomErrorToMsg(err));
       throw new Error(transformCustomErrorToMsg(err));
     }
+
+    win?.webContents?.send('publish-progress-info', {
+      percent: 93,
+      message: '正在处理封面模版...',
+      isError: false,
+      isSuccess: false,
+    } as PublishProgressInfo);
 
     const handleBarCoverTemplate = Handlebars.compile(userCover);
 
     const coverContent = he.decode(handleBarCoverTemplate(userCoverTemplateVariables));
+
+    win?.webContents?.send('publish-progress-info', {
+      percent: 95,
+      message: '正在写入封面...',
+      isError: false,
+      isSuccess: false,
+    } as PublishProgressInfo);
 
     fileTools.createFilesInDirForced(outputPath, [
       {
@@ -732,11 +866,26 @@ ipcMain.handle(
       },
     ]);
 
+    win?.webContents?.send('publish-progress-info', {
+      percent: 96,
+      message: '正在推送至仓库...',
+      isError: false,
+      isSuccess: false,
+    } as PublishProgressInfo);
+
     const [pushErr, _pushRes] = await to(deployTool.push());
 
     if (pushErr) {
+      sendProgressError(96, transformCustomErrorToMsg(pushErr));
       throw new Error(transformCustomErrorToMsg(pushErr));
     }
+
+    win?.webContents?.send('publish-progress-info', {
+      percent: 100,
+      message: '发布成功 😆 ',
+      isError: false,
+      isSuccess: true,
+    } as PublishProgressInfo);
 
     return {
       code: ERROR_CODE.OK,

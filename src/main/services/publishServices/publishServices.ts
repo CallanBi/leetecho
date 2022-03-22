@@ -40,7 +40,7 @@ export async function sleep<T, U>(fn: (par: T) => Promise<U>, par: T, sleepTime?
 }
 
 export async function concurrencyController<T, U>(args: {
-  requestFunc: (params: T) => Promise<U>;
+  requestFunc: (params: T, idx: number) => Promise<U>;
   params: T[];
   concurrency: number;
 }): Promise<U[]> {
@@ -48,10 +48,11 @@ export async function concurrencyController<T, U>(args: {
   const requestWindow: T[] = [];
   const results: U[] = [];
 
-  for (let i = 0; i < params.length; i++) {
+  let i = 0;
+  for (; i < params.length; i++) {
     requestWindow.push(params[i]);
     if (requestWindow.length === concurrency) {
-      const requestPromises = requestWindow.map((param) => requestFunc(param));
+      const requestPromises = requestWindow.map((param) => requestFunc(param, i));
       const [err, responses] = await to(Promise.all(requestPromises));
       if (err) {
         throw err;
@@ -62,7 +63,9 @@ export async function concurrencyController<T, U>(args: {
       continue;
     }
   }
-  const finalRequestPromises = requestWindow.map((param) => requestFunc(param));
+
+  const finalRequestPromises = requestWindow.map((param) => requestFunc(param, i));
+
   const [finalErr, res] = await to(Promise.all(finalRequestPromises));
   if (finalErr) {
     throw finalErr;

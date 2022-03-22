@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
-import { Button, message } from 'antd';
+import { Button, message, Modal, Progress } from 'antd';
 import { IconGithubLogo, IconGlobeStroke, IconLanguage, IconLink, IconSetting, IconUpload } from '@douyinfe/semi-icons';
 import { withSemiIconStyle } from '@/style';
 import { AppStoreContext } from '@/store/appStore/appStore';
@@ -10,6 +10,7 @@ import { useQuery } from 'react-query';
 import store, { User, UserConfig } from '@/storage/electronStore';
 import { COLOR_PALETTE } from 'src/const/theme/color';
 import { useCheckRepoConnection } from '@/rendererApi/user';
+import { css } from '@emotion/react';
 
 const { useRef, useState, useEffect, useMemo } = React;
 
@@ -50,6 +51,15 @@ const publishButtonStyle: React.CSSProperties = {
 const publishButtonIconStyle: React.CSSProperties = {
   marginRight: 10,
   top: 4,
+};
+
+type ProgressInfo = { percent: number; message: string; isSuccess: boolean; isError: boolean };
+
+const progressInfo: ProgressInfo = {
+  percent: 0,
+  message: '',
+  isSuccess: false,
+  isError: false,
 };
 
 interface NavFooterProps {}
@@ -150,6 +160,40 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
   );
 
   const [publishLoading, setPublishLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const [publishProgressInfo, setPublishProgressInfo] = useState<{
+    percent: number;
+    message: string;
+    isError?: boolean;
+    isSuccess?: boolean;
+  }>({
+    percent: progressInfo.percent,
+    message: progressInfo.message || '正在发布...',
+    isError: progressInfo.isError,
+    isSuccess: progressInfo.isSuccess,
+  });
+
+  useEffect(() => {
+    const progressListener = (event, params: ProgressInfo) => {
+      console.log('%c progressInfo >>>', 'background: yellow; color: blue', progressInfo);
+      if (
+        publishProgressInfo.isError !== params.isError ||
+        publishProgressInfo.isSuccess !== params.isSuccess ||
+        publishProgressInfo.percent !== params.percent ||
+        publishProgressInfo.message !== params.message
+      ) {
+        setPublishProgressInfo({
+          ...params,
+        });
+      }
+    };
+
+    ipcRenderer.on('publish-progress-info', progressListener);
+    return () => {
+      ipcRenderer.removeListener('publish-progress-info', progressListener);
+    };
+  }, []);
 
   return (
     <Footer>
@@ -181,7 +225,7 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
               message.error('未找到用户名，请稍后再试');
               return;
             }
-
+            setModalVisible(true);
             setPublishLoading(true);
             const [err, res] = await to(
               ipcRenderer.invoke('publish', {
@@ -207,6 +251,64 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
           发布
         </Button>
       </PublishButtonSection>
+      <Modal
+        style={{ borderRadius: 12, top: 60, minWidth: 660, height: 48 }}
+        title={null}
+        visible={modalVisible}
+        footer={null}
+        mask={false}
+        maskClosable={false}
+        closable={publishProgressInfo.isSuccess || publishProgressInfo.isError}
+        onCancel={() => {
+          setModalVisible(false);
+        }}
+        zIndex={9999}
+      >
+        <>
+          <section
+            css={css`
+              display: flex;
+              justify-content: center;
+            `}
+          >
+            {publishProgressInfo?.message ?? '正在发布...'}
+          </section>
+          <section
+            css={css`
+              margin-left: 12px;
+              margin-right: 12px;
+              padding-left: 12px;
+              padding-right: 12px;
+            `}
+          >
+            <Progress
+              // strokeColor={{
+              //   from: COLOR_PALETTE.LEETECHO_LIGHT_BLUE,
+              //   to: COLOR_PALETTE.LEETECHO_BLUE,
+              // }}
+              // trailColor={COLOR_PALETTE.LEETECHO_GREY}
+              success={{
+                strokeColor: COLOR_PALETTE.LEETECHO_GREEN,
+              }}
+              percent={publishProgressInfo.isSuccess ? 100 : publishProgressInfo.percent}
+              status={publishProgressInfo.isError ? 'exception' : publishProgressInfo.isSuccess ? 'success' : 'active'}
+              format={(percent) => `${percent?.toFixed(2)}%`}
+            />
+          </section>
+        </>
+      </Modal>
+      {/* <>
+        <section>{publishProgressInfo?.message ?? '正在发布...'}</section>
+        <Progress
+          type="circle"
+          strokeColor={{
+            '0%': COLOR_PALETTE.LEETECHO_LIGHT_BLUE,
+            '100%': COLOR_PALETTE.LEETECHO_BLUE,
+          }}
+          percent={publishProgressInfo.percent}
+          status={publishProgressInfo.isError ? 'exception' : publishProgressInfo.isSuccess ? 'success' : 'active'}
+        />
+      </> */}
       <FooterToolSection>
         <Button type="link" icon={<IconSetting />} />
         <Button type="link" icon={<IconGlobeStroke />} />

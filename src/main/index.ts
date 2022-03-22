@@ -174,3 +174,5 @@ app.on('quit', () => {
   win = null;
   ipcMain.removeAllListeners();
 });
+
+export { win };
