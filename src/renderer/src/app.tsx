@@ -124,6 +124,9 @@ const App: React.FC<Record<string, never>> = () => {
         </div>
       )}
       {!isLogin && <Login />}
+      <div
+        id="footerModalContainer"
+      ></div>
     </section>
   );
 };

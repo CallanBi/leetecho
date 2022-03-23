@@ -64,31 +64,38 @@ const TrafficLight: React.FC<TrafficLightProps> = (props: TrafficLightProps) => 
   const initMaximizedVal = winStatus === 'maximized';
   const [isMaximized, setIsMaximized] = useState<boolean>(initMaximizedVal);
 
-  ipcRenderer.on('set-win-status', (_, params: SetWinStatusResp) => {
-    const { isSuccessful, winStatus = '' } = params;
-    if (!isSuccessful) {
-      return;
-    }
-    if (winStatus !== 'maximized') {
-      setIsMaximized(false);
-      return;
-    }
-    if (!isMaximized) {
-      setIsMaximized(true);
-    }
-  });
+  useEffect(() => {
+    ipcRenderer.on('set-win-status', (_, params: SetWinStatusResp) => {
+      const { isSuccessful, winStatus = '' } = params;
+      if (!isSuccessful) {
+        return;
+      }
+      if (winStatus !== 'maximized') {
+        setIsMaximized(false);
+        return;
+      }
+      if (!isMaximized) {
+        setIsMaximized(true);
+      }
+    });
 
-  ipcRenderer.on('maximized', () => {
-    if (!isMaximized) {
-      setIsMaximized(true);
-    }
-  });
+    ipcRenderer.on('maximized', () => {
+      if (!isMaximized) {
+        setIsMaximized(true);
+      }
+    });
 
-  ipcRenderer.on('windowed', () => {
-    if (isMaximized) {
-      setIsMaximized(false);
-    }
-  });
+    ipcRenderer.on('windowed', () => {
+      if (isMaximized) {
+        setIsMaximized(false);
+      }
+    });
+    return () => {
+      ipcRenderer.removeAllListeners('set-win-status');
+      ipcRenderer.removeAllListeners('maximized');
+      ipcRenderer.removeAllListeners('windowed');
+    };
+  }, []);
 
   const maximizeWin = () => {
     ipcRenderer.send('set-win-status', 'maximized' as SetWinStatusReq);

@@ -41,6 +41,31 @@ const globalStyles = css`
     }
   }
 
+  #footerModalContainer {
+    .ant-modal-wrap {
+      border-radius: 12px;
+      top: 40px;
+      width: 681px;
+      margin: 0 auto;
+      height: 129px;
+      overflow: hidden;
+    }
+    .ant-modal-mask {
+      display: none;
+      overflow: hidden;
+    }
+    .ant-modal-content {
+      border-radius: 12px;
+      overflow: hidden;
+      background-color: ${COLOR_PALETTE.LEETECHO_WHITE};
+      box-shadow: 0px 2px 12px 0px rgb(0 0 0 /10%), 0 1px 0px 0 rgb(0 0 0 / 8%), 0 10px 25px 2px rgb(0 0 0 / 5%);
+
+      .ant-modal-body {
+        margin-right: 26px;
+      }
+    }
+  }
+
   /* table {
     border-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
   }

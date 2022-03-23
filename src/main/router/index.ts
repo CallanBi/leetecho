@@ -506,7 +506,7 @@ ipcMain.handle(
     }
 
     win?.webContents?.send('publish-progress-info', {
-      percent: 4,
+      percent: 2,
       message: '正在初始化发布设置...',
       isError: false,
       isSuccess: false,
@@ -530,7 +530,7 @@ ipcMain.handle(
     });
 
     win?.webContents?.send('publish-progress-info', {
-      percent: 7,
+      percent: 3,
       message: '正在检查仓库连接...',
       isError: false,
       isSuccess: false,
@@ -539,12 +539,12 @@ ipcMain.handle(
     const [checkRepoConnectionErr, _checkRepoConnectionRes] = await to(deployTool.checkRepoConnection());
 
     if (checkRepoConnectionErr) {
-      sendProgressError(7, transformCustomErrorToMsg(checkRepoConnectionErr));
+      sendProgressError(3, transformCustomErrorToMsg(checkRepoConnectionErr));
       throw new Error(transformCustomErrorToMsg(checkRepoConnectionErr));
     }
 
     win?.webContents?.send('publish-progress-info', {
-      percent: 14,
+      percent: 4,
       message: '正在初始化资源文件...',
       isError: false,
       isSuccess: false,
@@ -566,7 +566,7 @@ ipcMain.handle(
     );
 
     win?.webContents?.send('publish-progress-info', {
-      percent: 16,
+      percent: 5,
       message: '正在获取 LeetCode 用户做题进度...',
       isError: false,
       isSuccess: false,
@@ -578,12 +578,12 @@ ipcMain.handle(
     ];
 
     if (getUserProgressErr) {
-      sendProgressError(16, transformCustomErrorToMsg(getUserProgressErr));
+      sendProgressError(5, transformCustomErrorToMsg(getUserProgressErr));
       throw new Error(transformCustomErrorToMsg(getUserProgressErr));
     }
 
     win?.webContents?.send('publish-progress-info', {
-      percent: 20,
+      percent: 6,
       message: '正在生成进度描述...',
       isError: false,
       isSuccess: false,
@@ -636,7 +636,7 @@ ipcMain.handle(
     userCoverTemplateVariables.updateTime = format(new Date(), 'yyyy/MM/dd H:mm');
 
     win?.webContents?.send('publish-progress-info', {
-      percent: 25,
+      percent: 7,
       message: '正在处理模板...',
       isError: false,
       isSuccess: false,
@@ -659,12 +659,12 @@ ipcMain.handle(
     );
 
     if (!userCover || !userProblem) {
-      sendProgressError(25, '模板文件不存在，请检查模板文件是否存在');
+      sendProgressError(8, '模板文件不存在，请检查模板文件是否存在');
       throw new Error('Template is empty');
     }
 
     win?.webContents?.send('publish-progress-info', {
-      percent: 29,
+      percent: 9,
       message: '正在获取已 AC 题目...',
       isError: false,
       isSuccess: false,
@@ -675,7 +675,7 @@ ipcMain.handle(
     );
 
     if (getAllUserProfileSuccessQuestionsErr) {
-      sendProgressError(29, transformCustomErrorToMsg(getAllUserProfileSuccessQuestionsErr));
+      sendProgressError(10, transformCustomErrorToMsg(getAllUserProfileSuccessQuestionsErr));
       throw new Error(transformCustomErrorToMsg(getAllUserProfileSuccessQuestionsErr));
     }
 
@@ -684,7 +684,7 @@ ipcMain.handle(
     } = getAllUserProfileQuestionsRes;
 
     win?.webContents?.send('publish-progress-info', {
-      percent: 30,
+      percent: 11,
       message: '正在处理所有题目题集...',
       isError: false,
       isSuccess: false,
@@ -706,7 +706,7 @@ ipcMain.handle(
     );
 
     win?.webContents?.send('publish-progress-info', {
-      percent: 32,
+      percent: 12,
       message: '正在处理自定义题集...',
       isError: false,
       isSuccess: false,
@@ -737,7 +737,7 @@ ipcMain.handle(
         );
 
         if (getAllFilteredProblemsErr) {
-          sendProgressError(32, transformCustomErrorToMsg(getAllFilteredProblemsErr));
+          sendProgressError(13, transformCustomErrorToMsg(getAllFilteredProblemsErr));
           throw new Error(transformCustomErrorToMsg(getAllFilteredProblemsErr));
         }
 
@@ -760,12 +760,12 @@ ipcMain.handle(
     );
 
     if (replaceProblemFilterErr) {
-      sendProgressError(32, transformCustomErrorToMsg(replaceProblemFilterErr));
+      sendProgressError(13, transformCustomErrorToMsg(replaceProblemFilterErr));
       throw new Error(transformCustomErrorToMsg(replaceProblemFilterErr));
     }
 
     win?.webContents?.send('publish-progress-info', {
-      percent: 34,
+      percent: 14,
       message: '正在处理封面图片...',
       isError: false,
       isSuccess: false,
@@ -782,7 +782,7 @@ ipcMain.handle(
     });
 
     win?.webContents?.send('publish-progress-info', {
-      percent: 36,
+      percent: 15,
       message: '图片处理成功',
       isError: false,
       isSuccess: false,
@@ -794,15 +794,15 @@ ipcMain.handle(
       )) as [null | ErrorResp, SuccessResp<GetQuestionAllInfoByTitleSlugResponse>];
 
       win?.webContents?.send('publish-progress-info', {
-        percent: 37 + (idx / questions.length) * 55,
-        message: `正在渲染题目 ${q?.translatedTitle ?? q?.title ?? q?.titleSlug ?? ''} ...(${idx + 1}/${
+        percent: 15 + (idx / questions.length) * 77,
+        message: `正在渲染题目 ${q?.translatedTitle ?? q?.title ?? q?.titleSlug ?? ''} ... (${idx + 1} / ${
           questions.length
         })`,
         isError: false,
       } as PublishProgressInfo);
 
       if (err) {
-        sendProgressError(37 + (idx / questions.length) * 55, transformCustomErrorToMsg(err));
+        sendProgressError(15 + (idx / questions.length) * 77, transformCustomErrorToMsg(err));
         throw new Error(transformCustomErrorToMsg(err));
       }
 
@@ -837,7 +837,6 @@ ipcMain.handle(
     );
 
     if (err) {
-      sendProgressError(37 + (questions.length / questions.length) * 55, transformCustomErrorToMsg(err));
       throw new Error(transformCustomErrorToMsg(err));
     }
 
@@ -882,7 +881,7 @@ ipcMain.handle(
 
     win?.webContents?.send('publish-progress-info', {
       percent: 100,
-      message: '发布成功 😆 ',
+      message: '🎉 发布成功 🥰  ',
       isError: false,
       isSuccess: true,
     } as PublishProgressInfo);

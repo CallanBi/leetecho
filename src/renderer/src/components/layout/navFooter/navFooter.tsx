@@ -195,6 +195,11 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
     };
   }, []);
 
+  const getModalContainer = () => {
+    const modalContainer = document.getElementById('footerModalContainer');
+    return modalContainer || document.body;
+  };
+
   return (
     <Footer>
       <PublishButtonSection>
@@ -221,6 +226,12 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
           icon={<IconUpload style={withSemiIconStyle(publishButtonIconStyle)} />}
           loading={publishLoading}
           onClick={async () => {
+            setPublishProgressInfo({
+              percent: 0,
+              message: '正在发布...',
+              isError: false,
+              isSuccess: false,
+            });
             if (!usrSlug) {
               message.error('未找到用户名，请稍后再试');
               return;
@@ -240,19 +251,15 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
             );
             setPublishLoading(false);
             if (err) {
-              message.error(
-                err?.message ? `发布失败, 错误信息: ${err?.message ?? getErrorCodeMessage()}` : '发布失败, 未知错误',
-              );
-              return;
+              /** noop */
             }
-            message.success('🥰 发布成功～');
           }}
         >
           发布
         </Button>
       </PublishButtonSection>
       <Modal
-        style={{ borderRadius: 12, top: 60, minWidth: 660, height: 48 }}
+        style={{ borderRadius: 12, top: 12, minWidth: 660, height: 48 }}
         title={null}
         visible={modalVisible}
         footer={null}
@@ -262,7 +269,11 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
         onCancel={() => {
           setModalVisible(false);
         }}
+        maskTransitionName=""
+        /** transitionName: https://github.com/ant-design/ant-design/issues/16435 */
+        transitionName="ant-move-up"
         zIndex={9999}
+        getContainer={getModalContainer}
       >
         <>
           <section
@@ -282,11 +293,7 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
             `}
           >
             <Progress
-              // strokeColor={{
-              //   from: COLOR_PALETTE.LEETECHO_LIGHT_BLUE,
-              //   to: COLOR_PALETTE.LEETECHO_BLUE,
-              // }}
-              // trailColor={COLOR_PALETTE.LEETECHO_GREY}
+              trailColor={COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}
               success={{
                 strokeColor: COLOR_PALETTE.LEETECHO_GREEN,
               }}
@@ -297,18 +304,6 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
           </section>
         </>
       </Modal>
-      {/* <>
-        <section>{publishProgressInfo?.message ?? '正在发布...'}</section>
-        <Progress
-          type="circle"
-          strokeColor={{
-            '0%': COLOR_PALETTE.LEETECHO_LIGHT_BLUE,
-            '100%': COLOR_PALETTE.LEETECHO_BLUE,
-          }}
-          percent={publishProgressInfo.percent}
-          status={publishProgressInfo.isError ? 'exception' : publishProgressInfo.isSuccess ? 'success' : 'active'}
-        />
-      </> */}
       <FooterToolSection>
         <Button type="link" icon={<IconSetting />} />
         <Button type="link" icon={<IconGlobeStroke />} />
