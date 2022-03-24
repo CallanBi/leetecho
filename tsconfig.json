@@ -1,6 +1,7 @@
 {
   "extends": "./paths.json",
   "compilerOptions": {
+    "experimentalDecorators": true, // enable decorator
     "target": "ESNext",
     "module": "ESNext",
     "allowJs": true,
@@ -10,6 +11,14 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "strict": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "jsxImportSource": "@emotion/react",
+    "noErrorTruncation": true,
+    "include": [
+      "types/**/*.d.ts",
+      "src/main/router/**/*.d.ts",
+      "src/main/idl/**/*.d.ts",
+      "src/main/middleware/**/*.d.ts"
+    ]
   }
 }

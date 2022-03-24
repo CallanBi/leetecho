@@ -1,25 +1,47 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import App from './App'
-import 'antd/dist/antd.css'
-import './samples/electron-store'
-import './index.css'
+import * as React from 'react';
+import ReactDOM from 'react-dom';
+import 'antd/dist/antd.css';
+import './storage/electronStore';
+import './index.less';
+import 'material-design-icons-iconfont/dist/material-design-icons.css';
+
+import { HashRouter } from 'react-router-dom';
+import { Global } from '@emotion/react';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import globalStyles from './style';
+import AppStoreProvider from './store/appStore';
+import App from './app';
+import { defaultOptions } from './const/reactQuery/reactQuerySettings';
+import { ConfigProvider, message } from 'antd';
+
+import Empty from './components/illustration/empty';
+import { globalMessageConfig } from './const/layout';
+
+
+message.config(globalMessageConfig);
+
+const {
+  bridge: { removeLoading },
+} = window;
+
+const queryClient = new QueryClient({
+  defaultOptions,
+});
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <QueryClientProvider client={queryClient}>
+    <AppStoreProvider>
+      <Global styles={globalStyles} />
+      <HashRouter>
+        <ConfigProvider renderEmpty={() => <Empty />}>
+          <App />
+        </ConfigProvider>
+      </HashRouter>
+    </AppStoreProvider>
+    ,
+  </QueryClientProvider>,
   document.getElementById('root'),
   () => {
-    window.bridge.removeLoading()
+    removeLoading();
   },
-)
-
-// -----------------------------------------------------------
-
-console.log('contextBridge ->', window.bridge)
-
-// Use ipcRenderer.on
-window.bridge.ipcRenderer.on('main-process-message', (_event, ...args) => {
-  console.log('[Receive Main-process message]:', ...args)
-})
+);
