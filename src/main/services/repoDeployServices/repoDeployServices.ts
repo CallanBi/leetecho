@@ -70,6 +70,7 @@ export default class RepoDeploy {
   async checkRepoConnection() {
     let isRepo = false;
     const [err, _currentBranch] = await to(git.currentBranch({ fs, dir: this.outputDir }));
+
     if (!err) {
       isRepo = true;
     }
@@ -82,22 +83,29 @@ export default class RepoDeploy {
     }
 
     if (!isRepo) {
-      await git.init({ fs, dir: this.outputDir });
-      await git.setConfig({
-        fs,
-        dir: this.outputDir,
-        path: 'user.name',
-        value: this.settings.userName,
-      });
-      await git.setConfig({
-        fs,
-        dir: this.outputDir,
-        path: 'user.email',
-        value: this.settings.email,
-      });
+      try {
+        await git.init({ fs, dir: this.outputDir });
+        await git.setConfig({
+          fs,
+          dir: this.outputDir,
+          path: 'user.name',
+          value: this.settings.userName,
+        });
+        await git.setConfig({
+          fs,
+          dir: this.outputDir,
+          path: 'user.email',
+          value: this.settings.email,
+        });
+      } catch (e) {
+        throw new ErrorResp({
+          code: ERROR_CODE.REPO_INIT_ERROR,
+          message: (e as Error)?.message ? `Repo init error: ${(e as Error)?.message || ''}` : 'Repo init error',
+        });
+      }
     }
 
-    await to(
+    const [addRemoteError, _addRemoteRes] = await to(
       git.addRemote({
         fs,
         dir: this.outputDir,
@@ -106,6 +114,12 @@ export default class RepoDeploy {
         force: true,
       }),
     );
+    if (addRemoteError) {
+      throw new ErrorResp({
+        code: ERROR_CODE.REPO_CONNECTION_ERROR,
+        message: 'Repo connection error, unable to add remote repo',
+      });
+    }
     const [getRemoteInfoErr, info] = await to(
       git.getRemoteInfo({
         http,

@@ -57,26 +57,30 @@ const RemoteSettings: React.FC<RemoteSettingsProps> = (props: RemoteSettingsProp
         },
       });
 
+  const onCheckSuccess = () => {
+    message.success('🎉 连接成功，去发布吧~');
+    setCheckRepoConnectionQuery({
+      ...checkRepoConnectionQuery,
+      enableRequest: false,
+    });
+  };
+
+  const onCheckError = (error: Error) => {
+    message.error(error.message ? `仓库链接检测失败, 错误信息：${error.message}` : '仓库链接检测失败');
+    setCheckRepoConnectionQuery({
+      ...checkRepoConnectionQuery,
+      enableRequest: false,
+    });
+  };
+
   const [checkRepoConnectionQuery, setCheckRepoConnectionQuery] = useState<{
     enableRequest: boolean;
     onSuccess: (value: SuccessResp<Record<string, never>>) => void;
     onError: (error: Error) => void;
   }>({
         enableRequest: false,
-        onSuccess: () => {
-          message.success('🎉 连接成功，去发布吧~');
-          setCheckRepoConnectionQuery({
-            ...checkRepoConnectionQuery,
-            enableRequest: false,
-          });
-        },
-        onError: (error) => {
-          message.error(error.message ? `仓库链接检测失败, 错误信息：${error.message}` : '仓库链接检测失败');
-          setCheckRepoConnectionQuery({
-            ...checkRepoConnectionQuery,
-            enableRequest: false,
-          });
-        },
+        onSuccess: onCheckSuccess,
+        onError: onCheckError,
       });
 
   const {
@@ -105,7 +109,9 @@ const RemoteSettings: React.FC<RemoteSettingsProps> = (props: RemoteSettingsProp
     [userConfig, endPoint, appState.userState.usrName],
   ) as User;
 
-  const { isLoading: isCheckRepoConnectionLoading } = useCheckRepoConnection(
+  const { enableRequest, onSuccess, onError } = checkRepoConnectionQuery;
+
+  const { isLoading: isCheckRepoConnectionLoading, isFetching: isCheckRepoConnectionFetching } = useCheckRepoConnection(
     {
       repoName: thisUser?.appSettings?.repoName || '',
       branch: thisUser?.appSettings?.branch || '',
@@ -114,9 +120,9 @@ const RemoteSettings: React.FC<RemoteSettingsProps> = (props: RemoteSettingsProp
       token: thisUser?.appSettings?.token || '',
     },
     {
-      enabled: checkRepoConnectionQuery?.enableRequest,
-      onSuccess: checkRepoConnectionQuery?.onSuccess,
-      onError: checkRepoConnectionQuery?.onError,
+      enabled: enableRequest,
+      onSuccess: onSuccess,
+      onError: onError,
       cacheTime: 0,
     },
   );
@@ -250,7 +256,7 @@ const RemoteSettings: React.FC<RemoteSettingsProps> = (props: RemoteSettingsProp
             style={{
               marginRight: 12,
             }}
-            loading={isCheckRepoConnectionLoading}
+            loading={isCheckRepoConnectionLoading || isCheckRepoConnectionFetching}
             onClick={() => {
               setCheckRepoConnectionQuery({
                 ...checkRepoConnectionQuery,

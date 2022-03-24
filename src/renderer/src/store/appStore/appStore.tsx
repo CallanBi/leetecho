@@ -1,9 +1,13 @@
+import { FormattedTagItem } from '@/components/tagSelector/tagSelector';
+import { SorterResult } from 'antd/lib/table/interface';
 import * as React from 'react';
+import { ProblemsFilterObj } from 'src/main/router';
+import { ProblemItemFromGraphQL } from 'src/main/services/leetcodeServices/utils/interfaces';
 import withStoreProvider from '../withStoreProvider';
 
 export type AppState = {
   uiStatus: {
-    /** 侧边导航条是否折叠，目前禁用折叠，默认展开 */
+    /** Now isNavCollapsed is unused  */
     isNavCollapsed?: boolean;
     isNavShown: boolean;
   };
@@ -18,6 +22,16 @@ export type AppState = {
     endPoint?: 'CN' | 'US';
     /** user avatar link */
     avatar?: string;
+  };
+  problemFilterState?: {
+    pageStatus?: {
+      pageSize?: number;
+      current?: number;
+    };
+    sorterStatus?: SorterResult<ProblemItemFromGraphQL>;
+    filterStatus?: Omit<ProblemsFilterObj, 'tags'> & {
+      tags: FormattedTagItem[];
+    };
   };
 };
 
@@ -34,6 +48,23 @@ export const initState: AppState = {
     endPoint: 'CN',
     avatar: '',
   },
+  problemFilterState: {
+    pageStatus: {
+      pageSize: 10,
+      current: 1,
+    },
+    filterStatus: {
+      list: '',
+      difficulty: '',
+      status: '',
+      search: '',
+    },
+    sorterStatus: {
+      columnKey: '',
+      order: '' as 'ascend' | 'descend',
+      field: '',
+    },
+  },
 };
 
 export type AppActionType = 'change-ui-status';
@@ -48,6 +79,12 @@ export type AppAction =
   | {
     appActionType: 'change-user-status';
     payload: Partial<AppState['userState']>;
+    /** isReplacement: decide whether to replace or merge original data, false as default */
+    isReplacement?: boolean;
+  }
+  | {
+    appActionType: 'change-problem-filter-status';
+    payload: Partial<AppState['problemFilterState']>;
     /** isReplacement: decide whether to replace or merge original data, false as default */
     isReplacement?: boolean;
   };
@@ -77,6 +114,12 @@ export const reducer: React.Reducer<AppState, AppAction> = (state, appAction) =>
         return { ...state, uiStatus: appAction.payload };
       }
       return { ...state, userState: { ...state.userState, ...appAction.payload } };
+
+    case 'change-problem-filter-status':
+      if (appAction.isReplacement) {
+        return { ...state, problemFilterState: appAction.payload };
+      }
+      return { ...state, problemFilterState: { ...state.problemFilterState, ...appAction.payload } };
 
     default:
       return state;

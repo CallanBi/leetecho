@@ -1,3 +1,4 @@
+import to from 'await-to-js';
 import { format, toDate } from 'date-fns';
 import { isNil } from 'lodash';
 
@@ -188,4 +189,77 @@ export function formatLeetechoSyntax(templ: string): string {
     }
   }
   return copiedTempl;
+}
+
+/**
+ * find all base64 img match groups in the given template string
+ * @param content string
+ * @returns param: { imgTitle: string; imgSrc: string; }[] | undefined
+ */
+export function findAllBase64MarkdownImgs(content: string) {
+  const reg = /!\[(?<imgTitle>.*?)\]\((data:image\/png;base64,)(?<imgSrc>.*?)\)/g;
+  const results = content.matchAll(reg);
+  if (results) {
+    return Array.from(results).map(
+      (result) =>
+        result.groups as {
+          imgTitle: string;
+          imgSrc: string;
+        },
+    );
+  }
+}
+
+/**
+ * replace all base64 img syntax in the given template string with the given replacement callback function
+ * @param content string
+ * @param imgTitle string
+ * @param replaceSrc string
+ * @returns
+ */
+export function replaceAllBase64MarkdownImgs(content: string, cb: (imgTitle: string, imgSrc: string) => string) {
+  let copiedContent = content;
+  const reg = /!\[(?<imgTitle>.*?)\]\((?<base64Syntax>data:image\/png;base64,)(?<imgSrc>.*?)\)/g;
+  const results = content.matchAll(reg);
+  if (results) {
+    for (const result of results) {
+      const {
+        imgTitle: title,
+        imgSrc: src,
+        base64Syntax,
+      } = result.groups as {
+        imgTitle: string;
+        imgSrc: string;
+        base64Syntax: string;
+      };
+      copiedContent = copiedContent.replace(`![${title}](${base64Syntax}${src})`, cb(title, src));
+    }
+  }
+  return copiedContent;
+}
+
+/**
+ * Erase :problemFilter{""} syntax wrapper from the given template string and replace it by callback function.
+ * @param content string
+ * @returns string
+ */
+export async function replaceProblemFilterSyntax(
+  content: string,
+  cb: (filterStr: string) => Promise<string>,
+): Promise<string> {
+  let copiedContent = content;
+  const reg = /(?<syntax>:problemFilter{"(?<filterStr>.*?)"})/g;
+  const results = content.matchAll(reg);
+  if (results) {
+    for (const result of results) {
+      const { filterStr, syntax } = result.groups as { filterStr: string; syntax: string };
+      const [err, res] = await to(cb(filterStr));
+      if (err) {
+        throw err;
+      }
+
+      copiedContent = copiedContent.replace(syntax, res as string);
+    }
+  }
+  return copiedContent;
 }

@@ -15,6 +15,7 @@ declare global {
       isNotProduction: boolean;
       // app: typeof import('electron').app;
       platform: typeof process.platform;
+      openExternal: (url: string) => string;
     };
   }
 }

@@ -7,6 +7,7 @@ import { ErrorResp, SuccessResp } from '../../middleware/apiBridge/base';
 import ERROR_CODE, { getErrorCodeMessage } from '../../router/errorCode';
 import {
   GetNotesByQuestionIdResponse,
+  GetProblemsFromGraphQLResponse,
   GetQuestionDetailByTitleSlugResponse,
   GetSubmissionDetailByIdResponse,
   GetSubmissionsByQuestionSlugResponse,
@@ -18,6 +19,7 @@ import {
 } from '../leetcodeServices/utils/interfaces';
 
 import { format, toDate } from 'date-fns';
+import { GetProblemsRequest } from 'src/main/idl/problems';
 
 export async function sleep<T, U>(fn: (par: T) => Promise<U>, par: T, sleepTime?: number) {
   const promise = new Promise<U>(async (resolve, reject) => {
@@ -38,7 +40,7 @@ export async function sleep<T, U>(fn: (par: T) => Promise<U>, par: T, sleepTime?
 }
 
 export async function concurrencyController<T, U>(args: {
-  requestFunc: (params: T) => Promise<U>;
+  requestFunc: (params: T, idx: number) => Promise<U>;
   params: T[];
   concurrency: number;
 }): Promise<U[]> {
@@ -46,10 +48,11 @@ export async function concurrencyController<T, U>(args: {
   const requestWindow: T[] = [];
   const results: U[] = [];
 
-  for (let i = 0; i < params.length; i++) {
+  let i = 0;
+  for (; i < params.length; i++) {
     requestWindow.push(params[i]);
     if (requestWindow.length === concurrency) {
-      const requestPromises = requestWindow.map((param) => requestFunc(param));
+      const requestPromises = requestWindow.map((param) => requestFunc(param, i));
       const [err, responses] = await to(Promise.all(requestPromises));
       if (err) {
         throw err;
@@ -60,7 +63,9 @@ export async function concurrencyController<T, U>(args: {
       continue;
     }
   }
-  const finalRequestPromises = requestWindow.map((param) => requestFunc(param));
+
+  const finalRequestPromises = requestWindow.map((param) => requestFunc(param, i));
+
   const [finalErr, res] = await to(Promise.all(finalRequestPromises));
   if (finalErr) {
     throw finalErr;
@@ -230,3 +235,71 @@ export const getQuestionAllInfoByTitleSlug = async (params: { apiBridge: ApiBrid
     },
   } as SuccessResp<GetQuestionAllInfoByTitleSlugResponse>;
 };
+
+export async function getAllFilteredProblem(apiBridge: ApiBridge, params: GetProblemsRequest['filters']) {
+  const limit = 100;
+
+  const req = {
+    limit,
+    skip: 0,
+    filters: params,
+  } as GetProblemsRequest;
+
+  const requestOnce = async ({
+    realOffset,
+  }: {
+    realOffset: number;
+  }): Promise<GetProblemsFromGraphQLResponse['problemsetQuestionList']> => {
+    const [err, response] = await to(apiBridge.getProblems({ ...req, skip: realOffset }));
+
+    if (err) {
+      throw new ErrorResp({
+        code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: err.message || getErrorCodeMessage(),
+      });
+    }
+
+    return response;
+  };
+
+  const questions: GetProblemsFromGraphQLResponse['problemsetQuestionList']['questions'] = [];
+
+  let curOffset = 0;
+
+  let [err, res] = await to(requestOnce({ realOffset: curOffset }));
+
+  if (err) {
+    throw new ErrorResp({
+      code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+      message: err.message || getErrorCodeMessage(),
+    });
+  }
+
+  while (res?.hasMore) {
+    const { questions: pagedQuestions = [] } = res;
+    questions.push(...pagedQuestions);
+    curOffset += limit;
+    [err, res] = await to(requestOnce({ realOffset: curOffset }));
+    if (err) {
+      throw new ErrorResp({
+        code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: err.message || getErrorCodeMessage(),
+      });
+    }
+  }
+
+  questions.push(...(res?.questions ?? []));
+
+  if (err) {
+    throw err;
+  }
+
+  return {
+    code: ERROR_CODE.OK,
+    data: {
+      hasMore: res?.hasMore ?? false,
+      total: res?.total ?? 0,
+      questions,
+    },
+  } as SuccessResp<GetProblemsFromGraphQLResponse['problemsetQuestionList']>;
+}

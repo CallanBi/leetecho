@@ -14,6 +14,7 @@ interface MarkdownEditorProps {
   isReadOnly?: boolean;
   value?: string;
   onChange?: (value: string) => void;
+  type?: 'normal' | 'template';
 }
 
 const MarkdownEditor: React.FC<MarkdownEditorProps> = (props: MarkdownEditorProps) => {
@@ -23,6 +24,7 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = (props: MarkdownEditorProp
     onChange = () => {
       /* noop */
     },
+    type = 'normal',
   } = props;
 
   const [mode, setMode] = useState<Mode>(Mode.Default);
@@ -33,7 +35,7 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = (props: MarkdownEditorProp
 
   return (
     <section style={{ marginTop: 0, marginBottom: 12 }}>
-      <EditorToolBars mode={mode} toggleMode={toggleMode}></EditorToolBars>
+      <EditorToolBars type={type} mode={mode} toggleMode={toggleMode}></EditorToolBars>
       <Global styles={markdownEditorStyle}></Global>
       <MilkDownFullEditor
         mode={mode}

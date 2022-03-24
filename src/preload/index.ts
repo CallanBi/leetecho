@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { contextBridge, ipcRenderer, app } from 'electron';
-import { domReady } from './utils';
+import { contextBridge, ipcRenderer } from 'electron';
+import { domReady, openExternal } from './utils';
 import { useLoading } from './loading';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -31,6 +31,7 @@ contextBridge.exposeInMainWorld('bridge', {
   isDebug,
   isNotProduction,
   platform,
+  openExternal,
 });
 
 // `exposeInMainWorld` can not detect `prototype` attribute and methods, manually patch it.
