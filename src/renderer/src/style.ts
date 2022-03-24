@@ -66,6 +66,16 @@ const globalStyles = css`
     }
   }
 
+  #appSettingDrawer {
+    .ant-drawer-header-title {
+      display: flex;
+      flex-direction: row-reverse;
+      .ant-drawer-close {
+        margin-right: 0;
+      }
+    }
+  }
+
   /* table {
     border-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
   }

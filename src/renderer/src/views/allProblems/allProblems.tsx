@@ -12,6 +12,7 @@ import { ProblemItemFromGraphQL } from 'src/main/services/leetcodeServices/utils
 import { COLUMN_KEY_SORTER_KEY_MAP, TABLE_SORTER_ORDER_MAP } from './const';
 import { useRouter } from '@/hooks/router/useRouter';
 import WrappedLoading from '@/components/illustration/loading/wrappedLoading';
+import { AppStoreContext } from '@/store/appStore/appStore';
 
 const { useRef, useState, useEffect, useMemo } = React;
 
@@ -43,11 +44,17 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
     enableRequest: true,
   });
 
+  const { state: appState, dispatch: appDispatch } = React.useContext(AppStoreContext);
+
   const router = useRouter();
 
   const { query } = router;
 
-  const { search: routerSearchString = '' } = query as { search?: string };
+  const { search: routerSearchString } = query as { search?: string };
+
+  if (routerSearchString === undefined) {
+    /** noop */
+  }
 
   const hasRouterSearchQuery = Boolean(routerSearchString) || routerSearchString === '';
 
@@ -64,6 +71,49 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
       });
     }
   }
+
+  const {
+    problemFilterState: { filterStatus = {}, sorterStatus = {}, pageStatus = {} },
+  } = appState;
+
+  useEffect(() => {
+    const isFilterStateEqual = () => {
+      const { list = '', difficulty = '', status = '', search = '', tags = [] } = requestParams?.filterStatus || {};
+      const isFilterStatusEqual =
+        list === filterStatus?.list &&
+        difficulty === filterStatus?.difficulty &&
+        status === filterStatus?.status &&
+        search === filterStatus?.search;
+      const { order = '', columnKey = '' } = requestParams?.sorterStatus || {};
+
+      const isSortStatusEqual = sorterStatus?.columnKey === columnKey && sorterStatus?.order === order;
+
+      const { current = 1, pageSize = 10 } = requestParams?.pageStatus || {};
+
+      const isPageStatusEqual = pageStatus?.current === current && pageStatus?.pageSize === pageSize;
+
+      return isFilterStatusEqual && isSortStatusEqual && isPageStatusEqual;
+    };
+
+    if (!isFilterStateEqual()) {
+      setRequestParams({
+        ...requestParams,
+        filterStatus: {
+          ...requestParams.filterStatus,
+          ...filterStatus,
+        },
+        sorterStatus: {
+          ...requestParams.sorterStatus,
+          ...sorterStatus,
+        },
+        pageStatus: {
+          ...requestParams.pageStatus,
+          ...pageStatus,
+        },
+        enableRequest: true,
+      });
+    }
+  }, []);
 
   const onRequestSuccess = () => {
     if (requestParams.enableRequest) {
@@ -117,6 +167,23 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
 
   const onFilterChange = (val: ProblemsFilterObj) => {
     const { list = '', difficulty = '', status = '', search = '', tags = [] } = val;
+    appDispatch({
+      appActionType: 'change-problem-filter-status',
+      payload: {
+        ...appState.problemFilterState,
+        filterStatus: {
+          ...appState.problemFilterState?.filterStatus,
+          list,
+          difficulty,
+          status,
+          search,
+        },
+        pageStatus: {
+          ...appState.problemFilterState?.pageStatus,
+          current: 1,
+        },
+      },
+    });
     setRequestParams({
       ...requestParams,
       filterStatus: {
@@ -142,12 +209,33 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
     extra,
   ) => {
     const { current, pageSize } = pagination;
+    const { problemFilterState } = appState;
+    appDispatch({
+      appActionType: 'change-problem-filter-status',
+      payload: {
+        ...appState.problemFilterState,
+        pageStatus: {
+          ...appState.problemFilterState?.pageStatus,
+          current:
+            problemFilterState?.pageStatus?.pageSize !== pageSize ||
+            (problemFilterState?.sorterStatus?.order !== (sorter?.order || '') && sorter?.order !== undefined)
+              ? 1
+              : current,
+          pageSize,
+        },
+        sorterStatus: {
+          ...appState.problemFilterState?.sorterStatus,
+          ...sorter,
+        },
+      },
+    });
     setRequestParams({
       ...requestParams,
       pageStatus: {
         ...requestParams.pageStatus,
         current:
-          pageSize !== requestParams.pageStatus.pageSize || requestParams.sorterStatus.order !== sorter.order
+          pageSize !== requestParams.pageStatus.pageSize ||
+          (requestParams.sorterStatus.order !== (sorter.order || '') && sorter?.order !== undefined)
             ? 1
             : current,
         pageSize,
@@ -163,51 +251,14 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
   return (
     <>
       {(!hasRouterSearchQuery || routerSearchString === '') && (
-        <ProblemFilter onChange={onFilterChange}></ProblemFilter>
+        <ProblemFilter onChange={onFilterChange} paramsSyncToStore={true}></ProblemFilter>
       )}
       {hasRouterSearchQuery && routerSearchString !== '' && (
-        // <Button
-        //   type="link"
-        //   style={{ color: COLOR_PALETTE.LEETECHO_LIGHT_BLUE }}
-        //   onClick={() => {
-        //     router.push('/allProblems');
-        //     setRequestParams({
-        //       pageStatus: {
-        //         pageSize: 10,
-        //         current: 1,
-        //       },
-        //       filterStatus: {
-        //         list: '',
-        //         difficulty: '',
-        //         status: '',
-        //         search: '',
-        //       },
-        //       sorterStatus: {},
-        //       enableRequest: true,
-        //     });
-        //   }}
-        // >
-        //   {'< 返回'}
-        // </Button>
         <PageHeader
           style={{ paddingTop: 0, paddingBottom: 0, paddingLeft: 8 }}
           className="site-page-header"
           onBack={() => {
-            router.push('/allProblems');
-            setRequestParams({
-              pageStatus: {
-                pageSize: 10,
-                current: 1,
-              },
-              filterStatus: {
-                list: '',
-                difficulty: '',
-                status: '',
-                search: '',
-              },
-              sorterStatus: {},
-              enableRequest: true,
-            });
+            router.history.goBack();
           }}
           title="所有习题"
           subTitle={
@@ -247,4 +298,4 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
   );
 };
 
-export default AllProblems;
+export default React.memo(AllProblems);

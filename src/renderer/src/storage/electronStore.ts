@@ -15,7 +15,7 @@ export type User = {
     branch: string;
     userName: string;
     email: string;
-    token: string; // 令牌
+    token: string;
   }>;
 };
 
@@ -27,7 +27,6 @@ export type UserGroup = {
 export type UserConfig = {
   users: UserGroup;
   lastLoginUser: {
-    // 最后一次登录的用户
     usrName?: string;
     endPoint?: EndPoint;
     appSettings?: Partial<{
@@ -35,10 +34,10 @@ export type UserConfig = {
       branch: string;
       userName: string;
       email: string;
-      token: string; // 令牌
+      token: string;
     }>;
   };
-  isUserRemembered: boolean; // 是否勾选'记住我'
+  isUserRemembered: boolean; // whether to remember user
 };
 
 // Use 'electron-store'
@@ -111,11 +110,5 @@ const store = {
     }
   },
 };
-
-// (async () => {
-//   await store.set('Date.now', Date.now());
-//   console.log('electron-store ->', 'Date.now:', await store.get('Date.now'));
-//   console.log('electron-store ->', 'path:', await window.bridge.ipcRenderer.invoke('electron-store', 'path'));
-// })();
 
 export default store;

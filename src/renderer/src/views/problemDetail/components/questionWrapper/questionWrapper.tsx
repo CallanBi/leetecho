@@ -18,6 +18,8 @@ import ContentSkeleton from '@/components/contentSkeleton';
 import SubmissionsAndNotes from '../submissionsAndNotes';
 import { useRouter } from '@/hooks/router/useRouter';
 import Resizer from '@/components/resizer';
+import { IconLink } from '@douyinfe/semi-icons';
+import { withSemiIconStyle } from '@/style';
 
 const { Link } = Typography;
 
@@ -131,7 +133,9 @@ const QuestionWrapper: React.FC<QuestionWrapperProps> = (props: QuestionWrapperP
                   href={`https://leetcode-cn.com/problems/${getQuestionQuery.data?.titleSlug || ''}/`}
                   target="_blank"
                   style={{ color: COLOR_PALETTE.LEETECHO_LIGHT_BLUE }}
-                ></Link>
+                >
+                  <IconLink style={withSemiIconStyle()} />
+                </Link>
               </Descriptions.Item>
             </Descriptions>
             {getQuestionQuery.isLoading ? (

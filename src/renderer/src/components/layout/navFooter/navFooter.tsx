@@ -1,7 +1,13 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
-import { Button, message, Modal, Progress } from 'antd';
-import { IconGithubLogo, IconGlobeStroke, IconLanguage, IconLink, IconSetting, IconUpload } from '@douyinfe/semi-icons';
+import { Button, message, Modal, Progress, Tooltip } from 'antd';
+import {
+  IconGithubLogo,
+  IconLanguage,
+  IconSetting,
+  IconSignal,
+  IconUpload,
+} from '@douyinfe/semi-icons';
 import { withSemiIconStyle } from '@/style';
 import { AppStoreContext } from '@/store/appStore/appStore';
 import to from 'await-to-js';
@@ -11,11 +17,12 @@ import store, { User, UserConfig } from '@/storage/electronStore';
 import { COLOR_PALETTE } from 'src/const/theme/color';
 import { useCheckRepoConnection } from '@/rendererApi/user';
 import { css } from '@emotion/react';
+import AppSettingDrawer from '@/components/appSettingDrawer';
 
 const { useRef, useState, useEffect, useMemo } = React;
 
 const {
-  bridge: { ipcRenderer },
+  bridge: { ipcRenderer, openExternal },
 } = window;
 
 const Footer = styled.section`
@@ -176,7 +183,6 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
 
   useEffect(() => {
     const progressListener = (event, params: ProgressInfo) => {
-      console.log('%c progressInfo >>>', 'background: yellow; color: blue', progressInfo);
       if (
         publishProgressInfo.isError !== params.isError ||
         publishProgressInfo.isSuccess !== params.isSuccess ||
@@ -200,13 +206,19 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
     return modalContainer || document.body;
   };
 
+  const [settingDrawerVisible, setSettingDrawerVisible] = useState(false);
+
+  const onCloseSettingDrawer = (_) => {
+    setSettingDrawerVisible(false);
+  };
+
   return (
     <Footer>
       <PublishButtonSection>
         <Button
           shape="round"
           style={{ ...publishButtonStyle, background: COLOR_PALETTE.LEETECHO_HEADER_SEARCH_BG }}
-          icon={<IconLink style={withSemiIconStyle(publishButtonIconStyle)} />}
+          icon={<IconSignal style={withSemiIconStyle(publishButtonIconStyle)} />}
           loading={isCheckRepoConnectionLoading || isCheckRepoConnectionFetching}
           onClick={() => {
             setCheckRepoConnectionQuery({
@@ -305,11 +317,36 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
         </>
       </Modal>
       <FooterToolSection>
-        <Button type="link" icon={<IconSetting />} />
-        <Button type="link" icon={<IconGlobeStroke />} />
-        <Button type="link" icon={<IconGithubLogo />} />
-        <Button type="link" icon={<IconLanguage />} />
+        <Button
+          type="link"
+          icon={<IconSetting />}
+          onClick={() => {
+            setSettingDrawerVisible(true);
+          }}
+        />
+        <Button
+          type="link"
+          icon={<IconGithubLogo />}
+          onClick={() => {
+            openExternal?.('https://github.com/CallanBi/Leetecho');
+          }}
+        />
+        <Tooltip
+          title={
+            <section
+              css={css`
+                padding-left: 16px;
+              `}
+            >
+              <section>I18n is under construction, stay tuned!</section> <section>I18n 建设中，敬请期待！</section>
+            </section>
+          }
+          placement="top"
+        >
+          <Button type="link" icon={<IconLanguage />} />
+        </Tooltip>
       </FooterToolSection>
+      <AppSettingDrawer visible={settingDrawerVisible} onClose={onCloseSettingDrawer}></AppSettingDrawer>
     </Footer>
   );
 };

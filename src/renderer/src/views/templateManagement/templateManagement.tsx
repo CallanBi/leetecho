@@ -7,7 +7,7 @@ import { useReadUserTemplate, useSaveUserTemplate } from '@/rendererApi/io';
 import { AppStoreContext } from '@/store/appStore/appStore';
 import useResizable from '@/hooks/useResizable';
 import Resizer from '@/components/resizer';
-import { IconEdit, IconInfoCircle, IconSave } from '@douyinfe/semi-icons';
+import { IconEdit, IconInfoCircle, IconRefresh, IconSave } from '@douyinfe/semi-icons';
 import { withSemiIconStyle } from '@/style';
 import Footer from '@/components/layout/footer';
 import { getErrorCodeMessage } from 'src/main/router/errorCode';
@@ -321,7 +321,7 @@ const TemplateManagement: React.FC<TemplateManagementProps> = (props: TemplateMa
                     marginRight: 12,
                   }}
                   icon={
-                    <IconEdit
+                    <IconRefresh
                       style={withSemiIconStyle({
                         paddingRight: 12,
                       })}
@@ -426,7 +426,7 @@ const TemplateManagement: React.FC<TemplateManagementProps> = (props: TemplateMa
                     marginRight: 12,
                   }}
                   icon={
-                    <IconEdit
+                    <IconRefresh
                       style={withSemiIconStyle({
                         paddingRight: 12,
                       })}

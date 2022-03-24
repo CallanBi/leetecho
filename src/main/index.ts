@@ -22,7 +22,7 @@ const isDev = process.env.NODE_ENV === 'development';
 const installDevTools = async () => {
   const [err, name] = await to(installExtension(REACT_DEVELOPER_TOOLS.id));
   if (err) {
-    console.log('An error occurred: ', err);
+    console.log('An error occurred in react dev tool initiation: ', err);
     return;
   }
   console.log(`Added Extension:  ${name}`);

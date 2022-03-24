@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
-import { LightFilter, ProFormText, ProFormSelect } from '@ant-design/pro-form';
+import { LightFilter, ProFormText, ProFormSelect, ProFormInstance } from '@ant-design/pro-form';
 import { DIFFICULTY_WORD, LEETCODE_PROBLEM_LIST, STATUS_WORD, LeetCodeProblemListType } from '@/const/problemConst';
 import { IconSearch } from '@douyinfe/semi-icons';
 import { withSemiIconStyle } from '@/style';
@@ -9,6 +9,7 @@ import { COLOR_PALETTE } from 'src/const/theme/color';
 import TagSelector from '../tagSelector';
 import { Tag } from 'antd';
 import { FormattedTagItem } from '../tagSelector/tagSelector';
+import { AppStoreContext } from '@/store/appStore/appStore';
 
 const { useRef, useState, useEffect, useMemo } = React;
 
@@ -25,6 +26,7 @@ interface ProblemFilterProps {
   hasRouterQuery?: boolean;
   style?: React.CSSProperties;
   invisibleItem?: (keyof ProblemsFilterObj)[];
+  paramsSyncToStore?: boolean;
 }
 
 const ProblemFilterSection = styled.section`
@@ -45,7 +47,16 @@ const SelectedTagsDisplaySection = styled.section`
 `;
 
 const ProblemFilter: React.FC<ProblemFilterProps> = (props: React.PropsWithChildren<ProblemFilterProps>) => {
-  const { onChange, hasRouterQuery = false, style = {}, invisibleItem = [], children } = props;
+  const {
+    onChange,
+    hasRouterQuery = false,
+    style = {},
+    invisibleItem = [],
+    children,
+    paramsSyncToStore = false,
+  } = props;
+
+  const proFormRef = useRef<ProFormInstance | undefined>(undefined);
 
   const [selectedTagsValue, setSelectedTagsValue] = useState<FormattedTagItem[]>([]);
   const [filterVal, setFilterVal] = useState<ProblemsFilterObj>({
@@ -56,12 +67,23 @@ const ProblemFilter: React.FC<ProblemFilterProps> = (props: React.PropsWithChild
   });
 
   const onTagsValueChange = (val: FormattedTagItem[] | string[]) => {
+    appDispatch({
+      appActionType: 'change-problem-filter-status',
+      payload: {
+        ...appState.problemFilterState,
+        filterStatus: {
+          ...appState.problemFilterState?.filterStatus,
+          tags: val as FormattedTagItem[],
+        } as Omit<ProblemsFilterObj, 'tags'> & {
+          tags: FormattedTagItem[];
+        },
+        pageStatus: {
+          ...appState.problemFilterState?.pageStatus,
+          current: 1,
+        },
+      },
+    });
     setSelectedTagsValue(val as FormattedTagItem[]);
-    // const paramsString = location.search;
-    // const searchParams = new URLSearchParams(paramsString);
-    // if (searchParams.has('labels')) {
-    //   searchParams.set
-    // }
   };
 
   useEffect(() => {
@@ -70,6 +92,59 @@ const ProblemFilter: React.FC<ProblemFilterProps> = (props: React.PropsWithChild
       /** noop */
     };
   }, [selectedTagsValue]);
+
+  const { state: appState, dispatch: appDispatch } = React.useContext(AppStoreContext);
+
+  const {
+    list = '',
+    difficulty = '',
+    status = '',
+    search = '',
+    tags = [],
+  } = appState?.problemFilterState?.filterStatus || {};
+
+  const isTagsEqual = () =>
+    tags?.every((t) => selectedTagsValue?.map((s) => s?.value)?.includes(t?.value)) &&
+    selectedTagsValue?.every((s) => tags?.map((t) => t?.value)?.includes(s?.value));
+
+  const isEqual = () => {
+    const {
+      list: listInFields,
+      difficulty: difficultyInFields,
+      status: statusInFields,
+      search: searchInFields,
+    } = (proFormRef?.current?.getFieldsValue() || {}) as ProblemsFilterObj;
+
+    return (
+      list === listInFields &&
+      difficulty === difficultyInFields &&
+      status === statusInFields &&
+      search === searchInFields &&
+      isTagsEqual()
+    );
+  };
+
+  useEffect(() => {
+    if (paramsSyncToStore) {
+      if (!isEqual()) {
+        proFormRef?.current?.setFieldsValue({
+          list,
+          difficulty,
+          status,
+          search,
+        });
+        setFilterVal({
+          list,
+          difficulty,
+          status,
+          search,
+        });
+        if (!isTagsEqual()) {
+          onTagsValueChange(tags);
+        }
+      }
+    }
+  }, [paramsSyncToStore]);
 
   return (
     <ProblemFilterSection style={style}>
@@ -80,6 +155,7 @@ const ProblemFilter: React.FC<ProblemFilterProps> = (props: React.PropsWithChild
           setFilterVal(val);
           onChange?.({ ...val, tags: selectedTagsValue.map?.((t) => t.value || '') || [] });
         }}
+        formRef={proFormRef}
       >
         {!invisibleItem.includes('list') && (
           <ProFormSelect
@@ -125,7 +201,8 @@ const ProblemFilter: React.FC<ProblemFilterProps> = (props: React.PropsWithChild
               onClose={(e) => {
                 e.preventDefault(); // disable default closing tag movement
                 const filteredTags = selectedTagsValue.filter((t) => t.value !== tag.value);
-                setSelectedTagsValue(filteredTags);
+                // setSelectedTagsValue(filteredTags);
+                onTagsValueChange(filteredTags);
               }}
             >
               {tag.label}
