@@ -11,10 +11,6 @@ Leetecho is an elegant, experience-friendly product that automatically generates
   <!-- <a href="https://github.com/Callanbi/Leetecho/releases/latest">
     <img src="https://img.shields.io/github/release/CallanBi/Leetecho.svg?style=flat-square" alt="">
   </a> -->
-
-  <a href="https://github.com/getgridea/gridea/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/getgridea/gridea.svg?style=flat-square" alt="">
-  </a>
 </div>
 
 

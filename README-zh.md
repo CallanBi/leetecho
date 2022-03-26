@@ -11,10 +11,6 @@ Leetecho 是一款优雅、体验友好的自动生成 LeetCode 题解和笔记�
   <!-- <a href="https://github.com/Callanbi/Leetecho/releases/latest">
     <img src="https://img.shields.io/github/release/CallanBi/Leetecho.svg?style=flat-square" alt="">
   </a> -->
-
-  <a href="https://github.com/getgridea/gridea/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/getgridea/gridea.svg?style=flat-square" alt="">
-  </a>
 </div>
 
 
