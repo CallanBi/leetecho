@@ -40,12 +40,16 @@ export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_pr
 ### 0x2 检查仓库连接为什么那么久？
 如果没抛出错误，也有可能是因为中国内地连接 github 不稳定原因造成的。解决办法依然参考 Github 连接超时。
 
+### 0x3 为什么只支持 leetcode-cn.com， 暂时不支持 leetcode.com ?
+
+leetcode.com 的鉴权和 CN 有所不同，实现起来稍烦琐；此外，i18n 建设也需要一段时间。后续将会支持 leetcode.com，敬请期待~
+
 ---
 
 # 迭代计划
 
 ---
-
+- 【P1】支持 leetcode.com 帐号
 - 【P1】I18n 建设
 - 【P1】题目详情可新增、修改和删除笔记
 - 【P1】header 搜索栏保存用户输入历史
