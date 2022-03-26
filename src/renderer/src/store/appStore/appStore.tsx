@@ -6,6 +6,7 @@ import { ProblemItemFromGraphQL } from 'src/main/services/leetcodeServices/utils
 import withStoreProvider from '../withStoreProvider';
 
 export type AppState = {
+  appVersion: string;
   uiStatus: {
     /** Now isNavCollapsed is unused  */
     isNavCollapsed?: boolean;
@@ -36,6 +37,7 @@ export type AppState = {
 };
 
 export const initState: AppState = {
+  appVersion: '0.0.1',
   uiStatus: {
     isNavCollapsed: false,
     isNavShown: true,

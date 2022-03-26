@@ -1,8 +1,8 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
-import { Button, Form, Input, message, Checkbox } from 'antd';
-import { IconArrowRight } from '@douyinfe/semi-icons';
+import { Button, Form, Input, message, Checkbox, Select, Tooltip } from 'antd';
+import { IconArrowRight, IconInfoCircle } from '@douyinfe/semi-icons';
 import { withSemiIconStyle } from '@/style';
 import { useLogin } from '@/rendererApi/user';
 import { getErrorCodeFromMessage } from '@/rendererApi';
@@ -177,6 +177,19 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     (u) => u?.usrName === userConfig?.lastLoginUser?.usrName,
   )?.pwd;
 
+  const endPointSelectedOptions = [
+    {
+      label: 'LeetCode-CN',
+      value: 'CN',
+    },
+    {
+      label: 'LeetCode',
+      value: 'US',
+      disabled: true,
+      message: 'leetcode.com is under construction, stay tuned!',
+    },
+  ];
+
   return (
     <LoginInputSection>
       <Form
@@ -187,6 +200,7 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
           username: userConfig?.isUserRemembered ? userConfig?.lastLoginUser?.usrName || '' : undefined,
           password: userConfig?.isUserRemembered ? lastLoginUserPwd || '' : undefined,
           isUserRemembered: userConfig?.isUserRemembered || false,
+          endPoint: 'CN',
         }}
         autoComplete="off"
         requiredMark={false}
@@ -205,6 +219,39 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
         <Form.Item label="LeetCode 密码" name="password" rules={[{ required: true, message: '请输入 Leetcode 密码' }]}>
           <Input.Password />
         </Form.Item>
+
+        <Form.Item
+          label={
+            <>
+              <Tooltip
+                title={
+                  <section
+                    css={css`
+                      padding-left: 16px;
+                    `}
+                  >
+                    <section>leetcode.com support is under construction, stay tuned!</section>{' '}
+                    <section>leetcode.com 支持建设中，敬请期待！</section>
+                  </section>
+                }
+              >
+                <IconInfoCircle
+                  style={withSemiIconStyle({
+                    top: 0,
+                    marginRight: 12,
+                    color: COLOR_PALETTE.LEETECHO_BLUE,
+                  })}
+                />
+              </Tooltip>{' '}
+              域名
+            </>
+          }
+          name="endPoint"
+        >
+          <Select placeholder="请选择域名" options={endPointSelectedOptions}>
+          </Select>
+        </Form.Item>
+
         <Form.Item wrapperCol={{ offset: 10, span: 16 }} label="" name="isUserRemembered" valuePropName="checked">
           <Checkbox>记住我</Checkbox>
         </Form.Item>
@@ -214,7 +261,7 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
             htmlType="submit"
             size="large"
             icon={<IconArrowRight style={withSemiIconStyle()} />}
-            style={{ borderRadius: 36, marginTop: 12 }}
+            style={{ borderRadius: 36, marginTop: 0 }}
             loading={isLoading}
           />
         </Form.Item>

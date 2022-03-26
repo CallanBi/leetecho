@@ -22,7 +22,13 @@
   "mac": {
     "icon": "./assets/icon/icon-mac.icns",
     "target": [
-      "dmg"
+      {
+        "target": "dmg",
+        "arch": [
+          "x64",
+          "arm64"
+        ]
+      }
     ]
   },
   "win": {
@@ -47,7 +53,7 @@
       },
       {
         "target": "snap"
-      },
+      }
     ]
   },
   "nsis": {

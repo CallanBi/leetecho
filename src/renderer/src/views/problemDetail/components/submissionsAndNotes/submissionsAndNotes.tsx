@@ -9,10 +9,13 @@ import { Question, SubmissionList } from 'src/main/services/leetcodeServices/uti
 import { Descriptions, Pagination, Typography } from 'antd';
 import { COLOR_PALETTE } from 'src/const/theme/color';
 import ContentSkeleton from '@/components/contentSkeleton';
-import MarkdownEditor from '@/components/markdownEditor';
+// import MarkdownEditor from '@/components/markdownEditor';
 import ErrorIllustrator from '@/components/illustration/errorIllustrator';
 import Empty from '@/components/illustration/empty';
 import { formatTimeStamp } from 'src/main/tools';
+import withSuspend from '@/components/suspendComponent';
+
+const MarkdownEditor = withSuspend(React.lazy(() => import('@/components/markdownEditor')));
 
 const { Title } = Typography;
 
@@ -226,17 +229,18 @@ const SubmissionsAndNotes: React.FC<SubmissionsAndNotesProps> = (props: Submissi
                   return <MarkdownEditor key={e.id} value={e?.content} isReadOnly={true}></MarkdownEditor>;
                 })}
                 {notePagination?.curPageData?.length > 1 && (
-                  <section style={{
-                    display: 'flex',
-                    flexDirection: 'row-reverse',
-                  }}>
+                  <section
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row-reverse',
+                    }}
+                  >
                     <Pagination
                       total={notePagination.total}
                       pageSize={notePagination.pageSize}
                       current={notePagination.cur}
                       onChange={notePaginationChange}
-                      style={{
-                      }}
+                      style={{}}
                     ></Pagination>
                   </section>
                 )}

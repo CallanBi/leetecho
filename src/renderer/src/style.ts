@@ -23,6 +23,14 @@ const globalStyles = css`
     animation: none !important;
   }
 
+  .ant-layout-sider {
+    background-color: ${COLOR_PALETTE.LEETECHO_GREY}!important;
+  }
+
+  .ant-layout-sider-light {
+    background-color: ${COLOR_PALETTE.LEETECHO_GREY}!important;
+  }
+
   .ant-checkbox {
     .ant-checkbox-inner {
       background-color: ${COLOR_PALETTE.LEETECHO_INPUT_BACKGROUND}!important;
@@ -32,6 +40,13 @@ const globalStyles = css`
   .ant-checkbox-checked {
     .ant-checkbox-inner {
       background-color: ${COLOR_PALETTE.LEETECHO_BLUE}!important;
+    }
+  }
+
+  .ant-select-focused {
+    .ant-select-selector {
+      border-color: ${COLOR_PALETTE.LEETECHO_BLUE}!important;
+      box-shadow: none !important;
     }
   }
 

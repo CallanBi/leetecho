@@ -1,19 +1,17 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
-import { Button, Form, Input, message, PageHeader } from 'antd';
+import { Button, Form, Input, message } from 'antd';
 import Footer from '@/components/layout/footer';
-import { IconSave } from '@douyinfe/semi-icons';
+import { IconInfoCircle, IconSave } from '@douyinfe/semi-icons';
 import { withSemiIconStyle } from '@/style';
 import { AppStoreContext } from '@/store/appStore/appStore';
 import to from 'await-to-js';
-import store, { EndPoint, User, UserConfig, UserGroup } from '@/storage/electronStore';
+import store, { User, UserConfig } from '@/storage/electronStore';
 import { useQuery } from 'react-query';
 import { useCheckRepoConnection } from '@/rendererApi/user';
-
-const {
-  bridge: { ipcRenderer },
-} = window;
+import Link from 'antd/lib/typography/Link';
+import { COLOR_PALETTE } from 'src/const/theme/color';
 
 // const [_err, userConfig] = await to(store.get('userConfig'));
 
@@ -215,7 +213,26 @@ const RemoteSettings: React.FC<RemoteSettingsProps> = (props: RemoteSettingsProp
             <Input placeholder="Github 账户的邮箱" />
           </Form.Item>
 
-          <Form.Item label="令牌" name="token" rules={[{ required: true, message: '请输入 token' }]}>
+          <Form.Item
+            label="令牌"
+            name="token"
+            rules={[{ required: true, message: '请输入 token' }]}
+            extra={
+              <Link
+                style={{
+                  color: COLOR_PALETTE.LEETECHO_LIGHT_BLUE,
+                  padding: 12,
+                  position: 'relative',
+                  top: 12,
+                }}
+                href="https://callanbi.top/Leetecho/docs"
+                target="_blank"
+              >
+                <IconInfoCircle style={withSemiIconStyle()} />
+                {' '}说明文档
+              </Link>
+            }
+          >
             <Input.Password placeholder="查看说明文档了解如何生成令牌" />
           </Form.Item>
         </Form>
