@@ -81,6 +81,7 @@
     "react-router-dom": "5.2.0",
     "react-transition-group": "^4.4.2",
     "react-viewer": "^3.2.2",
+    "rollup-plugin-visualizer": "^5.6.0",
     "typescript": "^4.4.4",
     "vite": "^2.6.13",
     "vite-plugin-svgr": "^1.0.1"
@@ -102,6 +103,7 @@
     "import": "^0.0.6",
     "isomorphic-git": "^1.15.0",
     "lodash": "^4.17.21",
+    "node-fetch": "^2.6.7",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.9",
     "vite-plugin-markdown": "^2.0.2"

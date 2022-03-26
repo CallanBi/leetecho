@@ -11,7 +11,7 @@ import { useRouter } from './hooks/router/useRouter';
 import { AppStoreContext } from './store/appStore/appStore';
 import NavFooter from './components/layout/navFooter';
 import Header from './components/layout/header';
-import { ReactQueryDevtools } from 'react-query/devtools';
+// import { ReactQueryDevtools } from 'react-query/devtools';
 import Login from './views/login';
 import { css } from '@emotion/react';
 
@@ -55,7 +55,7 @@ const App: React.FC<Record<string, never>> = () => {
         -webkit-app-region: no-drag;
       `}
     >
-      {isNotProduction && <ReactQueryDevtools initialIsOpen={false} />}
+      {/* {isNotProduction && <ReactQueryDevtools initialIsOpen={false} />} */}
       {isLogin && (
         <div
           id="main"

@@ -71,7 +71,7 @@ const Login: React.FC<{}> = () => {
         <CSSTransition in={isFormShow} classNames="LoginLogoTransition" timeout={300}>
           <LogoSection>
             <Logo
-              height={400}
+              height={350}
               width={400}
               style={{
                 marginLeft: 28,
@@ -93,7 +93,7 @@ const Login: React.FC<{}> = () => {
                 style={
                   {
                     WebkitAppRegion: 'no-drag',
-                    top: 70,
+                    top: 95,
                   } as React.CSSProperties
                 }
                 type="link"

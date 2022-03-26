@@ -9,7 +9,9 @@ import { useGetUserStatus } from '@/rendererApi/user';
 import { UserStatus } from 'src/main/services/leetcodeServices/utils/interfaces';
 import { AppStoreContext } from '@/store/appStore/appStore';
 import to from 'await-to-js';
-import { message } from 'antd';
+import { Avatar, Dropdown, Menu, message } from 'antd';
+import { UseQueryResult } from 'react-query';
+import { IconUser } from '@douyinfe/semi-icons';
 
 const { useRef, useState, useEffect, useMemo } = React;
 
@@ -29,14 +31,14 @@ const HeaderToolsSection = styled.section`
   margin-right: ${isWinPlatform ? '0px' : '12px'};
 `;
 
-// const HeaderToolBtnSection = styled.section`
-//   -webkit-app-region: no-drag;
-//   cursor: default;
-//   color: ${COLOR_PALETTE.LEETECHO_LIGHT_BLACK};
-//   &:hover {
-//     color: ${COLOR_PALETTE.LEETECHO_LIGHT_BLUE};
-//   }
-// `;
+const HeaderToolBtnSection = styled.section`
+  -webkit-app-region: no-drag;
+  cursor: default;
+  color: ${COLOR_PALETTE.LEETECHO_LIGHT_BLACK};
+  &:hover {
+    color: ${COLOR_PALETTE.LEETECHO_LIGHT_BLUE};
+  }
+`;
 
 // const TrafficLightBtnSection = styled.section`
 //   -webkit-app-region: no-drag;
@@ -109,12 +111,31 @@ const HeaderLeftContent: React.FC<HeaderLeftContentProps> = (props: HeaderLeftCo
     /** noop */
   };
 
-  useGetUserStatus({
+  const { data: useStatusData } = useGetUserStatus({
     onSuccess: onGetUserStatusSuccess,
     onError: onGetUserStatusError,
     refetchInterval: 1000 * 60 * 10, // 10 minutes' cron job
     refetchIntervalInBackground: true,
-  });
+  }) as UseQueryResult<UserStatus, Error>;
+
+  const userMenu = useMemo(
+    () => (
+      <Menu>
+        <Menu.Item
+          style={{
+            width: '100px',
+          }}
+          danger
+          onClick={() => {
+            logout();
+          }}
+        >
+          登出
+        </Menu.Item>
+      </Menu>
+    ),
+    [logout],
+  );
 
   return (
     <HeaderToolsSection>
@@ -135,6 +156,17 @@ const HeaderLeftContent: React.FC<HeaderLeftContentProps> = (props: HeaderLeftCo
           icon={<DownloadOutlined size={MEASUREMENT.LEETECHO_TRAFFIC_LIGHT_ICO_SIZE as number} />}
         />
       </HeaderToolBtnSection> */}
+      <HeaderToolBtnSection
+        style={{
+          marginRight: 12,
+        }}
+      >
+        {useStatusData && (
+          <Dropdown overlay={userMenu} placement="bottomRight">
+            <Avatar src={useStatusData?.avatar} icon={<IconUser />}></Avatar>
+          </Dropdown>
+        )}
+      </HeaderToolBtnSection>
       <TrafficLight />
     </HeaderToolsSection>
   );

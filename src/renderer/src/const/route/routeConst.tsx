@@ -1,15 +1,23 @@
 /* eslint-disable indent */
-import { MenuDataItem } from '@ant-design/pro-layout/lib/typings';
-import { IconList, IconTemplate, IconServer } from '@douyinfe/semi-icons';
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
+
+/** It's even slower after code splitting */
+
+// const AllProblems = withSuspend(React.lazy(() => import('@/views/allProblems')));
+// const TemplateManagement = withSuspend(React.lazy(() => import('@/views/templateManagement')));
+// const RemoteSettings = withSuspend(React.lazy(() => import('@/views/remoteSettings')));
+// const ProblemDetail = withSuspend(React.lazy(() => import('@/views/problemDetail')));
 
 import AllProblems from '@/views/allProblems';
 import TemplateManagement from '@/views/templateManagement';
 import RemoteSettings from '@/views/remoteSettings';
-// import SettledProblems from '@/views/settledProblems';
-import { withSemiIconStyle } from '@/style';
 import ProblemDetail from '@/views/problemDetail';
+
+import { MenuDataItem } from '@ant-design/pro-layout/lib/typings';
+import { IconList, IconTemplate, IconServer } from '@douyinfe/semi-icons';
+
+import { withSemiIconStyle } from '@/style';
 
 const navIconStyle: React.CSSProperties = {
   marginLeft: 16,
