@@ -1,2 +1,0 @@
-"use strict";(self.webpackChunkleetecho_gh_page=self.webpackChunkleetecho_gh_page||[]).push([[512],{512:function(e,u,t){t.r(u);var s=t(6459),n=t(2791),c=t(2478),f=t(184);n.useRef,n.useState,n.useEffect,n.useMemo;u.default=function(e){return(0,s.Z)(e),(0,f.jsx)(c.default,{children:"CommonQuestions"})}}}]);
-//# sourceMappingURL=512.17fb5a38.chunk.js.map
