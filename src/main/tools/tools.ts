@@ -263,3 +263,21 @@ export async function replaceProblemFilterSyntax(
   }
   return copiedContent;
 }
+
+export function checkNeedUpdate(cur: string, latest: string): boolean {
+  let hasUpdate = false;
+  const latestVersion = latest?.split('.')?.map((item: string) => parseInt(item, 10));
+  const currentVersion = cur?.split('.')?.map((item: string) => parseInt(item, 10));
+
+  for (let i = 0; i < currentVersion.length; i += 1) {
+    if (currentVersion[i] > latestVersion[i]) {
+      hasUpdate = false;
+      break;
+    }
+    if (currentVersion[i] < latestVersion[i]) {
+      hasUpdate = true;
+      break;
+    }
+  }
+  return hasUpdate;
+}

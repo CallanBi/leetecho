@@ -1,23 +1,18 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
-import { Button, message, Modal, Progress, Tooltip } from 'antd';
-import {
-  IconGithubLogo,
-  IconLanguage,
-  IconSetting,
-  IconSignal,
-  IconUpload,
-} from '@douyinfe/semi-icons';
+import { Badge, Button, message, Modal, Progress, Tooltip, Typography } from 'antd';
+import { IconBolt, IconGithubLogo, IconLanguage, IconSetting, IconSignal, IconUpload } from '@douyinfe/semi-icons';
 import { withSemiIconStyle } from '@/style';
 import { AppStoreContext } from '@/store/appStore/appStore';
 import to from 'await-to-js';
-import { getErrorCodeMessage } from 'src/main/router/errorCode';
-import { useQuery } from 'react-query';
+import { useQuery, UseQueryResult } from 'react-query';
 import store, { User, UserConfig } from '@/storage/electronStore';
 import { COLOR_PALETTE } from 'src/const/theme/color';
-import { useCheckRepoConnection } from '@/rendererApi/user';
+import { useCheckRepoConnection, useCheckUpdate } from '@/rendererApi/user';
 import { css } from '@emotion/react';
 import AppSettingDrawer from '@/components/appSettingDrawer';
+import { ReleaseTag } from 'src/main/idl/user';
+import { checkNeedUpdate } from 'src/main/tools';
 
 const { useRef, useState, useEffect, useMemo } = React;
 
@@ -77,6 +72,33 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
   const {
     userState: { usrSlug = '', usrName = '', endPoint = 'CN' },
   } = appState;
+
+  const { appVersion = '' } = appState;
+
+  const [checkUpdateRequestParams, setCheckUpdateRequestParams] = useState({
+    enableRequest: true,
+    onSuccess: () => {
+      setCheckUpdateRequestParams({
+        ...checkUpdateRequestParams,
+        enableRequest: false,
+      });
+    },
+    onError: () => {
+      /** noop */
+    },
+  });
+
+  const { isSuccess: isCheckUpdateSuccess, data: releaseData } = useCheckUpdate(
+    checkUpdateRequestParams?.enableRequest,
+    checkUpdateRequestParams?.onSuccess,
+    checkUpdateRequestParams?.onError,
+  ) as UseQueryResult<SuccessResp<ReleaseTag>['data'], Error>;
+
+  const hasUpdate = useMemo(() => {
+    const latest = releaseData?.name || '';
+
+    return checkNeedUpdate(appVersion, latest);
+  }, [appVersion, releaseData, releaseData?.name]);
 
   const [fetchStoreUsersQuery, setFetchStoreUsersQuery] = useState<{
     enableRequest: boolean;
@@ -277,7 +299,7 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
         footer={null}
         mask={false}
         maskClosable={false}
-        closable={publishProgressInfo.isSuccess || publishProgressInfo.isError}
+        closable={true}
         onCancel={() => {
           setModalVisible(false);
         }}
@@ -345,6 +367,42 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
         >
           <Button type="link" icon={<IconLanguage />} />
         </Tooltip>
+        {hasUpdate && isCheckUpdateSuccess && (
+          <Tooltip
+            title={
+              <section
+                css={css`
+                  padding-left: 16px;
+                `}
+              >
+                <section>
+                  发现新版本 {releaseData?.name} ，推荐前往{' '}
+                  <Typography.Link
+                    href="https://callanbi.top/Leetecho/"
+                    target="_blank"
+                    style={{
+                      color: COLOR_PALETTE.LEETECHO_BLUE,
+                    }}
+                  >
+                    官网
+                  </Typography.Link>{' '}
+                  下载
+                </section>
+              </section>
+            }
+            placement="top"
+          >
+            <Button type="link">
+              <Badge
+                status="processing"
+                size="default"
+                style={{
+                  bottom: 3,
+                }}
+              />
+            </Button>
+          </Tooltip>
+        )}
       </FooterToolSection>
       <AppSettingDrawer visible={settingDrawerVisible} onClose={onCloseSettingDrawer}></AppSettingDrawer>
     </Footer>

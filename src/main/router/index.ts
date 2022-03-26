@@ -24,7 +24,7 @@ import {
   GetSubmissionsByQuestionSlugResponse,
 } from '../idl/problems';
 import { GetAllTagsResponse } from '../idl/tags';
-import { CheckRepoConnectionRequest, LoginReq, LoginResp, LogoutResp } from '../idl/user';
+import { CheckRepoConnectionRequest, LoginReq, LoginResp, LogoutResp, ReleaseTag } from '../idl/user';
 import ERROR_CODE, { getErrorCodeMessage } from './errorCode';
 import {
   Difficulty,
@@ -58,6 +58,8 @@ import { format } from 'date-fns';
 
 import he from 'he';
 import RepoDeploy from '../services/repoDeployServices/repoDeployServices';
+
+import fetch from 'node-fetch';
 
 import fs from 'fs';
 
@@ -145,6 +147,23 @@ let apiBridge: ApiBridge | null = null;
 /** V8's serialization algorithm does not include custom properties on errors, see: https://github.com/electron/electron/issues/24427 */
 export const transformCustomErrorToMsg: (err: Error | ErrorResp) => string = (err) =>
   `${(err as ErrorResp).code ?? ERROR_CODE.UNKNOWN_ERROR} ${err.message ?? getErrorCodeMessage()}`;
+
+ipcMain.handle('checkUpdate', async (_) => {
+  const [err, res] = await to(
+    fetch('https://api.github.com/repos/CallanBi/Leetecho/releases/latest').then((res: ReleaseTag) => {
+      return res?.json();
+    }),
+  );
+
+  if (err) {
+    throw transformCustomErrorToMsg(err);
+  }
+
+  return {
+    code: res?.code ?? ERROR_CODE.OK,
+    data: res,
+  } as SuccessResp<ReleaseTag>;
+});
 
 ipcMain.handle('login', async (_, params: LoginReq) => {
   const [err, res] = await to(baseHandler(ApiBridge.login(params)));

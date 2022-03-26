@@ -1,6 +1,7 @@
 import to from 'await-to-js';
-import { QueryKey, useQuery, UseQueryOptions } from 'react-query';
-import { GetUserStatusResponse, UserStatus } from 'src/main/services/leetcodeServices/utils/interfaces';
+import { useQuery, UseQueryOptions } from 'react-query';
+import { ReleaseTag } from 'src/main/idl/user';
+import { GetUserStatusResponse } from 'src/main/services/leetcodeServices/utils/interfaces';
 
 const {
   bridge: { ipcRenderer },
@@ -67,4 +68,29 @@ const useCheckRepoConnection = (
     options,
   );
 
-export { useLogin, useGetUserStatus, useCheckRepoConnection };
+const useCheckUpdate = (
+  enableVal: boolean,
+  onSuccess: (data: SuccessResp<Record<string, never>>) => void,
+  onError: (err: Error) => unknown,
+) =>
+  useQuery<SuccessResp<ReleaseTag>, Error>(
+    ['checkUpdate'],
+    async () => {
+      const [err, res] = (await to(ipcRenderer.invoke('checkUpdate'))) as [Error | null, SuccessResp<ReleaseTag>];
+      if (err) {
+        throw err;
+      }
+      return res?.data;
+    },
+    {
+      enabled: enableVal,
+      retry: false,
+      refetchInterval: 1000 * 60 * 60, // 1 hour's cron job
+      refetchIntervalInBackground: true,
+      cacheTime: 1000 * 60 * 60 /** check update should be cached for 1 hour */,
+      onSuccess,
+      onError,
+    },
+  );
+
+export { useLogin, useGetUserStatus, useCheckRepoConnection, useCheckUpdate };

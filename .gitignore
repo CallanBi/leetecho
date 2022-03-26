@@ -79,6 +79,9 @@ typings/
 # DynamoDB Local files
 .dynamodb/
 
+# rollup-plugin-visualizer files
+stats.html
+
 # ----
 dist
 **/.tmp
@@ -86,3 +89,5 @@ release
 .DS_Store
 dist-ssr
 *.local
+
+

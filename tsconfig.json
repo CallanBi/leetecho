@@ -14,6 +14,9 @@
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react",
     "noErrorTruncation": true,
+    "exclude": [
+      "node_modules",
+    ],
     "include": [
       "types/**/*.d.ts",
       "src/main/router/**/*.d.ts",
