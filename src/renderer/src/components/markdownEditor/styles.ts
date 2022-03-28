@@ -353,7 +353,7 @@ const markdownEditorStyle = css`
   .milkdown-menu {
     border: ${`1px solid ${COLOR_PALETTE.LEETECHO_GREY}`}!important;
     border-left: ${`1px solid ${COLOR_PALETTE.LEETECHO_GREY}`}!important;
-    border-bottom: 0!important;
+    border-bottom: 0 !important;
     background-color: ${COLOR_PALETTE.LEETECHO_GREY}!important;
     .icon {
       color: ${COLOR_PALETTE.LEETECHO_LIGHT_BLACK}!important;
@@ -393,6 +393,25 @@ const markdownEditorStyle = css`
     code {
       background-color: ${COLOR_PALETTE.LEETECHO_INPUT_HOVER_BG}!important;
       color: ${COLOR_PALETTE.LEETECHO_LIGHT_BLACK}!important;
+    }
+
+    h1 {
+      font-size: 22px;
+    }
+    h2 {
+      font-size: 21px;
+    }
+    h3 {
+      font-size: 20px;
+    }
+    h4 {
+      font-size: 19px;
+    }
+    h5 {
+      font-size: 18px;
+    }
+    h6 {
+      font-size: 17px;
     }
   }
 

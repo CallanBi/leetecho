@@ -8,7 +8,7 @@ import { withSemiIconStyle } from '@/style';
 import { AppStoreContext } from '@/store/appStore/appStore';
 import to from 'await-to-js';
 import store, { User, UserConfig } from '@/storage/electronStore';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { useCheckRepoConnection } from '@/rendererApi/user';
 import Link from 'antd/lib/typography/Link';
 import { COLOR_PALETTE } from 'src/const/theme/color';
@@ -57,35 +57,46 @@ const RemoteSettings: React.FC<RemoteSettingsProps> = (props: RemoteSettingsProp
 
   const onCheckSuccess = () => {
     message.success('🎉 连接成功，去发布吧~');
-    setCheckRepoConnectionQuery({
-      ...checkRepoConnectionQuery,
-      enableRequest: false,
+    /** close repo connection request */
+    appDispatch({
+      appActionType: 'change-query-status',
+      payload: {
+        checkRepoConnectionQuery: {
+          enableRequest: false,
+        },
+      },
     });
   };
 
   const onCheckError = (error: Error) => {
     message.error(error.message ? `仓库链接检测失败, 错误信息：${error.message}` : '仓库链接检测失败');
-    setCheckRepoConnectionQuery({
-      ...checkRepoConnectionQuery,
-      enableRequest: false,
+    /** close repo connection request */
+    appDispatch({
+      appActionType: 'change-query-status',
+      payload: {
+        checkRepoConnectionQuery: {
+          enableRequest: false,
+        },
+      },
     });
   };
 
   const [checkRepoConnectionQuery, setCheckRepoConnectionQuery] = useState<{
-    enableRequest: boolean;
     onSuccess: (value: SuccessResp<Record<string, never>>) => void;
     onError: (error: Error) => void;
   }>({
-        enableRequest: false,
         onSuccess: onCheckSuccess,
         onError: onCheckError,
       });
 
   const {
     userState: { endPoint, usrName },
+    queryStatus: {
+      checkRepoConnectionQuery: { enableRequest: checkRepoConnectionEnableRequest = false },
+    },
   } = appState;
 
-  const { data: userConfig } = useQuery(
+  const { data: userConfig, isLoading: isFetchStoreLoading } = useQuery(
     ['fetchStoreUserConfig', 'userConfig'],
     async () => {
       const [err, userConfig] = (await to(store.get('userConfig'))) as [Error, undefined] | [UserConfig];
@@ -99,15 +110,15 @@ const RemoteSettings: React.FC<RemoteSettingsProps> = (props: RemoteSettingsProp
       onSuccess: fetchStoreUsersQuery?.onSuccess,
       onError: fetchStoreUsersQuery?.onError,
       cacheTime: 0,
+      retry: false,
     },
-  ) as any as { data: UserConfig };
+  ) as any as { data: UserConfig; isLoading: boolean };
 
-  const thisUser: User = useMemo(
-    () => userConfig?.users?.[endPoint || 'CN']?.find((user) => user?.usrName === appState.userState.usrName) || {},
-    [userConfig, endPoint, appState.userState.usrName],
-  ) as User;
+  const thisUser: User | undefined = userConfig?.users?.[endPoint || 'CN']?.find(
+    (user) => user?.usrName === appState.userState.usrName,
+  );
 
-  const { enableRequest, onSuccess, onError } = checkRepoConnectionQuery;
+  const { onSuccess, onError } = checkRepoConnectionQuery;
 
   const { isLoading: isCheckRepoConnectionLoading, isFetching: isCheckRepoConnectionFetching } = useCheckRepoConnection(
     {
@@ -118,7 +129,7 @@ const RemoteSettings: React.FC<RemoteSettingsProps> = (props: RemoteSettingsProp
       token: thisUser?.appSettings?.token || '',
     },
     {
-      enabled: enableRequest,
+      enabled: checkRepoConnectionEnableRequest,
       onSuccess: onSuccess,
       onError: onError,
       cacheTime: 0,
@@ -191,7 +202,24 @@ const RemoteSettings: React.FC<RemoteSettingsProps> = (props: RemoteSettingsProp
     }
 
     message.success('保存成功');
+
+    setFetchStoreUsersQuery({
+      ...fetchStoreUsersQuery,
+      enableRequest: true,
+    });
+
+    /** check repo connection */
+    appDispatch({
+      appActionType: 'change-query-status',
+      payload: {
+        checkRepoConnectionQuery: {
+          enableRequest: true,
+        },
+      },
+    });
   };
+
+  const queryClient = useQueryClient();
 
   return (
     <RemoteSettingSection>
@@ -228,8 +256,7 @@ const RemoteSettings: React.FC<RemoteSettingsProps> = (props: RemoteSettingsProp
                 href="https://callanbi.top/Leetecho/docs"
                 target="_blank"
               >
-                <IconInfoCircle style={withSemiIconStyle()} />
-                {' '}说明文档
+                <IconInfoCircle style={withSemiIconStyle()} /> 说明文档
               </Link>
             }
           >
@@ -263,26 +290,42 @@ const RemoteSettings: React.FC<RemoteSettingsProps> = (props: RemoteSettingsProp
                 })}
               />
             }
+            loading={isFetchStoreLoading || isCheckRepoConnectionFetching || isCheckRepoConnectionLoading}
             onClick={() => {
               form.submit();
             }}
           >
-            保存
+            保存并检查仓库连接
           </Button>
-          <Button
-            style={{
-              marginRight: 12,
-            }}
-            loading={isCheckRepoConnectionLoading || isCheckRepoConnectionFetching}
-            onClick={() => {
-              setCheckRepoConnectionQuery({
-                ...checkRepoConnectionQuery,
-                enableRequest: true,
-              });
-            }}
-          >
-            检查仓库连接
-          </Button>
+          {(isCheckRepoConnectionFetching || isCheckRepoConnectionLoading) && (
+            <Button
+              style={{
+                marginRight: 12,
+              }}
+              onClick={() => {
+                queryClient.cancelQueries([
+                  'checkRepoConnection',
+                  {
+                    repoName: thisUser?.appSettings?.repoName || '',
+                    branch: thisUser?.appSettings?.branch || '',
+                    userName: thisUser?.appSettings?.userName || '',
+                    email: thisUser?.appSettings?.email || '',
+                    token: thisUser?.appSettings?.token || '',
+                  },
+                ]);
+                appDispatch({
+                  appActionType: 'change-query-status',
+                  payload: {
+                    checkRepoConnectionQuery: {
+                      enableRequest: false,
+                    },
+                  },
+                });
+              }}
+            >
+              取消检查连接
+            </Button>
+          )}
         </section>
       </Footer>
     </RemoteSettingSection>

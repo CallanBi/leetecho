@@ -1,5 +1,13 @@
 import to from 'await-to-js';
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from 'react-query';
+import {
+  AddNoteRequest,
+  AddNoteResponse,
+  DeleteNoteRequest,
+  DeleteNoteResponse,
+  UpdateNoteRequest,
+  UpdateNoteResponse,
+} from 'src/main/services/leetcodeServices/utils/interfaces';
 
 const {
   bridge: { ipcRenderer },
@@ -75,7 +83,7 @@ const useGetNotesByQuestionId = (
     },
     {
       retry: 2,
-      cacheTime: 2000 /** 2s */,
+      cacheTime: 0,
       ...options,
     },
   );
@@ -106,4 +114,66 @@ const useGetSubmissionDetailById = (
     },
   );
 
-export { useGetProblem, useGetSubmissionsByTitleSlug, useGetNotesByQuestionId, useGetSubmissionDetailById };
+const useUpdateNote = (
+  options: Omit<
+  UseMutationOptions<UpdateNoteResponse['noteUpdateUserNote'], Error, UpdateNoteRequest>,
+  'mutationKey' | 'mutationFn'
+  >,
+) =>
+  useMutation<UpdateNoteResponse['noteUpdateUserNote'], Error, UpdateNoteRequest>(async (params) => {
+    const [err, res] = (await to(ipcRenderer.invoke('updateNote', params))) as [
+      Error | null,
+      SuccessResp<UpdateNoteResponse['noteUpdateUserNote']>,
+    ];
+    if (err) {
+      throw err;
+    }
+    const { data } = res;
+    return data;
+  }, options);
+
+const useDeleteNote = (
+  options: Omit<
+  UseMutationOptions<DeleteNoteResponse['noteDeleteUserNote'], Error, DeleteNoteRequest>,
+  'mutationKey' | 'mutationFn'
+  >,
+) =>
+  useMutation<DeleteNoteResponse['noteDeleteUserNote'], Error, DeleteNoteRequest>(async (params) => {
+    const [err, res] = (await to(ipcRenderer.invoke('deleteNote', params))) as [
+      Error | null,
+      SuccessResp<DeleteNoteResponse['noteDeleteUserNote']>,
+    ];
+    if (err) {
+      throw err;
+    }
+    const { data } = res;
+    return data;
+  }, options);
+
+const useAddNote = (
+  options: Omit<
+  UseMutationOptions<AddNoteResponse['noteCreateCommonNote'], Error, AddNoteRequest>,
+  'mutationKey' | 'mutationFn'
+  >,
+) =>
+  useMutation<AddNoteResponse['noteCreateCommonNote'], Error, AddNoteRequest>(async (params) => {
+    const [err, res] = (await to(ipcRenderer.invoke('addNote', params))) as [
+      Error | null,
+      SuccessResp<AddNoteResponse['noteCreateCommonNote']>,
+    ];
+    if (err) {
+      throw err;
+    }
+    const { data } = res;
+    return data;
+  }, options);
+
+export {
+  useGetProblem,
+  useGetSubmissionsByTitleSlug,
+  useGetNotesByQuestionId,
+  useGetSubmissionDetailById,
+  useUpdateNote,
+  useDeleteNote,
+  useAddNote,
+};
