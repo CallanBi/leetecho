@@ -42,7 +42,7 @@ export type AppState = {
 };
 
 export const initState: AppState = {
-  appVersion: '0.0.1',
+  appVersion: '0.0.2',
   uiStatus: {
     isNavCollapsed: false,
     isNavShown: true,

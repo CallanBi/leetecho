@@ -1,6 +1,6 @@
 {
   "name": "Leetecho",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Leetecho is a tool that automatically generates LeetCode solutions and notes and publishes them to a personal repository.",
   "author": "CallanBi <mcbihv@126.com>",
   "license": "MIT",
