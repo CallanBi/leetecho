@@ -1,6 +1,11 @@
 import to from 'await-to-js';
 import Leetcode from '../../services/leetcodeServices';
-import { EndPoint } from '../../services/leetcodeServices/utils/interfaces';
+import {
+  AddNoteRequest,
+  DeleteNoteRequest,
+  EndPoint,
+  UpdateNoteRequest,
+} from '../../services/leetcodeServices/utils/interfaces';
 import {
   GetNotesByQuestionIdRequest,
   GetProblemsRequest,
@@ -91,6 +96,30 @@ class ApiBridge {
       throw err;
     }
     return res as UnPromisifyFunction<typeof this.leetcode.getNotesByQuestionId>;
+  }
+
+  async updateNote(params: UpdateNoteRequest) {
+    const [err, res] = await to(this.leetcode.updateNote(params));
+    if (err) {
+      throw err;
+    }
+    return res as UnPromisifyFunction<typeof this.leetcode.updateNote>;
+  }
+
+  async addNote(params: AddNoteRequest) {
+    const [err, res] = await to(this.leetcode.addNote(params));
+    if (err) {
+      throw err;
+    }
+    return res as UnPromisifyFunction<typeof this.leetcode.addNote>;
+  }
+
+  async deleteNote(params: DeleteNoteRequest) {
+    const [err, res] = await to(this.leetcode.deleteNote(params));
+    if (err) {
+      throw err;
+    }
+    return res as UnPromisifyFunction<typeof this.leetcode.deleteNote>;
   }
 
   async getSubmissionDetailById(params: GetSubmissionDetailByIdRequest) {

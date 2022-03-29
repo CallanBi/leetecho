@@ -16,7 +16,7 @@ const layoutSettings: Partial<ProSettings> = {
 
 const globalMessageConfig: ConfigOptions = {
   top: 52,
-  duration: 3.5,
+  duration: 3,
 };
 
 export { layoutSettings, globalMessageConfig };

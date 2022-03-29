@@ -384,9 +384,62 @@ export interface UserProfileUserQuestionProgress {
   numUntouchedQuestions: NumUntouchedQuestion[];
 }
 
+export interface UpdateNoteRequest {
+  content: string;
+  noteId: string;
+  noteType: string;
+  /** the id of the question where the note belongs*/
+  targetId: string;
+  summary: string;
+}
+
 export interface GetUserProgressResponse {
   userProfileUserQuestionSubmitStats: UserProfileUserQuestionSubmitStats;
   userProfileUserQuestionProgress: UserProfileUserQuestionProgress;
+}
+
+export interface NoteUpdateUserNote {
+  note: UserNote;
+  ok: boolean;
+  __typename: string;
+}
+
+export interface UpdateNoteResponse {
+  __typename: string;
+  noteUpdateUserNote: NoteUpdateUserNote;
+}
+export interface AddNoteRequest {
+  content: string;
+  noteType: string;
+  targetId: string;
+  summary: string;
+}
+
+export interface NoteCreateCommonNote {
+  note: UserNote;
+  ok: boolean;
+  __typename: string;
+}
+
+export interface AddNoteResponse {
+  __typename: string;
+  noteCreateCommonNote: NoteCreateCommonNote;
+}
+
+export interface DeleteNoteRequest {
+  noteType: string;
+  targetId: string;
+  noteId: string;
+}
+
+export interface NoteDeleteUserNote {
+  ok: boolean;
+  __typename: string;
+}
+
+export interface DeleteNoteResponse {
+  __typename: string;
+  noteDeleteUserNote: NoteDeleteUserNote;
 }
 
 export {

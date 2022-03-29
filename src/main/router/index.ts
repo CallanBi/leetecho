@@ -27,12 +27,18 @@ import { GetAllTagsResponse } from '../idl/tags';
 import { CheckRepoConnectionRequest, LoginReq, LoginResp, LogoutResp, ReleaseTag } from '../idl/user';
 import ERROR_CODE, { getErrorCodeMessage } from './errorCode';
 import {
+  AddNoteRequest,
+  AddNoteResponse,
+  DeleteNoteRequest,
+  DeleteNoteResponse,
   Difficulty,
   GetNotesByQuestionIdResponse,
   GetUserProgressResponse,
   GetUserStatusResponse,
   Question,
   Status,
+  UpdateNoteRequest,
+  UpdateNoteResponse,
 } from '../services/leetcodeServices/utils/interfaces';
 import {
   formatLeetechoSyntax,
@@ -287,6 +293,51 @@ ipcMain.handle('getNotesByQuestionId', async (_, params: GetNotesByQuestionIdReq
     code: res?.code ?? ERROR_CODE.OK,
     data: res?.data ?? {},
   } as SuccessResp<GetNotesByQuestionIdResponse>;
+});
+
+ipcMain.handle('updateNote', async (_, params: UpdateNoteRequest) => {
+  if (!apiBridge) {
+    throw new ErrorResp({ code: ERROR_CODE.NOT_LOGIN });
+  }
+  const [err, res] = await to(baseHandler(apiBridge.updateNote(params)));
+
+  if (err) {
+    throw new Error(transformCustomErrorToMsg(err));
+  }
+  return {
+    code: res?.code ?? ERROR_CODE.OK,
+    data: res?.data ?? {},
+  } as SuccessResp<UpdateNoteResponse>;
+});
+
+ipcMain.handle('addNote', async (_, params: AddNoteRequest) => {
+  if (!apiBridge) {
+    throw new ErrorResp({ code: ERROR_CODE.NOT_LOGIN });
+  }
+  const [err, res] = await to(baseHandler(apiBridge.addNote(params)));
+
+  if (err) {
+    throw new Error(transformCustomErrorToMsg(err));
+  }
+  return {
+    code: res?.code ?? ERROR_CODE.OK,
+    data: res?.data ?? {},
+  } as SuccessResp<AddNoteResponse>;
+});
+
+ipcMain.handle('deleteNote', async (_, params: DeleteNoteRequest) => {
+  if (!apiBridge) {
+    throw new ErrorResp({ code: ERROR_CODE.NOT_LOGIN });
+  }
+  const [err, res] = await to(baseHandler(apiBridge.deleteNote(params)));
+
+  if (err) {
+    throw new Error(transformCustomErrorToMsg(err));
+  }
+  return {
+    code: res?.code ?? ERROR_CODE.OK,
+    data: res?.data ?? {},
+  } as SuccessResp<DeleteNoteResponse>;
 });
 
 ipcMain.handle('getSubmissionDetailById', async (_, params: GetSubmissionDetailByIdRequest) => {
@@ -717,7 +768,7 @@ ipcMain.handle(
             // eslint-disable-next-line max-len
             `| ${question.frontendId ?? (question.questionFrontendId || '')} | [${question.title}](problems/${
               question.titleSlug
-            }.md) | [${question.translatedTitle}](problems/${question.titleSlug}) | ![](./imgs/${
+            }.md) | [${question.translatedTitle}](problems/${question.titleSlug}.md) | ![](./imgs/${
               question?.difficulty?.toLowerCase() ?? ''
             }.png) | ${formatTimeStamp(question?.lastSubmittedAt ?? 0)}`,
         )
@@ -769,7 +820,7 @@ ipcMain.handle(
                   question.title
                 }](problems/${question.titleSlug}.md) | [${question.titleCn}](problems/${
                   question.titleSlug
-                }) | ![](./imgs/${question?.difficulty?.toLowerCase() ?? ''}.png) | ${formatTimeStamp(
+                }.md) | ![](./imgs/${question?.difficulty?.toLowerCase() ?? ''}.png) | ${formatTimeStamp(
                   questions?.find((q) => q.titleSlug === question.titleSlug)?.lastSubmittedAt ?? 0,
                 )}`,
             )
@@ -851,7 +902,7 @@ ipcMain.handle(
       concurrencyController({
         requestFunc: handleQuestion,
         params: questions,
-        concurrency: 3,
+        concurrency: 2,
       }),
     );
 

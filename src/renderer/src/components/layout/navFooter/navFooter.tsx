@@ -1,11 +1,11 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 import { Badge, Button, message, Modal, Progress, Tooltip, Typography } from 'antd';
-import { IconBolt, IconGithubLogo, IconLanguage, IconSetting, IconSignal, IconUpload } from '@douyinfe/semi-icons';
+import { IconGithubLogo, IconLanguage, IconSetting, IconSignal, IconUpload } from '@douyinfe/semi-icons';
 import { withSemiIconStyle } from '@/style';
 import { AppStoreContext } from '@/store/appStore/appStore';
 import to from 'await-to-js';
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery, useQueryClient, UseQueryResult } from 'react-query';
 import store, { User, UserConfig } from '@/storage/electronStore';
 import { COLOR_PALETTE } from 'src/const/theme/color';
 import { useCheckRepoConnection, useCheckUpdate } from '@/rendererApi/user';
@@ -13,8 +13,9 @@ import { css } from '@emotion/react';
 import AppSettingDrawer from '@/components/appSettingDrawer';
 import { ReleaseTag } from 'src/main/idl/user';
 import { checkNeedUpdate } from 'src/main/tools';
+import { useRouter } from '@/hooks/router/useRouter';
 
-const { useRef, useState, useEffect, useMemo } = React;
+const { useState, useEffect, useMemo } = React;
 
 const {
   bridge: { ipcRenderer, openExternal },
@@ -69,8 +70,13 @@ interface NavFooterProps {}
 const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
   const { state: appState, dispatch: appDispatch } = React.useContext(AppStoreContext);
 
+  const router = useRouter();
+
   const {
     userState: { usrSlug = '', usrName = '', endPoint = 'CN' },
+    queryStatus: {
+      checkRepoConnectionQuery: { enableRequest: checkRepoConnectionEnableRequest = false },
+    },
   } = appState;
 
   const { appVersion = '' } = appState;
@@ -122,31 +128,35 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
         },
       });
 
-  const onCheckSuccess = () => {
-    message.success('🎉 连接成功，去发布吧~');
-    setCheckRepoConnectionQuery({
-      ...checkRepoConnectionQuery,
-      enableRequest: false,
+  const onCheckRepoSuccess = () => {
+    if (router.pathname !== '/remoteSettings') {
+      message.success('🎉 连接成功，去发布吧~');
+    }
+    /** close repo connection request */
+    appDispatch({
+      appActionType: 'change-query-status',
+      payload: {
+        checkRepoConnectionQuery: {
+          enableRequest: false,
+        },
+      },
     });
   };
 
-  const onCheckError = (error: Error) => {
-    message.error(error.message ? `仓库链接检测失败, 错误信息：${error.message}` : '仓库链接检测失败');
-    setCheckRepoConnectionQuery({
-      ...checkRepoConnectionQuery,
-      enableRequest: false,
+  const onCheckRepoError = (error: Error) => {
+    if (router.pathname !== '/remoteSettings') {
+      message.error(error.message ? `仓库链接检测失败, 错误信息：${error.message}` : '仓库链接检测失败');
+    }
+    /** close repo connection request */
+    appDispatch({
+      appActionType: 'change-query-status',
+      payload: {
+        checkRepoConnectionQuery: {
+          enableRequest: false,
+        },
+      },
     });
   };
-
-  const [checkRepoConnectionQuery, setCheckRepoConnectionQuery] = useState<{
-    enableRequest: boolean;
-    onSuccess: (value: SuccessResp<Record<string, never>>) => void;
-    onError: (error: Error) => void;
-  }>({
-        enableRequest: false,
-        onSuccess: onCheckSuccess,
-        onError: onCheckError,
-      });
 
   const { data: userConfig } = useQuery(
     ['fetchStoreUserConfig', 'userConfig'],
@@ -170,8 +180,6 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
     [userConfig, endPoint, appState.userState.usrName],
   ) as User;
 
-  const { enableRequest, onSuccess, onError } = checkRepoConnectionQuery;
-
   const { isLoading: isCheckRepoConnectionLoading, isFetching: isCheckRepoConnectionFetching } = useCheckRepoConnection(
     {
       repoName: thisUser?.appSettings?.repoName || '',
@@ -181,9 +189,9 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
       token: thisUser?.appSettings?.token || '',
     },
     {
-      enabled: enableRequest,
-      onSuccess: onSuccess,
-      onError: onError,
+      enabled: checkRepoConnectionEnableRequest,
+      onSuccess: onCheckRepoSuccess,
+      onError: onCheckRepoError,
       cacheTime: 0,
     },
   );
@@ -234,8 +242,40 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
     setSettingDrawerVisible(false);
   };
 
+  const queryClient = useQueryClient();
+
   return (
     <Footer>
+      {(isCheckRepoConnectionFetching || isCheckRepoConnectionLoading) && (
+        <PublishButtonSection>
+          <Button
+            shape="round"
+            style={{ ...publishButtonStyle, background: COLOR_PALETTE.LEETECHO_HEADER_SEARCH_BG }}
+            onClick={() => {
+              queryClient.cancelQueries([
+                'checkRepoConnection',
+                {
+                  repoName: thisUser?.appSettings?.repoName || '',
+                  branch: thisUser?.appSettings?.branch || '',
+                  userName: thisUser?.appSettings?.userName || '',
+                  email: thisUser?.appSettings?.email || '',
+                  token: thisUser?.appSettings?.token || '',
+                },
+              ]);
+              appDispatch({
+                appActionType: 'change-query-status',
+                payload: {
+                  checkRepoConnectionQuery: {
+                    enableRequest: false,
+                  },
+                },
+              });
+            }}
+          >
+            取消检查连接
+          </Button>
+        </PublishButtonSection>
+      )}
       <PublishButtonSection>
         <Button
           shape="round"
@@ -243,9 +283,14 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
           icon={<IconSignal style={withSemiIconStyle(publishButtonIconStyle)} />}
           loading={isCheckRepoConnectionLoading || isCheckRepoConnectionFetching}
           onClick={() => {
-            setCheckRepoConnectionQuery({
-              ...checkRepoConnectionQuery,
-              enableRequest: true,
+            /** check repo connection */
+            appDispatch({
+              appActionType: 'change-query-status',
+              payload: {
+                checkRepoConnectionQuery: {
+                  enableRequest: true,
+                },
+              },
             });
           }}
         >
