@@ -24,8 +24,14 @@ import {
   QuestionStatus,
   SortOrder,
   TagGroupItem,
+  UpdateNoteRequest,
   Uris,
   UserProfileQuestions,
+  UpdateNoteResponse,
+  AddNoteRequest,
+  AddNoteResponse,
+  DeleteNoteRequest,
+  DeleteNoteResponse,
 } from '../utils/interfaces';
 import Problem from './problem';
 
@@ -858,6 +864,122 @@ class Leetcode {
 
     const { noteAggregateNote } = response as GetNotesResponse;
     return noteAggregateNote;
+  }
+
+  async updateNote(param: UpdateNoteRequest): Promise<UpdateNoteResponse['noteUpdateUserNote']> {
+    const { content = '', noteId = '', noteType = 'COMMON_QUESTION', summary = '', targetId = '' } = param;
+    const [err, response] = await to(
+      Helper.GraphQLRequest({
+        query: `
+        mutation noteUpdateUserNote($content: String!, $noteId: ID!, $summary: String!) {
+          __typename
+          noteUpdateUserNote(content: $content, noteId: $noteId, summary: $summary) {
+            note {
+              config
+              content
+              id
+              noteType
+              targetId
+              updatedAt
+              __typename
+            }
+            ok
+            __typename
+          }
+        }
+
+      `,
+        variables: {
+          content,
+          noteId,
+          noteType,
+          summary,
+          targetId,
+        },
+      }),
+    );
+    if (err) {
+      throw new ErrorResp({
+        code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: err.message || getErrorCodeMessage(),
+      });
+    }
+
+    const { noteUpdateUserNote } = response as UpdateNoteResponse;
+    return noteUpdateUserNote;
+  }
+
+  async addNote(param: AddNoteRequest): Promise<AddNoteResponse['noteCreateCommonNote']> {
+    const { content = '', noteType = 'COMMON_QUESTION', summary = '', targetId = '' } = param;
+    const [err, response] = await to(
+      Helper.GraphQLRequest({
+        query: `
+        mutation noteCreateCommonNote($content: String!, $noteType: NoteCommonTypeEnum!, $targetId: String!, $summary: String!) {
+          __typename
+          noteCreateCommonNote(content: $content, noteType: $noteType, targetId: $targetId, summary: $summary) {
+            note {
+              config
+              content
+              id
+              noteType
+              targetId
+              updatedAt
+              __typename
+            }
+            ok
+            __typename
+          }
+        }
+
+      `,
+        variables: {
+          content,
+          noteType,
+          summary,
+          targetId,
+        },
+      }),
+    );
+    if (err) {
+      throw new ErrorResp({
+        code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: err.message || getErrorCodeMessage(),
+      });
+    }
+
+    const { noteCreateCommonNote } = response as AddNoteResponse;
+    return noteCreateCommonNote;
+  }
+
+  async deleteNote(param: DeleteNoteRequest): Promise<DeleteNoteResponse['noteDeleteUserNote']> {
+    const { noteType = 'COMMON_QUESTION', targetId = '', noteId = '' } = param;
+    const [err, response] = await to(
+      Helper.GraphQLRequest({
+        query: `
+        mutation noteDeleteUserNote($noteId: ID!) {
+          __typename
+          noteDeleteUserNote(noteId: $noteId) {
+            ok
+            __typename
+          }
+        }
+      `,
+        variables: {
+          noteType,
+          targetId,
+          noteId,
+        },
+      }),
+    );
+    if (err) {
+      throw new ErrorResp({
+        code: (err as StatusCodeError).statusCode ?? ERROR_CODE.UNKNOWN_ERROR,
+        message: err.message || getErrorCodeMessage(),
+      });
+    }
+
+    const { noteDeleteUserNote } = response as DeleteNoteResponse;
+    return noteDeleteUserNote;
   }
 
   async getUserStatus(): Promise<GetUserStatusResponse['userStatus']> {

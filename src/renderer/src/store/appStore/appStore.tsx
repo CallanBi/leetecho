@@ -7,6 +7,11 @@ import withStoreProvider from '../withStoreProvider';
 
 export type AppState = {
   appVersion: string;
+  queryStatus: {
+    checkRepoConnectionQuery: {
+      enableRequest: boolean;
+    };
+  };
   uiStatus: {
     /** Now isNavCollapsed is unused  */
     isNavCollapsed?: boolean;
@@ -67,6 +72,11 @@ export const initState: AppState = {
       field: '',
     },
   },
+  queryStatus: {
+    checkRepoConnectionQuery: {
+      enableRequest: false,
+    },
+  },
 };
 
 export type AppActionType = 'change-ui-status';
@@ -87,6 +97,12 @@ export type AppAction =
   | {
     appActionType: 'change-problem-filter-status';
     payload: Partial<AppState['problemFilterState']>;
+    /** isReplacement: decide whether to replace or merge original data, false as default */
+    isReplacement?: boolean;
+  }
+  | {
+    appActionType: 'change-query-status';
+    payload: Partial<AppState['queryStatus']>;
     /** isReplacement: decide whether to replace or merge original data, false as default */
     isReplacement?: boolean;
   };
@@ -122,6 +138,12 @@ export const reducer: React.Reducer<AppState, AppAction> = (state, appAction) =>
         return { ...state, problemFilterState: appAction.payload };
       }
       return { ...state, problemFilterState: { ...state.problemFilterState, ...appAction.payload } };
+
+    case 'change-query-status':
+      if (appAction.isReplacement) {
+        return { ...state, queryStatus: appAction.payload };
+      }
+      return { ...state, queryStatus: { ...state.queryStatus, ...appAction.payload } };
 
     default:
       return state;
