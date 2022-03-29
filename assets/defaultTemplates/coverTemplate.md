@@ -37,10 +37,4 @@ My LeetCode homepage : [{{ profile.userName }} - Profile - LeetCode](https://lee
 |:---:|:-----:|:-----:|:----------:|:----------:|
 :allProblems{}
 
-# My Customized Problem Set
-|  #  | Title |  Title-CN  | Difficulty | Last Submission Time |
-|:---:|:-----:|:-----:|:----------:|:----------:|
-:problemFilter{"{"list":"qgq7m9e","difficulty":"MEDIUM","tags":["database"]}"}
-
-
 ```
