@@ -27,7 +27,7 @@ Leetecho 基本功能实现。
 * change concurrency request number in publishing notes from 3 to 2
 * cover template bug fix
 
-**Full Changelog**: https://github.com/CallanBi/Leetecho/compare/0.0.1...0.0.2
+**Full Changelog**: https://github.com/CallanBi/leetecho/compare/0.0.1...0.0.2
 
 ### Chinese Version
 
@@ -38,5 +38,5 @@ Leetecho 基本功能实现。
 * 将发布笔记的并发请求数从 3 改为 2
 * 封面模板的错误修复
 
-**全部 Changelog**: https://github.com/CallanBi/Leetecho/compare/0.0.1...0.0.2
+**全部 Changelog**: https://github.com/CallanBi/leetecho/compare/0.0.1...0.0.2
 
