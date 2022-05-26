@@ -253,7 +253,7 @@ const RemoteSettings: React.FC<RemoteSettingsProps> = (props: RemoteSettingsProp
                   position: 'relative',
                   top: 12,
                 }}
-                href="https://callanbi.top/Leetecho/docs"
+                href="https://callanbi.top/leetecho/docs"
                 target="_blank"
               >
                 <IconInfoCircle style={withSemiIconStyle()} /> 说明文档

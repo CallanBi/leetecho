@@ -1,6 +1,6 @@
 {
   "name": "Leetecho",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Leetecho is a tool that automatically generates LeetCode solutions and notes and publishes them to a personal repository.",
   "author": "CallanBi <mcbihv@126.com>",
   "license": "MIT",
@@ -102,7 +102,7 @@
     "handlebar": "^1.0.0",
     "he": "^1.2.0",
     "import": "^0.0.6",
-    "isomorphic-git": "^1.15.0",
+    "isomorphic-git": "^1.17.2",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.7",
     "request": "^2.88.2",

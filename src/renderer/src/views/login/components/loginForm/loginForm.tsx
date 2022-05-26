@@ -179,11 +179,11 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
 
   const endPointSelectedOptions = [
     {
-      label: 'LeetCode-CN',
+      label: 'leetcode.cn',
       value: 'CN',
     },
     {
-      label: 'LeetCode',
+      label: 'leetcode.com',
       value: 'US',
       disabled: true,
       message: 'leetcode.com is under construction, stay tuned!',
@@ -248,8 +248,7 @@ const LoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
           }
           name="endPoint"
         >
-          <Select placeholder="请选择域名" options={endPointSelectedOptions}>
-          </Select>
+          <Select placeholder="请选择域名" options={endPointSelectedOptions}></Select>
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 10, span: 16 }} label="" name="isUserRemembered" valuePropName="checked">

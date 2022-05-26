@@ -4,7 +4,7 @@
 
 Leetecho 是一款优雅、体验友好的自动生成 LeetCode 题解和笔记并发布到代码托管平台的个人仓库的产品。
 
-  [下载](https://github.com/CallanBi/Leetecho/releases) | [产品 Landing 主页](https://callanbi.top/Leetecho)
+  [下载](https://github.com/CallanBi/Leetecho/releases) | [产品 Landing 主页](https://callanbi.top/leetecho)
 
 <div align="center">
 
@@ -17,7 +17,7 @@ Leetecho 是一款优雅、体验友好的自动生成 LeetCode 题解和笔记�
 ---
  [English](https://github.com/CallanBi/Leetecho/blob/main/README.md) | [简体中文](https://github.com/CallanBi/Leetecho/blob/main/README-zh.md)
 
-**目前仅支持`leetcode-cn.com`帐号；**
+**目前仅支持`leetcode.cn`帐号；**
 **产品目前仅支持中文，后续 i18n 建设和 `leetcode.com` 会有计划支持，尽情期待！**
 
 

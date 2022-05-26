@@ -5,7 +5,7 @@
 ```leetecho
 ## Tags - 题目标签
 
-{{#each topicTags}} <img src="https://img.shields.io/badge/{{ this.name }}-{{ this.translatedName }}-blue.svg">  {{/each}}
+{{#each topicTags}} <img src="https://img.shields.io/badge/{{ deleteHyphen this.name }}-{{ deleteHyphen this.translatedName }}-blue.svg">  {{/each}}
 
 
 ## Description - 题目描述
@@ -21,7 +21,7 @@
 ```leetecho
 ## Link - 题目链接
 
-[LeetCode](https://leetcode.com/problems/{{ titleSlug }}/description/)  -  [LeetCode-CN](https://leetcode-cn.com/problems/{{ titleSlug }}/description/)
+[LeetCode](https://leetcode.com/problems/{{ titleSlug }}/description/)  -  [LeetCode-CN](https://leetcode.cn/problems/{{ titleSlug }}/description/)
 ```
 
 ## Latest Accepted Submissions - 最近一次 AC 的提交
