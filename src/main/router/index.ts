@@ -71,7 +71,7 @@ import fs from 'fs';
 
 import { win } from '../index';
 
-const isDev = process.env.NODE_ENV === 'development';
+const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'debug';
 
 export type EndPoint = 'CN' | 'US';
 
@@ -146,6 +146,10 @@ Handlebars.registerHelper('ifCN', function (endPoint, options) {
   } else {
     return '';
   }
+});
+
+Handlebars.registerHelper('deleteHyphen', function (aString: string) {
+  return aString.replace('-', ' ');
 });
 
 let apiBridge: ApiBridge | null = null;

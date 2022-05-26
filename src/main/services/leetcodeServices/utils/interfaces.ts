@@ -180,6 +180,7 @@ export interface OutputDetail {
 export interface SubmissionDetail {
   id: string;
   code: string;
+  isMine: boolean;
   runtime: string;
   memory: string;
   rawMemory: string;

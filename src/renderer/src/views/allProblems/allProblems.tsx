@@ -112,6 +112,24 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
         },
         enableRequest: true,
       });
+      appDispatch({
+        appActionType: 'change-problem-filter-status',
+        payload: {
+          ...appState.problemFilterState,
+          pageStatus: {
+            ...appState.problemFilterState?.pageStatus,
+            ...pageStatus,
+          },
+          sorterStatus: {
+            ...appState.problemFilterState?.sorterStatus,
+            ...sorterStatus,
+          },
+          filterStatus: {
+            ...appState.problemFilterState?.filterStatus,
+            ...filterStatus,
+          },
+        },
+      });
     }
   }, []);
 
@@ -287,6 +305,24 @@ const AllProblems: React.FC<AllProblemsProp> = (props: AllProblemsProp = default
         onRow={(record, index) => {
           return {
             onClick: (_) => {
+              appDispatch({
+                appActionType: 'change-problem-filter-status',
+                payload: {
+                  ...appState.problemFilterState,
+                  pageStatus: {
+                    ...appState.problemFilterState?.pageStatus,
+                    ...requestParams.pageStatus,
+                  },
+                  sorterStatus: {
+                    ...appState.problemFilterState?.sorterStatus,
+                    ...requestParams.sorterStatus,
+                  },
+                  filterStatus: {
+                    ...appState.problemFilterState?.filterStatus,
+                    ...requestParams.filterStatus,
+                  },
+                },
+              });
               router.push(`/problemDetail?titleSlug=${record.titleSlug || ''}`);
             },
           };

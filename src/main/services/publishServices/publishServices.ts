@@ -21,6 +21,13 @@ import {
 import { format, toDate } from 'date-fns';
 import { GetProblemsRequest } from 'src/main/idl/problems';
 
+/**
+ * sleep for a while in async function
+ * @param fn async fn
+ * @param par input param
+ * @param sleepTime sleep time in millisecond
+ * @returns sleep fn
+ */
 export async function sleep<T, U>(fn: (par: T) => Promise<U>, par: T, sleepTime?: number) {
   const promise = new Promise<U>(async (resolve, reject) => {
     const [err, res] = (await to(fn(par))) as [null | Error | ErrorResp, U];
@@ -39,6 +46,11 @@ export async function sleep<T, U>(fn: (par: T) => Promise<U>, par: T, sleepTime?
   return promise;
 }
 
+/**
+ * concurrency control
+ * @param args
+ * @returns results
+ */
 export async function concurrencyController<T, U>(args: {
   requestFunc: (params: T, idx: number) => Promise<U>;
   params: T[];
@@ -81,6 +93,64 @@ export async function concurrencyController<T, U>(args: {
  */
 export function formatTimeStamp(timestamp: string | number) {
   return format(toDate(Number(timestamp) * 1000), 'yyyy/MM/dd H:mm');
+}
+
+/**
+ * retry request with a limited number of retries
+ * @param requestFunc request function
+ * @param params request params
+ * @param retryCount retry count
+ * @param isResFailed customized function for checking if response is failed
+ * @param error? customized error
+ * @returns response
+ */
+export function retryRequest<T, U>(
+  requestFunc: (params: T) => Promise<U>,
+  params: T,
+  isResFailed: (res?: U) => boolean = () => false,
+  retryCount = 100,
+  error?: Error | ErrorResp,
+) {
+  return new Promise<U>((resolve, reject) => {
+    let count = 0;
+    const request = async () => {
+      try {
+        const [err, res] = await to(requestFunc(params));
+        if (err || isResFailed(res)) {
+          if (count < retryCount) {
+            count++;
+            request();
+          } else {
+            if (err) {
+              reject(err);
+            }
+            if (isResFailed(res)) {
+              if (error) {
+                reject(error || res);
+              } else {
+                reject(
+                  new ErrorResp({
+                    code: ERROR_CODE.UNKNOWN_ERROR,
+                    message: 'invalid response in retry request',
+                  }) || res,
+                );
+              }
+            }
+          }
+        } else {
+          resolve(res);
+        }
+      } catch (e) {
+        if (count < retryCount) {
+          count++;
+          request();
+        } else {
+          reject(e);
+        }
+      }
+    };
+    request();
+  });
 }
 
 export interface GetQuestionAllInfoByTitleSlugResponse extends Question {
@@ -200,7 +270,17 @@ export const getQuestionAllInfoByTitleSlug = async (params: { apiBridge: ApiBrid
   }
 
   const [getSubmissionDetailByIdErr, lastAcceptedSubmissionDetail] = (await to(
-    apiBridge.getSubmissionDetailById({ id: lastAcceptedSubmission.id }),
+    retryRequest(
+      apiBridge.getSubmissionDetailById.bind(apiBridge),
+      { id: lastAcceptedSubmission.id },
+      (res) => res === null || res === undefined,
+      100,
+      new ErrorResp({
+        code: ERROR_CODE.UNKNOWN_ERROR,
+        message: 'invalid response in retry request: submission detail is empty',
+      }),
+    ),
+    // apiBridge.getSubmissionDetailById({ id: lastAcceptedSubmission.id }),
   )) as [null | ErrorResp, GetSubmissionDetailByIdResponse['submissionDetail']];
 
   const [getNotesErr, allNotes] = (await to(
@@ -229,7 +309,7 @@ export const getQuestionAllInfoByTitleSlug = async (params: { apiBridge: ApiBrid
       ...questionDetail,
       lastAcceptedSubmissionDetail: {
         ...lastAcceptedSubmissionDetail,
-        time: formatTimeStamp(lastAcceptedSubmissionDetail?.timestamp ?? 0),
+        time: lastAcceptedSubmissionDetail?.timestamp ? formatTimeStamp(lastAcceptedSubmissionDetail.timestamp) : '',
       },
       notes: userNotes.length === 0 ? [{ content: 'No notes' }] : userNotes,
     },

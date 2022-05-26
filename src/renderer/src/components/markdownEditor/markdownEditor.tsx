@@ -4,12 +4,11 @@ import { css, Global } from '@emotion/react';
 import { Mode } from './components/milkdownEditor/milkdownFullEditor';
 import markdownEditorStyle from './styles';
 import EditorToolBars from './components/editorToolBars';
-import Loading from '../illustration/loading';
+import { message } from 'antd';
 
 import MilkDownFullEditor from './components/milkdownEditor/milkdownFullEditor';
 
 const { useRef, useState, useEffect, useMemo } = React;
-
 interface MarkdownEditorProps {
   isReadOnly?: boolean;
   value?: string;

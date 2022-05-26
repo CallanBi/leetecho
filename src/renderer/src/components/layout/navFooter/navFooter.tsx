@@ -423,7 +423,7 @@ const NavFooter: React.FC<NavFooterProps> = (props: NavFooterProps) => {
                 <section>
                   发现新版本 {releaseData?.name} ，推荐前往{' '}
                   <Typography.Link
-                    href="https://callanbi.top/Leetecho/"
+                    href="https://callanbi.top/leetecho/"
                     target="_blank"
                     style={{
                       color: COLOR_PALETTE.LEETECHO_BLUE,

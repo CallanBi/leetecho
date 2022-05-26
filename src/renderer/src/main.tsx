@@ -17,7 +17,6 @@ import { ConfigProvider, message } from 'antd';
 import Empty from './components/illustration/empty';
 import { globalMessageConfig } from './const/layout';
 
-
 message.config(globalMessageConfig);
 
 const {

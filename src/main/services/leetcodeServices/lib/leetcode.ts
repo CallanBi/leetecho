@@ -548,6 +548,7 @@ class Leetcode {
             statusDisplay
             timestamp
             lang
+            isMine
             passedTestCaseCnt
             totalTestCaseCnt
             sourceUrl
@@ -578,7 +579,6 @@ class Leetcode {
             __typename
           }
         }
-
       `,
         variables: {
           id,

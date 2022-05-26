@@ -17,7 +17,7 @@ Leetecho is an elegant, experience-friendly product that automatically generates
 ---
  [English](https://github.com/CallanBi/Leetecho/blob/main/README.md) | [简体中文](https://github.com/CallanBi/Leetecho/blob/main/README-zh.md)
 
-**Only `leetcode-cn.com` accounts are currently supported;**
+**Only `leetcode.cn` accounts are currently supported;**
 **The product only supports Simplify Chinese at the moment, supporting i18n construction and `leetcode.com` are on the schedule, stay tuned!**
 
 
