@@ -4,7 +4,7 @@
 
 Leetecho is an elegant, experience-friendly product that automatically generates LeetCode solutions and notes and publishes them to personal repositories on code hosting platforms.
 
-  [Download](https://github.com/CallanBi/Leetecho/releases) | [Products Landing HomePage](https://callanbi.top/Leetecho)
+  [Download](https://github.com/CallanBi/Leetecho/releases) | [Products Landing HomePage](https://callanbi.top/leetecho)
 
 <div align="center">
 
