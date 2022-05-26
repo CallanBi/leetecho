@@ -14,14 +14,16 @@
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react",
     "noErrorTruncation": true,
-    "exclude": [
-      "node_modules",
-    ],
-    "include": [
-      "types/**/*.d.ts",
-      "src/main/router/**/*.d.ts",
-      "src/main/idl/**/*.d.ts",
-      "src/main/middleware/**/*.d.ts"
-    ]
-  }
+  },
+  "exclude": [
+    "node_modules",
+  ],
+  "include": [
+    "types/**/*.d.ts",
+    "src/main/router/**/*.d.ts",
+    "src/main/idl/**/*.d.ts",
+    "src/main/middleware/**/*.d.ts",
+    "src/renderer/src/types/*.d.ts",
+    "src/renderer/src/types/**/*.d.ts"
+  ]
 }

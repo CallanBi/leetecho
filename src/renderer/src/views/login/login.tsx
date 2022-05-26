@@ -2,15 +2,24 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
-import { Button } from 'antd';
+import { Badge, Button, Tooltip, Typography } from 'antd';
 import { CSSTransition } from 'react-transition-group';
 import { ReactComponent as Logo } from '@/assets/logo-vertical.svg';
 import { COLOR_PALETTE } from '../../../../const/theme/color';
+import { AppStoreContext } from '../../store/appStore/appStore';
 
 import LoginForm from './components/loginForm';
 import TrafficLight from '@/components/trafficLight';
+import { useCheckUpdate } from '@/rendererApi/user';
+import { UseQueryResult } from 'react-query';
+import { ReleaseTag } from 'src/main/idl/user';
+import { checkNeedUpdate } from 'src/main/tools';
 
 const { useRef, useState, useEffect, useMemo } = React;
+
+const CheckUpdateSection = styled.section`
+  display: inline-block;
+`;
 
 const LoginSection = styled.section`
   -webkit-app-region: drag;
@@ -62,9 +71,76 @@ const Login: React.FC<{}> = () => {
     [],
   );
 
+  const { state: appState } = React.useContext(AppStoreContext);
+
+  const { appVersion = '' } = appState;
+
+  const [checkUpdateRequestParams, setCheckUpdateRequestParams] = useState({
+    enableRequest: true,
+    onSuccess: () => {
+      setCheckUpdateRequestParams({
+        ...checkUpdateRequestParams,
+        enableRequest: false,
+      });
+    },
+    onError: () => {
+      /** noop */
+    },
+  });
+
+  const { isSuccess: isCheckUpdateSuccess, data: releaseData } = useCheckUpdate(
+    checkUpdateRequestParams?.enableRequest,
+    checkUpdateRequestParams?.onSuccess,
+    checkUpdateRequestParams?.onError,
+  ) as UseQueryResult<SuccessResp<ReleaseTag>['data'], Error>;
+
+  const hasUpdate = useMemo(() => {
+    const latest = releaseData?.name || '';
+
+    return checkNeedUpdate(appVersion, latest);
+  }, [appVersion, releaseData, releaseData?.name]);
+
   return (
     <>
       <LoginTrafficLightSection>
+        {hasUpdate && isCheckUpdateSuccess && (
+          <CheckUpdateSection>
+            <Tooltip
+              title={
+                <section
+                  css={css`
+                    padding-left: 16px;
+                  `}
+                >
+                  <section>
+                    发现新版本 {releaseData?.name} ，推荐前往{' '}
+                    <Typography.Link
+                      href="https://callanbi.top/leetecho/"
+                      target="_blank"
+                      style={{
+                        color: COLOR_PALETTE.LEETECHO_BLUE,
+                      }}
+                    >
+                      官网
+                    </Typography.Link>{' '}
+                    下载
+                  </section>
+                </section>
+              }
+              placement="top"
+            >
+              <Button type="link">
+                <Badge
+                  status="processing"
+                  size="default"
+                  style={{
+                    bottom: 3,
+                  }}
+                />
+              </Button>
+            </Tooltip>
+          </CheckUpdateSection>
+        )}
         <TrafficLight />
       </LoginTrafficLightSection>
       <LoginSection>

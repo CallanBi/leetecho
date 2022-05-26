@@ -20,6 +20,7 @@ import { useRouter } from '@/hooks/router/useRouter';
 import Resizer from '@/components/resizer';
 import { IconLink } from '@douyinfe/semi-icons';
 import { withSemiIconStyle } from '@/style';
+import PaidOnlyQuestion from './components/paidOnlyQuestion';
 
 const { Link } = Typography;
 
@@ -51,8 +52,10 @@ interface QuestionWrapperProps {
 const QuestionWrapper: React.FC<QuestionWrapperProps> = (props: QuestionWrapperProps) => {
   const { getQuestionQuery, getSubmissionsQuery } = props;
 
+  const isLocked = getQuestionQuery.data?.isPaidOnly && getQuestionQuery.data?.content === null;
+
   const { size, handler } = useResizable({
-    size: INIT_LEFT_SIZE,
+    size: !isLocked ? INIT_LEFT_SIZE : 1600,
     minSize: 100,
     maxSize: 1600,
     direction: 'right',
@@ -100,11 +103,17 @@ const QuestionWrapper: React.FC<QuestionWrapperProps> = (props: QuestionWrapperP
 
   const router = useRouter();
 
+  console.log(
+    '%c getQuestionQuery.data.isPaidOnly >>>',
+    'background: yellow; color: blue',
+    getQuestionQuery.data?.isPaidOnly,
+  );
+
   return (
     <>
       <QuestionWrapperSection>
         {(size as number) > LEFT_HIDDEN_SIZE && (
-          <QuestionViewerSection style={{ width: size }}>
+          <QuestionViewerSection style={{ width: !isLocked ? size : '100%' }}>
             <PageHeader
               style={{ paddingTop: 0, paddingBottom: 24, paddingLeft: 8 }}
               onBack={() => {
@@ -130,7 +139,7 @@ const QuestionWrapper: React.FC<QuestionWrapperProps> = (props: QuestionWrapperP
               </Descriptions.Item>
               <Descriptions.Item label="官方链接">
                 <Link
-                  href={`https://leetcode-cn.com/problems/${getQuestionQuery.data?.titleSlug || ''}/`}
+                  href={`https://leetcode.cn/problems/${getQuestionQuery.data?.titleSlug || ''}/`}
                   target="_blank"
                   style={{ color: COLOR_PALETTE.LEETECHO_LIGHT_BLUE }}
                 >
@@ -140,6 +149,8 @@ const QuestionWrapper: React.FC<QuestionWrapperProps> = (props: QuestionWrapperP
             </Descriptions>
             {getQuestionQuery.isLoading ? (
               <ContentSkeleton maxWidth={550}></ContentSkeleton>
+            ) : isLocked ? (
+              <PaidOnlyQuestion></PaidOnlyQuestion>
             ) : (
               <QuestionContentSection>
                 {parse(getQuestionQuery?.data?.translatedContent || getQuestionQuery?.data?.content || '', options)}
@@ -147,28 +158,32 @@ const QuestionWrapper: React.FC<QuestionWrapperProps> = (props: QuestionWrapperP
             )}
           </QuestionViewerSection>
         )}
-        <Resizer onMouseDown={handler} onTouchStart={handler}></Resizer>
-        <SubmissionsAndNotes
-          width={size > LEFT_HIDDEN_SIZE ? `calc(100% - ${size}px)` : '100%'}
-          getQuestionQuery={getQuestionQuery}
-          getSubmissionsQuery={getSubmissionsQuery}
-        ></SubmissionsAndNotes>
+        {!isLocked && <Resizer onMouseDown={handler} onTouchStart={handler}></Resizer>}
+        {!isLocked && (
+          <SubmissionsAndNotes
+            width={size > LEFT_HIDDEN_SIZE ? `calc(100% - ${size}px)` : '100%'}
+            getQuestionQuery={getQuestionQuery}
+            getSubmissionsQuery={getSubmissionsQuery}
+          ></SubmissionsAndNotes>
+        )}
       </QuestionWrapperSection>
-      <Viewer
-        visible={imgInfo.viewVisible}
-        onClose={() => {
-          setImgInfo({ src: '', alt: '', viewVisible: false });
-        }}
-        noImgDetails
-        showTotal={false}
-        attribute={false}
-        noNavbar
-        noToolbar
-        onMaskClick={() => {
-          setImgInfo({ src: '', alt: '', viewVisible: false });
-        }}
-        images={[{ src: imgInfo.src, alt: imgInfo.alt }]}
-      />
+      {!isLocked && (
+        <Viewer
+          visible={imgInfo.viewVisible}
+          onClose={() => {
+            setImgInfo({ src: '', alt: '', viewVisible: false });
+          }}
+          noImgDetails
+          showTotal={false}
+          attribute={false}
+          noNavbar
+          noToolbar
+          onMaskClick={() => {
+            setImgInfo({ src: '', alt: '', viewVisible: false });
+          }}
+          images={[{ src: imgInfo.src, alt: imgInfo.alt }]}
+        />
+      )}
     </>
   );
 };

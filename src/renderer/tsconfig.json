@@ -31,6 +31,8 @@
   },
   "include": [
     "./src",
+    "./src/types/*.d.ts",
+    "./src/types/**/*.d.ts",
     "types/*.d.ts",
     "types/**/*.d.ts",
     "**/types/**/*.d.ts",

@@ -118,6 +118,10 @@ async function createWindow() {
     event.sender.send('set-win-status', { isSuccessful: true, winStatus: params } as SetWinStatusResp);
   });
 
+  // ipcMain.on('open-url', (event, url) => {
+  //   shell.openExternal(url);
+  // });
+
   /** win status listen */
   win?.on('maximize', () => {
     win?.webContents.send('maximized', { isSuccessful: true, winStatus: 'maximized' } as MaximizedResp);
@@ -165,6 +169,10 @@ app.on('activate', () => {
 // use this to open links externally
 app.on('web-contents-created', (e, webContents) => {
   webContents.on('new-window', (event, url) => {
+    event.preventDefault();
+    // shell.openExternal(url);
+  });
+  webContents.on('will-navigate', (event, url) => {
     event.preventDefault();
     shell.openExternal(url);
   });

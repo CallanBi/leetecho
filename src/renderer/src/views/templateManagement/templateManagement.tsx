@@ -290,7 +290,7 @@ const TemplateManagement: React.FC<TemplateManagementProps> = (props: TemplateMa
           style={{
             color: COLOR_PALETTE.LEETECHO_LIGHT_BLUE,
           }}
-          href="https://callanbi.top/Leetecho/docs"
+          href="https://callanbi.top/leetecho/docs"
           target="_blank"
         >
           说明文档
