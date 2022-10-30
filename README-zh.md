@@ -48,7 +48,7 @@ Leetecho 是一款优雅、体验友好的自动生成 LeetCode 题解和笔记�
 
 5. 比 LeetCode 官网体验更友好，更便捷的习题检索，迅速让你回想起写题目的灵感来源。
 
-文档，常见问题和迭代计划和更多其他内容，可以去 [产品 Landing 主页](https://callanbi.top/Leetecho) 浏览。
+文档，常见问题和迭代计划和更多其他内容，可以去 [产品 Landing 主页](https://callanbi.top/leetecho) 浏览。
 
 ## 产品界面
 
