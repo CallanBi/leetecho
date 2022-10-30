@@ -48,7 +48,7 @@ Here's the fun part: if you brush one question a day, Leetecho can keep your roa
 
 5. A more user-friendly experience than the official LeetCode website, with a more convenient question search that quickly brings you back to the source of inspiration for writing the question.
 
-Documentation, FAQs and iteration plans and more can be found on the [Product Landing home page](https://callanbi.top/Leetecho)(only in Simplify Chinese version currently).
+Documentation, FAQs and iteration plans and more can be found on the [Product Landing home page](https://callanbi.top/leetecho)(only in Simplify Chinese version currently).
 
 ## Product Interface
 
