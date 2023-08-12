@@ -55,8 +55,10 @@ export async function concurrencyController<T, U>(args: {
   requestFunc: (params: T, idx: number) => Promise<U>;
   params: T[];
   concurrency: number;
+  shouldSleep?: boolean;
+  sleepTime?: number;
 }): Promise<U[]> {
-  const { requestFunc, params, concurrency } = args;
+  const { requestFunc, params, concurrency, shouldSleep = false, sleepTime = 1000 } = args;
   const requestWindow: T[] = [];
   const results: U[] = [];
 
@@ -65,11 +67,28 @@ export async function concurrencyController<T, U>(args: {
     requestWindow.push(params[i]);
     if (requestWindow.length === concurrency) {
       const requestPromises = requestWindow.map((param) => requestFunc(param, i));
-      const [err, responses] = await to(Promise.all(requestPromises));
+
+      let err = null;
+      let responses = null;
+
+      if (shouldSleep) {
+        [err, responses] = await to(
+          sleep(
+            async () => {
+              return Promise.all(requestPromises);
+            },
+            null,
+            sleepTime,
+          ),
+        );
+      } else {
+        [err, responses] = await to(Promise.all(requestPromises));
+      }
+
       if (err) {
         throw err;
       }
-      results.push(...responses);
+      results.push(...(responses as U[]));
       requestWindow.length = 0;
     } else {
       continue;
@@ -102,20 +121,30 @@ export function formatTimeStamp(timestamp: string | number) {
  * @param retryCount retry count
  * @param isResFailed customized function for checking if response is failed
  * @param error? customized error
+ * @param shouldSleep? should sleep before retry
+ * @param sleepTime? sleep time in millisecond
  * @returns response
  */
 export function retryRequest<T, U>(
   requestFunc: (params: T) => Promise<U>,
   params: T,
   isResFailed: (res?: U) => boolean = () => false,
-  retryCount = 100,
+  retryCount = 10,
   error?: Error | ErrorResp,
+  shouldSleep = false,
+  sleepTime = 1000,
 ) {
   return new Promise<U>((resolve, reject) => {
     let count = 0;
     const request = async () => {
       try {
-        const [err, res] = await to(requestFunc(params));
+        let res = null;
+        let err = null;
+        if (shouldSleep) {
+          [err, res] = await to(sleep(requestFunc, params, sleepTime));
+        } else {
+          [err, res] = await to(requestFunc(params));
+        }
         if (err || isResFailed(res)) {
           if (count < retryCount) {
             count++;
@@ -138,7 +167,7 @@ export function retryRequest<T, U>(
             }
           }
         } else {
-          resolve(res);
+          resolve(res as U);
         }
       } catch (e) {
         if (count < retryCount) {
@@ -235,10 +264,20 @@ export const getAllUserProfileSuccessQuestions = async (apiBridge: ApiBridge) =>
 export const getQuestionAllInfoByTitleSlug = async (params: { apiBridge: ApiBridge; titleSlug: string }) => {
   const { apiBridge, titleSlug } = params;
 
-  const [questionDetailErr, questionDetail] = (await to(apiBridge.getProblem({ titleSlug }))) as [
-    null | ErrorResp,
-    GetQuestionDetailByTitleSlugResponse['question'],
-  ];
+  const [questionDetailErr, questionDetail] = (await to(
+    retryRequest(
+      apiBridge.getProblem.bind(apiBridge),
+      { titleSlug },
+      (res) => res === null || res === undefined,
+      100,
+      new ErrorResp({
+        code: ERROR_CODE.UNKNOWN_ERROR,
+        message: 'invalid response in retry request: question detail is empty',
+      }),
+      true,
+      2000,
+    ),
+  )) as [null | ErrorResp, GetQuestionDetailByTitleSlugResponse['question']];
 
   if (questionDetailErr) {
     throw new ErrorResp({
@@ -248,7 +287,18 @@ export const getQuestionAllInfoByTitleSlug = async (params: { apiBridge: ApiBrid
   }
 
   const [getSubmissionErr, allSubmissionsList] = (await to(
-    apiBridge.getSubmissionsByTitleSlug({ questionSlug: titleSlug }),
+    retryRequest(
+      apiBridge.getSubmissionsByTitleSlug.bind(apiBridge),
+      { questionSlug: titleSlug },
+      (res) => res === null || res === undefined,
+      100,
+      new ErrorResp({
+        code: ERROR_CODE.UNKNOWN_ERROR,
+        message: 'invalid response in retry request: submission list is empty',
+      }),
+      true,
+      2000,
+    ),
   )) as [null | ErrorResp, GetSubmissionsByQuestionSlugResponse['submissionList']];
 
   if (getSubmissionErr) {
@@ -279,12 +329,26 @@ export const getQuestionAllInfoByTitleSlug = async (params: { apiBridge: ApiBrid
         code: ERROR_CODE.UNKNOWN_ERROR,
         message: 'invalid response in retry request: submission detail is empty',
       }),
+      true,
+      2000,
     ),
     // apiBridge.getSubmissionDetailById({ id: lastAcceptedSubmission.id }),
   )) as [null | ErrorResp, GetSubmissionDetailByIdResponse['submissionDetail']];
 
   const [getNotesErr, allNotes] = (await to(
-    apiBridge.getNotesByQuestionId({ questionId: Number(questionDetail.questionId) }),
+    // apiBridge.getNotesByQuestionId({ questionId: Number(questionDetail.questionId) }),
+    retryRequest(
+      apiBridge.getNotesByQuestionId.bind(apiBridge),
+      { questionId: Number(questionDetail.questionId) },
+      (res) => res === null || res === undefined,
+      100,
+      new ErrorResp({
+        code: ERROR_CODE.UNKNOWN_ERROR,
+        message: 'invalid response in retry request: notes is empty',
+      }),
+      true,
+      2000,
+    ),
   )) as [null | ErrorResp, GetNotesByQuestionIdResponse['noteOneTargetCommonNote']];
 
   if (getNotesErr) {

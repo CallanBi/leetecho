@@ -906,7 +906,9 @@ ipcMain.handle(
       concurrencyController({
         requestFunc: handleQuestion,
         params: questions,
-        concurrency: 2,
+        concurrency: 1,
+        shouldSleep: true,
+        sleepTime: 2000,
       }),
     );
 
